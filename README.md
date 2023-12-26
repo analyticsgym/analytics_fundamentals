@@ -1,2 +1,2 @@
 ### Analytics Skills Fundamentals
-A collection of work in-progress notes and recommended study resources.
+A collection of work in-progress notes and study resources.
