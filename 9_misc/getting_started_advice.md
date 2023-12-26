@@ -68,7 +68,7 @@ Naturally, the knowledge further sinks in when you have practiced and applied th
 
 [^1]: future todo: investigate the learning science behind skill retention with routine use vs skill retention without routine use.
 
-### Always Be Learning[^1]
+### Always Be Learning[^2]
 Continuous learning seems to be the most common behavior trait among top performers across any discipline. 
 
 Learning methods vary by top performer and discipline: some folks read, listen, watch, practice, or talk to experts to acquire knowledge.
@@ -81,6 +81,6 @@ Top performers then apply the learning/knowledge in a way that produces elite re
 
 “When I need to learn about a new subject, I’ll definitely devour some books on the topic, but I almost always supplement this reading by seeking out dialogue with leading experts in the field.” [Reid Hoffman: Blitzscaling](https://www.amazon.com/dp/B0791239V7/ref=dp-kindle-redirect?_encoding=UTF8&btkr=1)
 
-[^1]: future todo: include additional learning quotes/inspiration from non-white males.
+[^2]: future todo: include additional learning quotes/inspiration from non-white males.
 
 #AlwaysBeLearning
