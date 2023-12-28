@@ -6,6 +6,27 @@
 -   Different from zero or an empty string.
 -   Nulls can arise due to missing data, data errors, incorrect joins, etc.
 
+#### Check columns for NULL values
+
+```
+WITH employee_ids(id, department, salary) AS (
+    VALUES
+    (1, NULL, 50000),
+    (2, 'HR', 60000),
+    (3, 'Sales', 70000),
+    (4, 'IT', 65000),
+    (5, 'Marketing', 75000),
+    (6, 'Marketing', NULL),
+    (7, 'Admin', NULL)
+)
+
+SELECT
+	COUNT(*) - COUNT(id) AS id_nulls,
+	COUNT(*) - COUNT(department) AS department_nulls,
+	COUNT(*) - COUNT(salary) AS salary_nulls
+FROM employee_ids
+```
+
 #### NULLs in arithmetic operations or comparisons
 
 -   Any arithmetic operation with NULL will result in NULL.
