@@ -46,11 +46,19 @@
 9.  **Help your future self and colleagues with code comments/styling**
 
     -   Include inline code comments for complex logic.
-    -   Follow an agreed upon style guide to assist with code readability speed.
+    -   Follow an agreed upon style guide to assist with code readability/logic understanding speed.
 
-10. **Include data filters early on**
+10. **Include data filters as early as possible**
 
-    -   Reduce downstream processing load/run time by filtering to required data as early in query logic as possible.
+    -   Reduce downstream processing load/run time by filtering to required data early in query logic (i.e. in first CTE where relevant vs last CTE).
+    -   Double check for
+
+11. **Check of unexpected fanout in joins**
+
+    -   i.e. an analyst anticipates a 1 to 1 relationship for key X between Table A and Table B; however, duplicate entries for key X in Table B results in a multiplicative increase in output (fanout).
+    -   When relevant, check for expected uniqueness.
+
+12. 
 
 \######################################################
 
@@ -62,11 +70,7 @@ Work in-prorgess
 
     -   \^Describe this further; too vague.
 
--   Watch out for duplicate/dirty records in source data that can distort results
-
--   Look out for joins that cause unintentional fanout
-
--   Double check filter logic/join conditions
+-   
 
 -   Timestamp time zones. Default tends to be UTC but different data sources and tables could have different time zones.
 
