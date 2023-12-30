@@ -8,21 +8,21 @@
 
     -   Avoid assuming data output is correct because a query ran successfully.
 
-    -   Cross-check with manual calculations, other data sources, and know baseline/stable metrics.
+    -   Cross-check with manual calculations, other data sources, and known baseline/stable metrics.
 
 3.  **Test logic on sample datasets**
 
-    -   Validate logic on subset of data to catch issues early.
+    -   Validate logic on subset of data to catch issues early and increase iteration speed.
 
 4.  **Handle NULL values strategically**
 
     -   Consider NULL value behavior in calculations and filters.
 
-    -   Check for columns for NULL values: `COUNT(*) - COUNT(column_1) AS column_1_null_count`
+    -   Check for columns for NULL values: `COUNT(*) - COUNT(column_1) AS column_1_null_count`.
 
 5.  **Routinely monitor for unexpected values and dirty data**
 
-    -   Monitor for data quality erosion (queries initially passing QA can later be affected by source data issues or bugs).
+    -   Monitor for data quality erosion (i.e. a query initially passing QA can later be affected by source data changes or bugs).
     -   Consider writing a set of QA tests for critical outputs.
 
 6.  ***Avoid 'SELECT \*' outputs on large data***
@@ -33,7 +33,7 @@
 
 7.  **Attempt to join on similar grain for large tables**
 
-    -   i.e. 1 to 1 relationship joins between large tables tend to be more efficient vs 1 to many relationships.
+    -   1 to 1 relationship joins between large tables tend to be more efficient vs 1 to many relationships.
 
     -   i.e. User_id 123 is one row in Table A and one row in Table B.
 
@@ -51,31 +51,23 @@
 10. **Include data filters as early as possible**
 
     -   Reduce downstream processing load/run time by filtering to required data early in query logic (i.e. in first CTE where relevant vs last CTE).
-    -   Double check for
 
 11. **Check of unexpected fanout in joins**
 
-    -   i.e. an analyst anticipates a 1 to 1 relationship for key X between Table A and Table B; however, duplicate entries for key X in Table B results in a multiplicative increase in output (fanout).
-    -   When relevant, check for expected uniqueness.
+    -   i.e. an analyst anticipates a 1 to 1 relationship for key X between Table A and Table B; however, duplicates exist for key X in Table B resulting in multiplicative output (fanout).
+    -   Validate expected uniqueness prior to joins.
 
-12. 
+12. **PostgreSQL defaults to integer division**
 
-\######################################################
+    -   SELECT 3 / 4 in PostgreSQL defaults to integer division which yields 0 instead of 0.75 as one might expect (integer division).
+    -   SELECT ROUND(1.0 \* 3/4,2) returns 0.75 (floating point division).
+    -   Check your SQL dialect documentation to determine if the dialect defaults to integer division vs floating division.
 
-Work in-prorgess
+13. **When possible, simplify 'where' and 'join' logic on large data**
 
--   **Limit 'where' and 'join' logic on large data**
+    -   Simpler 'where' and 'join' logic often results in more efficient/faster queries.
+    -   i.e. alongside other join/where logic, filtering on a URL string tends to result resource intensive query (analysts might explore pre-processing step to reduce load in join/where logic).
 
-    -   Use efficient conditions and joins to minimize data processing.
+14. **Timezone handling can be tricky**
 
-    -   \^Describe this further; too vague.
-
--   
-
--   Timestamp time zones. Default tends to be UTC but different data sources and tables could have different time zones.
-
--   Alias sub query results by default to avoid errors.
-
--   SELECT 3 / 4 in PostgreSQL defaults to integer division which yields 0 instead of 0.75 as one might expect. SELECT ROUND(1.0 \* 3/4,2) returns 0.75.
-
--   Other best practices specific to data analysis SQL use cases
+    -   Default tends to be UTC but different data sources, tables, and tools can handle time zone conversion differently.
