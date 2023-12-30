@@ -1,2 +1,2 @@
-### Analytics Skills Fundamentals
-A collection of work in-progress notes and study resources.
+### Analytics Fundamentals [work in-progress]
+Continuous learning notes and study resources for myself and other analytics analysts.
