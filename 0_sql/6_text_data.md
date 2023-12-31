@@ -1,5 +1,5 @@
 #### LIKE and ILIKE 
-- used for matching patterns within strings
+- used for matching string patterns
 - combining wildcards used for more dynamic pattern matching
 - for text search on large datasets, more advance search methods might be needed to avoid performance slowdown
 - LIKE: is case sensitive 
