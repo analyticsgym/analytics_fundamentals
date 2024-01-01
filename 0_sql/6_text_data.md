@@ -1,7 +1,7 @@
 #### LIKE and ILIKE 
 - used for matching string patterns
-- combining wildcards used for more dynamic pattern matching
-- for text search on large datasets, more advance search methods might be needed to avoid performance slowdown
+- can combine with other string functions/wildcards to create complex pattern searches
+- for text search on large datasets, more advance search methods and/or non-SQL tool might be needed to avoid performance slowdown
 - LIKE: is case sensitive 
 - ILIKE: is not case sensitive
 
@@ -32,21 +32,52 @@ VALUES ('Today is such a beautiful day! #sunshine #happy'),
        ('Attending a great conference this week. #conference #networking #learning')
 )
 
-SELECT	
-	-- count tweets containing the word 'new' with LIKE and ILIKE
-	COUNT(CASE WHEN tweet LIKE '%new%' THEN tweet END) AS twt_cnt_contains_new_case_sensitive,
-	COUNT(CASE WHEN tweet ILIKE '%new%' THEN tweet END) AS twt_cnt_contains_new_case_insensitive,
-	-- count tweets that start start with 'I love' case insensitive only
-	COUNT(CASE WHEN tweet ILIKE 'i love%' THEN tweet END) AS twt_cnt_contains_i_love,
-	-- count tweets with hashtag
-	COUNT(CASE WHEN tweet LIKE '%#%' THEN tweet END) AS twt_cnt_includes_hashtag,
-	-- counts tweets that do not contain love
-	COUNT(CASE WHEN tweet NOT ILIKE '%love%' THEN tweet END) AS twt_cnt_does_not_contain_love
+-- For case when logic, when ELSE is not specified, NULL is returned for non-matching cases
+SELECT
+    -- Count tweets containing the word 'new' with LIKE (case sensitive)
+    COUNT(
+        CASE 
+            WHEN tweet LIKE '%new%' 
+            THEN tweet 
+        END
+    ) AS twt_cnt_contains_new_case_sensitive,
+    
+    -- Count tweets containing the word 'new' with ILIKE (case insensitive)
+    COUNT(
+        CASE 
+            WHEN tweet ILIKE '%new%' 
+            THEN tweet 
+        END
+    ) AS twt_cnt_contains_new_case_insensitive,
+    
+    -- Count tweets that start with 'I love' (case insensitive only)
+    COUNT(
+        CASE 
+            WHEN tweet ILIKE 'i love%' 
+            THEN tweet 
+        END
+    ) AS twt_cnt_contains_i_love,
+    
+    -- Count tweets that include a hashtag
+    COUNT(
+        CASE 
+            WHEN tweet LIKE '%#%' 
+            THEN tweet 
+        END
+    ) AS twt_cnt_includes_hashtag,
+    
+    -- Count tweets that do not contain 'love' (case insensitive)
+    COUNT(
+        CASE 
+            WHEN tweet NOT ILIKE '%love%' 
+            THEN tweet 
+        END
+    ) AS twt_cnt_does_not_contain_love
 FROM example_tweets
 ```
 
 #### SPLIT_PART 
-- takes 3 arguments: input string, delimeter to split string into part, numeric index of part to return
+- takes 3 arguments: input string, delimiter to split string into part, numeric index of part to return
 
 ```
 WITH sample_urls (id, url) AS (
@@ -67,7 +98,7 @@ SELECT
   SPLIT_PART(url, '/', 3) AS domain,
   SPLIT_PART(url, '/', 4) AS section,
   SPLIT_PART(url, '/', 5) AS sub_section
-FROM sample_urls;
+FROM sample_urls
 ```
 
 #### UPPER, LOWER
@@ -135,7 +166,7 @@ FROM store_products
 - *, +, ?, {n}, {m,n} to specify how many times a preceding pattern should occur (0 or more, 1 or more, 0 or 1, n times, and between m and n times)
 - parentheses ( ) to group patterns together and apply quantifiers to the entire group
 - vertical bar | to match one of several alternative patterns
-- lookahead and lookbehind assertions: Use (?= ) for positive lookahead, (?! ) for negative lookahead, (?<= ) for positive lookbehind, and (?<! ) for negative lookbehind
+- lookahead and lookbehind assertions: use (?= ) for positive lookahead, (?! ) for negative lookahead, (?<= ) for positive lookbehind, and (?<! ) for negative lookbehind
 
 ```
 WITH fake_elon_tweets(id, tweet) AS (
@@ -278,7 +309,7 @@ SELECT
 			THEN UPPER(SUBSTRING(last_name, 1, 1)) || regexp_replace(SUBSTRING(last_name, 2), '.', '*', 'g')
 			ELSE last_name
 	END AS obfuscated_last_name
-FROM people;
+FROM people
 ```
 
 #### REGEXP_SPLTIT_TO_TABLE 
@@ -415,4 +446,3 @@ SELECT
 	SUM(LENGTH(tweet) - LENGTH(REPLACE(tweet, '#', ''))) as total_hashtags
 FROM example_tweets
 ```
-
