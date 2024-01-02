@@ -21,14 +21,25 @@ FROM ts_example
 ```
 
 #### EXTRACT vs DATE_PART
-- slight differences in DATE_PART vs EXTRACT
-- DATE_PART can grab fractional values with decimal points vs EXTRACT rounds down to nearest integer
+- slight differences in DATE_PART vs EXTRACT; often used interchangeably
+- some nuance: DATE_PART can grab fractional values with decimal points vs EXTRACT rounds down to nearest integer
 
 ```
+WITH ts_example_2 AS (
+	SELECT 
+		TO_TIMESTAMP('2022-07-13 11:20:18:06', 'YYYY-MM-DD HH:MI:SS::MS') AS timestamp_2
+)
+
 SELECT
-    date_part('year', '2022-01-23'::DATE) AS dp_year,
-    date_part('month', '2022-01-23'::DATE) AS dp_month,
-    date_part('day', '2022-01-23'::DATE) AS dp_day
+    DATE_PART('year', timestamp_2) AS dp_year,
+    DATE_PART('quarter', timestamp_2) AS dp_quarter,
+    DATE_PART('month', timestamp_2) AS dp_month,
+    DATE_PART('day', timestamp_2) AS dp_day,
+    DATE_PART('hour', timestamp_2) AS dp_hour,
+    DATE_PART('minute', timestamp_2) AS dp_minute,
+    -- fractional seconds example 
+    DATE_PART('seconds', timestamp_2) AS dp_second
+FROM ts_example_2
 ```
 
 #### DATE_TRUNC
@@ -36,24 +47,23 @@ SELECT
 - commonly used to aggregate by date dimension (i.e. sales by month/quarter)
 
 ```
-WITH ts_example_2 AS (
+WITH ts_example_3 AS (
 	SELECT 
-		TO_TIMESTAMP('2022-05-22 07:30:03', 'YYYY-MM-DD HH:MI:SS') AS timestamp_2
+		TO_TIMESTAMP('2022-05-22 07:30:03', 'YYYY-MM-DD HH:MI:SS') AS timestamp_3
 )
 
 SELECT
 	*,
-	DATE_TRUNC('quarter', timestamp_2)::DATE AS quarter,
-	DATE_TRUNC('month', timestamp_2)::DATE AS month,
+	DATE_TRUNC('quarter', timestamp_3)::DATE AS quarter,
+	DATE_TRUNC('month', timestamp_3)::DATE AS month,
 	-- simpler syntax for day
-	timestamp_2::DATE AS day,
-	DATE_TRUNC('hour', timestamp_2) AS hour
-FROM ts_example_2
+	timestamp_3::DATE AS day,
+	DATE_TRUNC('hour', timestamp_3) AS hour
+FROM ts_example_3
 ```
 
-
-
 #### Timestamp math
+- NEEDS IMPROVEMENT for PostgreSQL (i.e. AGE function, etc)
 - approaches differ by database
 - PostgreSQL examples
 - less verbose options with Amazon Redshift, etc
@@ -68,13 +78,14 @@ WITH ts_math_example AS (SELECT
 SELECT
 	subscription_start,
 	subscription_end,
-	(EXTRACT(YEAR FROM subscription_end) - EXTRACT(YEAR FROM subscription_start)) * 12 +
-  (EXTRACT(MONTH FROM subscription_end) - EXTRACT(MONTH FROM subscription_start)) AS months_difference
+  EXTRACT(YEAR FROM AGE(subscription_end, subscription_start)) * 12 + 
+    EXTRACT(MONTH FROM AGE(subscription_end, subscription_start)) AS months_difference
 FROM ts_math_example
 ```
 
 #### Day of quarter workaround
 - day of function doesn't exist 
+
 ```
 WITH ts_example AS (
 	SELECT 
@@ -86,9 +97,6 @@ SELECT
 	EXTRACT(DAY FROM timestamp_1 - DATE_TRUNC('QUARTER', timestamp_1))+1 AS day_of_quarter
 FROM ts_example
 ```
-
-#### 
-
 
 #### Timezones
 - many databases default to using UTC (doesn't have daylight savings)
@@ -156,8 +164,6 @@ FROM year
 -- The year is also evenly divisible by 400, in which case it is a leap year.
 WHERE (year % 4 = 0 AND year % 100 <> 0) OR (year % 400 = 0);
 ```
-
-#### 
 
 #### Round a date timestamp to the nearest calendar day
 - conditional 
