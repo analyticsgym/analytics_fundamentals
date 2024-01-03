@@ -62,7 +62,37 @@ SELECT
 FROM ts_example_3
 ```
 
-#### Timestamp math
+#### Date/Timestamp differences with AGE
+- used to calculate differences between two given dates/timestamps or one given date/timestamp and current date/timestamp
+- AGE function returns an interval data type
+- works similar to DATEDIFF in other databases
+
+
+```
+-- generate timestamps and age interval
+WITH age_example AS (
+	-- sub query workaround (PostgreSQL has limitations on referencingcolumns previously specified in a query)
+	SELECT
+	  *,
+	  AGE(purchased_at, home_page_first_visit) AS age_interval
+	FROM (
+	    SELECT 
+		    TO_TIMESTAMP('2022-05-22 07:30:03', 'YYYY-MM-DD HH:MI:SS') AS home_page_first_visit,
+		    TO_TIMESTAMP('2022-05-22 08:01:12', 'YYYY-MM-DD HH:MI:SS') AS purchased_at
+	) AS sub_q
+)
+
+-- extract age interval parts
+-- 1/4 pick back up here (pull out parts of age interval then combine for difference calcs)
+SELECT
+  *
+FROM age_example
+```
+
+#### Date/Timestamp differences using direct subtraction
+- To be added
+
+#### Timestamp math (drop this section)
 - NEEDS IMPROVEMENT for PostgreSQL (i.e. AGE function, etc)
 - approaches differ by database
 - PostgreSQL examples
