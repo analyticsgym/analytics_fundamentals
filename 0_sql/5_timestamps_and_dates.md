@@ -73,66 +73,51 @@ FROM ts_example_3
 [Two main methods (subtracting two dates/timestamps or using AGE function)]{.underline}
 
 -   subtracting two dates/timestamps
-    -   subtracting two dates/timestamps returns an interval data type down to the smallest unit (starting at days)
+    -   timestamps: returns an interval data type down to the smallest unit (starting at days when relevant)
+    -   dates: returns number of calendar days
 -   AGE function
-    -   used to calculate differences between two given dates/timestamps or one given date/timestamp and current date/timestamp
-    -   works directionally similar to DATEDIFF in other databases
-    -   returns interval data type (starting at years)
+    -   calculates differences between two given dates/timestamps or one given date/timestamp and current date/timestamp
+    -   works kind of like DATEDIFF in other databases
+    -   returns interval data type (starting at years when relevant)
     -   helpful to see difference in human readable form starting in years
     -   for complex calcs, similar workarounds needed vs simple date/timestamp subtraction
 
 ```         
+-- depends on use case for when subtracting dates/timestamps vs AGE function would be more streamlined logic
 WITH practice_timestamps AS (
 	SELECT 
-		TO_TIMESTAMP('2022-05-22 07:30:03', 'YYYY-MM-DD HH:MI:SS') AS home_page_first_visit,
-		TO_TIMESTAMP('2023-05-23 10:01:12', 'YYYY-MM-DD HH:MI:SS') AS purchased_at
+		TO_TIMESTAMP('2022-04-30 07:30:03', 'YYYY-MM-DD HH:MI:SS') AS home_page_first_visit,
+		TO_TIMESTAMP('2022-05-23 10:01:12', 'YYYY-MM-DD HH:MI:SS') AS purchased_at,
+		TO_TIMESTAMP('2022-05-23 10:01:12', 'YYYY-MM-DD HH:MI:SS') + INTERVAL '1 YEAR' AS year_1_renewed_at
 )
 
--- Why is this CTE needed? PostgreSQL has limitations on referencing columns previously specified in a query
-, age_intervals AS (
+-- why use this CTE? 
+-- PostgreSQL has limitations on referencing columns previously specified in a query
+-- less verbose than including logic above
+, include_intervals AS (
 	SELECT
 	  *,
-	  AGE(purchased_at, home_page_first_visit) AS home_vs_purchase_age_interval,
-	  AGE(purchased_at::DATE, home_page_first_visit::DATE) AS home_vs_purchase_age_interval_2,
-	  -- when second input not given current date used
-	  AGE(purchased_at) AS purchase_vs_current_date_age_interval
+	  -- date/timestamp subtraction
+	  purchased_at::DATE - home_page_first_visit::DATE AS days_from_home_first_visit_to_pur,
+	  purchased_at - home_page_first_visit AS ts_sub_interval_pur_vs_home_first_vis,
+	  year_1_renewed_at - purchased_at AS ts_sub_interval_renew_vs_pur,
+	  -- AGE function subtraction
+	  AGE(purchased_at, home_page_first_visit) AS age_interval_pur_vs_home_first_vis,
+	  AGE(year_1_renewed_at, purchased_at) AS age_interval_renew_vs_pur
 	FROM practice_timestamps
 )
 
--- extract age interval parts
--- 1/4 pick back up here (pull out parts of age interval then combine for difference calcs)
+-- example use cases using subtraction internal and age interval
+-- note logic to properly handle interval components for addition
 SELECT
   *,
-  purchased_at - home_page_first_visit AS test0,
-  EXTRACT('days' FROM purchased_at - home_page_first_visit) AS test0_a,
-  EXTRACT('minutes' FROM purchased_at - home_page_first_visit) AS test0_b,
-  EXTRACT('seconds' FROM purchased_at - home_page_first_visit) AS test0_c,
-  DATE_TRUNC('quarter', purchased_at)::DATE AS v1,
-  DATE_TRUNC('quarter', home_page_first_visit)::DATE AS v2,
-  (DATE_TRUNC('quarter', purchased_at)::DATE - 
-  	DATE_TRUNC('quarter', home_page_first_visit)::DATE) / 90 AS test,
-  (DATE_TRUNC('quarter', purchased_at)::DATE - 
-  	DATE_TRUNC('quarter', home_page_first_visit)::DATE) / 90::FLOAT AS test2,
-  purchased_at::DATE - home_page_first_visit::DATE AS days_diff_home_vs_pur_1,
-  EXTRACT('day' FROM home_vs_purchase_age_interval) AS days_diff_home_vs_pur_2,
-  EXTRACT('quarter' FROM home_vs_purchase_age_interval) AS days_diff_home_vs_pur_3
-FROM age_intervals
-```
-
-#### Day of quarter workaround
-
--   day of function doesn't exist
-
-```         
-WITH ts_example AS (
-    SELECT 
-        TO_TIMESTAMP('2021-03-13 09:30:00', 'YYYY-MM-DD HH:MI:SS') AS timestamp_1
-)
-
-SELECT
-    -- add 1 so count starts 1; default is 0
-    EXTRACT(DAY FROM timestamp_1 - DATE_TRUNC('QUARTER', timestamp_1))+1 AS day_of_quarter
-FROM ts_example
+  -- date subtraction days and timestamp subtraction interval
+  (days_from_home_first_visit_to_pur * 24) + 
+  	EXTRACT('hour' FROM ts_sub_interval_pur_vs_home_first_vis) AS hours_from_home_first_vis_to_pur,
+  -- using AGE interval
+  (EXTRACT('year' FROM age_interval_renew_vs_pur) * 12) + 
+  	EXTRACT('month' FROM age_interval_renew_vs_pur) AS months_from_pur_to_renew
+FROM include_intervals
 ```
 
 #### Timezones
@@ -156,33 +141,35 @@ FROM example_ts
 
 ## Practical Use Cases
 
+#### Day of Quarter
+
+-   example use case where built-in function doesn't exist
+-   leverage combination of existing functions to achieve desired result
+
+```         
+WITH ts_example AS (
+    SELECT TO_TIMESTAMP('2021-01-01 09:30:00', 'YYYY-MM-DD HH:MI:SS') AS timestamp_example
+		UNION ALL
+	SELECT TO_TIMESTAMP('2021-01-13 09:30:00', 'YYYY-MM-DD HH:MI:SS') AS timestamp_example
+		UNION ALL
+	SELECT TO_TIMESTAMP('2021-04-10 09:30:00', 'YYYY-MM-DD HH:MI:SS') AS timestamp_example
+		UNION ALL
+	SELECT TO_TIMESTAMP('2021-12-28 09:30:00', 'YYYY-MM-DD HH:MI:SS') AS timestamp_example
+)
+
+SELECT
+    -- add 1 so count starts 1; default is 0
+    EXTRACT(DAY FROM timestamp_example - DATE_TRUNC('QUARTER', timestamp_example))+1 AS day_of_quarter
+FROM ts_example
+```
+
 #### Calendar days vs 24-hour-windows difference
 
 ```         
-------------------
-------------------
-------------------
--- WIP / needs QA/iteration
-------------------
-------------------
-------------------
-WITH membership AS (
-    SELECT *
-    FROM (
-        VALUES
-            (1, '2022-04-05 10:00:00-07:00'::timestamp with time zone, '2022-04-05 12:00:00-07:00'::timestamp with time zone),
-            (2, '2022-04-06 23:00:00-07:00'::timestamp with time zone, '2023-04-07 01:00:00-07:00'::timestamp with time zone),
-            (3, '2022-04-07 10:00:00-07:00'::timestamp with time zone, '2022-04-08 10:00:00-07:00'::timestamp with time zone)
-    ) AS membership(member_id, start_time, end_time)
-)
-SELECT
-    *,
-    end_time::date - start_time::date AS calendar_days_difference,
-    extract(epoch from (end_time - start_time)) AS diff_seconds,
-    extract(seconds from (end_time - start_time)) AS diff_seconds_2,
-    extract(hours from (end_time - start_time)) AS diff_hours,
-    extract(epoch from (end_time - start_time)) / (60 * 60 * 24) AS twenty_four_interval_difference
-FROM membership;
+-- next step: 1/6
+-- add example 
+-- sign up vs first core action
+-- show calendar days and 24 windows diff
 ```
 
 #### Leap years
