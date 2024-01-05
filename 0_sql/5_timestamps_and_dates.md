@@ -1,33 +1,37 @@
-#### EXTRACT
-- extract parts of a date/time value
+Reminder: below is a recap of key timestamp/date functions in PostgreSQL (database vendors expected to have slightly different syntax).
 
-```
+#### EXTRACT
+
+-   extract parts of a date/time value
+
+```         
 WITH ts_example AS (
-	SELECT 
-		TO_TIMESTAMP('2021-03-13 09:30:03', 'YYYY-MM-DD HH:MI:SS') AS timestamp_1
+    SELECT 
+        TO_TIMESTAMP('2021-03-13 09:30:03', 'YYYY-MM-DD HH:MI:SS') AS timestamp_1
 )
 
 SELECT
-	EXTRACT(YEAR FROM timestamp_1) AS year,
-	EXTRACT(QUARTER FROM timestamp_1) AS quarter,
-	EXTRACT(MONTH FROM timestamp_1) AS month,
-	EXTRACT(DOY FROM timestamp_1) AS day_of_year,
-	EXTRACT(DAY FROM timestamp_1) AS day_of_month,
-	EXTRACT(DOW FROM timestamp_1) AS day_of_week,
-	EXTRACT(HOUR FROM timestamp_1) AS ts_hour,
-	EXTRACT(MINUTE FROM timestamp_1) AS ts_minute,
-	EXTRACT(SECOND FROM timestamp_1) AS ts_second
+    EXTRACT(YEAR FROM timestamp_1) AS year,
+    EXTRACT(QUARTER FROM timestamp_1) AS quarter,
+    EXTRACT(MONTH FROM timestamp_1) AS month,
+    EXTRACT(DOY FROM timestamp_1) AS day_of_year,
+    EXTRACT(DAY FROM timestamp_1) AS day_of_month,
+    EXTRACT(DOW FROM timestamp_1) AS day_of_week,
+    EXTRACT(HOUR FROM timestamp_1) AS ts_hour,
+    EXTRACT(MINUTE FROM timestamp_1) AS ts_minute,
+    EXTRACT(SECOND FROM timestamp_1) AS ts_second
 FROM ts_example
 ```
 
 #### EXTRACT vs DATE_PART
-- slight differences in DATE_PART vs EXTRACT; often used interchangeably
-- some nuance: DATE_PART can grab fractional values with decimal points vs EXTRACT rounds down to nearest integer
 
-```
+-   slight differences in DATE_PART vs EXTRACT; often used interchangeably
+-   some nuance: DATE_PART can grab fractional values with decimal points vs EXTRACT rounds down to nearest integer
+
+```         
 WITH ts_example_2 AS (
-	SELECT 
-		TO_TIMESTAMP('2022-07-13 11:20:18:06', 'YYYY-MM-DD HH:MI:SS::MS') AS timestamp_2
+    SELECT 
+        TO_TIMESTAMP('2022-07-13 11:20:18:06', 'YYYY-MM-DD HH:MI:SS::MS') AS timestamp_2
 )
 
 SELECT
@@ -43,106 +47,110 @@ FROM ts_example_2
 ```
 
 #### DATE_TRUNC
-- similar to FLOOR function but for a date/time and specific unit of time (year, quarter, month, day, hour, minute, etc)
-- commonly used to aggregate by date dimension (i.e. sales by month/quarter)
 
-```
+-   similar to FLOOR function but for a date/time and specific unit of time (year, quarter, month, day, hour, minute, etc)
+-   commonly used to aggregate by date dimension (i.e. sales by month/quarter)
+
+```         
 WITH ts_example_3 AS (
-	SELECT 
-		TO_TIMESTAMP('2022-05-22 07:30:03', 'YYYY-MM-DD HH:MI:SS') AS timestamp_3
+    SELECT 
+        TO_TIMESTAMP('2022-05-22 07:30:03', 'YYYY-MM-DD HH:MI:SS') AS timestamp_3
 )
 
 SELECT
-	*,
-	DATE_TRUNC('quarter', timestamp_3)::DATE AS quarter,
-	DATE_TRUNC('month', timestamp_3)::DATE AS month,
-	-- simpler syntax for day
-	timestamp_3::DATE AS day,
-	DATE_TRUNC('hour', timestamp_3) AS hour
+    *,
+    DATE_TRUNC('year', timestamp_3)::DATE AS year,
+    DATE_TRUNC('quarter', timestamp_3)::DATE AS quarter,
+    DATE_TRUNC('month', timestamp_3)::DATE AS month,
+    -- simpler syntax for day
+    timestamp_3::DATE AS day,
+    DATE_TRUNC('hour', timestamp_3) AS hour
 FROM ts_example_3
 ```
 
-#### Date/Timestamp differences with AGE
-- used to calculate differences between two given dates/timestamps or one given date/timestamp and current date/timestamp
-- AGE function returns an interval data type
-- works similar to DATEDIFF in other databases
+#### Date/Timestamp subtraction
 
+[Two main methods (subtracting two dates/timestamps or using AGE function)]{.underline}
 
-```
--- generate timestamps and age interval
-WITH age_example AS (
-	-- sub query workaround (PostgreSQL has limitations on referencingcolumns previously specified in a query)
+-   subtracting two dates/timestamps
+    -   subtracting two dates/timestamps returns an interval data type down to the smallest unit (starting at days)
+-   AGE function
+    -   used to calculate differences between two given dates/timestamps or one given date/timestamp and current date/timestamp
+    -   works directionally similar to DATEDIFF in other databases
+    -   returns interval data type (starting at years)
+    -   helpful to see difference in human readable form starting in years
+    -   for complex calcs, similar workarounds needed vs simple date/timestamp subtraction
+
+```         
+WITH practice_timestamps AS (
+	SELECT 
+		TO_TIMESTAMP('2022-05-22 07:30:03', 'YYYY-MM-DD HH:MI:SS') AS home_page_first_visit,
+		TO_TIMESTAMP('2023-05-23 10:01:12', 'YYYY-MM-DD HH:MI:SS') AS purchased_at
+)
+
+-- Why is this CTE needed? PostgreSQL has limitations on referencing columns previously specified in a query
+, age_intervals AS (
 	SELECT
 	  *,
-	  AGE(purchased_at, home_page_first_visit) AS age_interval
-	FROM (
-	    SELECT 
-		    TO_TIMESTAMP('2022-05-22 07:30:03', 'YYYY-MM-DD HH:MI:SS') AS home_page_first_visit,
-		    TO_TIMESTAMP('2022-05-22 08:01:12', 'YYYY-MM-DD HH:MI:SS') AS purchased_at
-	) AS sub_q
+	  AGE(purchased_at, home_page_first_visit) AS home_vs_purchase_age_interval,
+	  AGE(purchased_at::DATE, home_page_first_visit::DATE) AS home_vs_purchase_age_interval_2,
+	  -- when second input not given current date used
+	  AGE(purchased_at) AS purchase_vs_current_date_age_interval
+	FROM practice_timestamps
 )
 
 -- extract age interval parts
 -- 1/4 pick back up here (pull out parts of age interval then combine for difference calcs)
 SELECT
-  *
-FROM age_example
-```
-
-#### Date/Timestamp differences using direct subtraction
-- To be added
-
-#### Timestamp math (drop this section)
-- NEEDS IMPROVEMENT for PostgreSQL (i.e. AGE function, etc)
-- approaches differ by database
-- PostgreSQL examples
-- less verbose options with Amazon Redshift, etc
-
-```
--- TODO : add more examples
-WITH ts_math_example AS (SELECT
-	TO_TIMESTAMP('2022-05-22 07:30:03', 'YYYY-MM-DD HH:MI:SS') AS subscription_start,
-	TO_TIMESTAMP('2022-05-22 07:30:03', 'YYYY-MM-DD HH:MI:SS')  + INTERVAL '1 year' AS subscription_end
-)
-
-SELECT
-	subscription_start,
-	subscription_end,
-  EXTRACT(YEAR FROM AGE(subscription_end, subscription_start)) * 12 + 
-    EXTRACT(MONTH FROM AGE(subscription_end, subscription_start)) AS months_difference
-FROM ts_math_example
+  *,
+  purchased_at - home_page_first_visit AS test0,
+  EXTRACT('days' FROM purchased_at - home_page_first_visit) AS test0_a,
+  EXTRACT('minutes' FROM purchased_at - home_page_first_visit) AS test0_b,
+  EXTRACT('seconds' FROM purchased_at - home_page_first_visit) AS test0_c,
+  DATE_TRUNC('quarter', purchased_at)::DATE AS v1,
+  DATE_TRUNC('quarter', home_page_first_visit)::DATE AS v2,
+  (DATE_TRUNC('quarter', purchased_at)::DATE - 
+  	DATE_TRUNC('quarter', home_page_first_visit)::DATE) / 90 AS test,
+  (DATE_TRUNC('quarter', purchased_at)::DATE - 
+  	DATE_TRUNC('quarter', home_page_first_visit)::DATE) / 90::FLOAT AS test2,
+  purchased_at::DATE - home_page_first_visit::DATE AS days_diff_home_vs_pur_1,
+  EXTRACT('day' FROM home_vs_purchase_age_interval) AS days_diff_home_vs_pur_2,
+  EXTRACT('quarter' FROM home_vs_purchase_age_interval) AS days_diff_home_vs_pur_3
+FROM age_intervals
 ```
 
 #### Day of quarter workaround
-- day of function doesn't exist 
 
-```
+-   day of function doesn't exist
+
+```         
 WITH ts_example AS (
-	SELECT 
-		TO_TIMESTAMP('2021-03-13 09:30:00', 'YYYY-MM-DD HH:MI:SS') AS timestamp_1
+    SELECT 
+        TO_TIMESTAMP('2021-03-13 09:30:00', 'YYYY-MM-DD HH:MI:SS') AS timestamp_1
 )
 
 SELECT
-	-- add 1 so count starts 1; default is 0
-	EXTRACT(DAY FROM timestamp_1 - DATE_TRUNC('QUARTER', timestamp_1))+1 AS day_of_quarter
+    -- add 1 so count starts 1; default is 0
+    EXTRACT(DAY FROM timestamp_1 - DATE_TRUNC('QUARTER', timestamp_1))+1 AS day_of_quarter
 FROM ts_example
 ```
 
 #### Timezones
-- many databases default to using UTC (doesn't have daylight savings)
-- confirm with data engineers the default database time zone to be safe
-- note timezones with daylight savings will have 2 standard abbreviations (i.e. PST daylight savings not in effect and PDT daylight savings in effect)
-- PostgreSQL does not have a built-in convert_timezone() function vs other database vendors do
 
-```
+-   many databases default to using UTC (doesn't have daylight savings)
+-   confirm with data engineers the default database time zone to be safe
+-   note timezones with daylight savings will have 2 standard abbreviations (i.e. PST daylight savings not in effect and PDT daylight savings in effect)
+-   PostgreSQL does not have a built-in convert_timezone() function vs other database vendors do
+
+```         
 -- PostgreSQL approach to convert from PDT to UTC
 WITH example_ts AS (
-	SELECT TIMESTAMP '2023-04-04 15:00:00' AT TIME ZONE 'PDT' AS timestamp_pdt
+    SELECT TIMESTAMP '2023-04-04 15:00:00' AT TIME ZONE 'PDT' AS timestamp_pdt
 )
 
 SELECT
-	timestamp_pdt,
-	timestamp_pdt AT TIME ZONE 'UTC' AS timestamp_utc
+    timestamp_pdt,
+    timestamp_pdt AT TIME ZONE 'UTC' AS timestamp_utc
 FROM example_ts
 ```
 
@@ -150,7 +158,7 @@ FROM example_ts
 
 #### Calendar days vs 24-hour-windows difference
 
-```
+```         
 ------------------
 ------------------
 ------------------
@@ -168,25 +176,25 @@ WITH membership AS (
     ) AS membership(member_id, start_time, end_time)
 )
 SELECT
-	*,
-	end_time::date - start_time::date AS calendar_days_difference,
-	extract(epoch from (end_time - start_time)) AS diff_seconds,
-	extract(seconds from (end_time - start_time)) AS diff_seconds_2,
-	extract(hours from (end_time - start_time)) AS diff_hours,
-	extract(epoch from (end_time - start_time)) / (60 * 60 * 24) AS twenty_four_interval_difference
+    *,
+    end_time::date - start_time::date AS calendar_days_difference,
+    extract(epoch from (end_time - start_time)) AS diff_seconds,
+    extract(seconds from (end_time - start_time)) AS diff_seconds_2,
+    extract(hours from (end_time - start_time)) AS diff_hours,
+    extract(epoch from (end_time - start_time)) / (60 * 60 * 24) AS twenty_four_interval_difference
 FROM membership;
 ```
 
-
 #### Leap years
-- output leap years using leap year rule filtering
 
-```
+-   output leap years using leap year rule filtering
+
+```         
 WITH years AS (
   SELECT generate_series(1900, 3000) AS year
 )
 SELECT 
-	year
+    year
 FROM year
 -- <<< leap year rule >>>
 -- If a year is evenly divisible by 4, it is a leap year, except:
@@ -196,14 +204,15 @@ WHERE (year % 4 = 0 AND year % 100 <> 0) OR (year % 400 = 0);
 ```
 
 #### Round a date timestamp to the nearest calendar day
-- conditional 
 
-```
+-   conditional
+
+```         
 WITH sample_data AS (
-	SELECT '2022-04-02 00:06:00'::timestamp AS original_timestamp
-		UNION
-	SELECT '2022-04-02 08:21:00'::timestamp AS original_timestamp
-		UNION 
+    SELECT '2022-04-02 00:06:00'::timestamp AS original_timestamp
+        UNION
+    SELECT '2022-04-02 08:21:00'::timestamp AS original_timestamp
+        UNION 
   SELECT '2022-04-02 16:30:00'::timestamp AS original_timestamp
 )
 
@@ -218,25 +227,27 @@ SELECT
 FROM sample_data;
 ```
 
-#### Hard code date string to use as filter 
-- useful when a query filters on a date in multiple locations
-- update the date filter once vs multiple locations
+#### Hard code date string to use as filter
 
-```
+-   useful when a query filters on a date in multiple locations
+-   update the date filter once vs multiple locations
+
+```         
 WITH filter_date AS (
-	-- cast string to date type
-	SELECT '2023-03-12'::DATE as filter_var
+    -- cast string to date type
+    SELECT '2023-03-12'::DATE as filter_var
 )
 
 SELECT
-	filter_var
+    filter_var
 FROM filter_date
 ```
 
 #### Find all date gaps in a series of dates
-- left join to the complete date sequence and filter on NULLs in the table where we want to surface date gaps
 
-```
+-   left join to the complete date sequence and filter on NULLs in the table where we want to surface date gaps
+
+```         
 DROP TABLE IF EXISTS temp_new_customers;
 CREATE TEMP TABLE temp_new_customers AS
 
@@ -262,40 +273,42 @@ WITH complete_date_sequence AS (
 SELECT 
   DATE_TRUNC('day', complete_date) AS sequence_date
 FROM GENERATE_SERIES(
-	  (SELECT MIN(purchase_date) FROM temp_new_customers),
-	  (SELECT MAX(purchase_date) FROM temp_new_customers),
-	  '1 day'::interval
-	) AS complete_date
+      (SELECT MIN(purchase_date) FROM temp_new_customers),
+      (SELECT MAX(purchase_date) FROM temp_new_customers),
+      '1 day'::interval
+    ) AS complete_date
 )
 
 -- return missing dates
 SELECT 
-	c.sequence_date
+    c.sequence_date
 FROM complete_date_sequence AS c
 LEFT JOIN temp_new_customers AS t 
-	ON t.purchase_date = c.sequence_date
+    ON t.purchase_date = c.sequence_date
 WHERE t.purchase_date IS NULL
 ```
 
 #### Fill in date gaps in a series of dates
-- for the date gaps in the new customers table we get NULL values for `first_time_purchasers` and replace the NULLs with 0 so have a complete date sequence
 
-```
+-   for the date gaps in the new customers table we get NULL values for `first_time_purchasers` and replace the NULLs with 0 so have a complete date sequence
+
+```         
 -- using example data created above
 -- date gaps filled and 0s used when gap exists
 SELECT 
-	c.sequence_date,
-	COALESCE(t.first_time_purchasers, 0) AS first_time_purchasers_clean
+    c.sequence_date,
+    COALESCE(t.first_time_purchasers, 0) AS first_time_purchasers_clean
 FROM complete_date_sequence AS c
 LEFT JOIN temp_new_customers AS t 
-	ON t.purchase_date = c.sequence_date
+    ON t.purchase_date = c.sequence_date
 ORDER BY first_time_purchasers_clean ASC
 ```
 
 #### Filter dates
-- remember BETWEEN clause is inclusive of beginning and end value
 
-```
+-   remember BETWEEN clause is inclusive of beginning and end value
+
+```         
 WITH monthly_sales (year_month, sales_amount) AS (
   VALUES
     ('2021-10', 20),
@@ -320,9 +333,8 @@ WITH monthly_sales (year_month, sales_amount) AS (
 )
 
 SELECT
-	*
+    *
 FROM monthly_sales
 -- use BETWEEN to grab 2022 months
 WHERE TO_DATE(year_month, 'YYYY-MM') BETWEEN '2022-01-01'::DATE AND '2022-12-01'::DATE
 ```
-
