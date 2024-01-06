@@ -1,4 +1,4 @@
-Reminder: below is a recap of key timestamp/date functions in PostgreSQL (database vendors expected to have slightly different syntax).
+Reminder: below is a recap of key timestamp/date functions in PostgreSQL (database vendors expected to have slightly different syntax). TODO: how to better format code; long horizontal lines are not ideal and wrapping making readability tricky
 
 #### EXTRACT
 
@@ -85,26 +85,26 @@ FROM ts_example_3
 ```         
 -- depends on use case for when subtracting dates/timestamps vs AGE function would be more streamlined logic
 WITH practice_timestamps AS (
-	SELECT 
-		TO_TIMESTAMP('2022-04-30 07:30:03', 'YYYY-MM-DD HH:MI:SS') AS home_page_first_visit,
-		TO_TIMESTAMP('2022-05-23 10:01:12', 'YYYY-MM-DD HH:MI:SS') AS purchased_at,
-		TO_TIMESTAMP('2022-05-23 10:01:12', 'YYYY-MM-DD HH:MI:SS') + INTERVAL '1 YEAR' AS year_1_renewed_at
+    SELECT 
+        TO_TIMESTAMP('2022-04-30 07:30:03', 'YYYY-MM-DD HH:MI:SS') AS home_page_first_visit,
+        TO_TIMESTAMP('2022-05-23 10:01:12', 'YYYY-MM-DD HH:MI:SS') AS purchased_at,
+        TO_TIMESTAMP('2022-05-23 10:01:12', 'YYYY-MM-DD HH:MI:SS') + INTERVAL '1 YEAR' AS year_1_renewed_at
 )
 
 -- why use this CTE? 
 -- PostgreSQL has limitations on referencing columns previously specified in a query
 -- less verbose than including logic above
 , include_intervals AS (
-	SELECT
-	  *,
-	  -- date/timestamp subtraction
-	  purchased_at::DATE - home_page_first_visit::DATE AS days_from_home_first_visit_to_pur,
-	  purchased_at - home_page_first_visit AS ts_sub_interval_pur_vs_home_first_vis,
-	  year_1_renewed_at - purchased_at AS ts_sub_interval_renew_vs_pur,
-	  -- AGE function subtraction
-	  AGE(purchased_at, home_page_first_visit) AS age_interval_pur_vs_home_first_vis,
-	  AGE(year_1_renewed_at, purchased_at) AS age_interval_renew_vs_pur
-	FROM practice_timestamps
+    SELECT
+      *,
+      -- date/timestamp subtraction
+      purchased_at::DATE - home_page_first_visit::DATE AS days_from_home_first_visit_to_pur,
+      purchased_at - home_page_first_visit AS ts_sub_interval_pur_vs_home_first_vis,
+      year_1_renewed_at - purchased_at AS ts_sub_interval_renew_vs_pur,
+      -- AGE function subtraction
+      AGE(purchased_at, home_page_first_visit) AS age_interval_pur_vs_home_first_vis,
+      AGE(year_1_renewed_at, purchased_at) AS age_interval_renew_vs_pur
+    FROM practice_timestamps
 )
 
 -- example use cases using subtraction internal and age interval
@@ -113,10 +113,10 @@ SELECT
   *,
   -- date subtraction days and timestamp subtraction interval
   (days_from_home_first_visit_to_pur * 24) + 
-  	EXTRACT('hour' FROM ts_sub_interval_pur_vs_home_first_vis) AS hours_from_home_first_vis_to_pur,
+    EXTRACT('hour' FROM ts_sub_interval_pur_vs_home_first_vis) AS hours_from_home_first_vis_to_pur,
   -- using AGE interval
   (EXTRACT('year' FROM age_interval_renew_vs_pur) * 12) + 
-  	EXTRACT('month' FROM age_interval_renew_vs_pur) AS months_from_pur_to_renew
+    EXTRACT('month' FROM age_interval_renew_vs_pur) AS months_from_pur_to_renew
 FROM include_intervals
 ```
 
@@ -139,6 +139,13 @@ SELECT
 FROM example_ts
 ```
 
+**EPOCH**
+
+-   Explain the concept behind EPOCH and it's usefulness
+
+```{-- next step 1/7: add examples of simpler date arithmetic using EPOCH}
+```
+
 ## Practical Use Cases
 
 #### Day of Quarter
@@ -148,13 +155,13 @@ FROM example_ts
 
 ```         
 WITH ts_example AS (
-    SELECT TO_TIMESTAMP('2021-01-01 09:30:00', 'YYYY-MM-DD HH:MI:SS') AS timestamp_example
-		UNION ALL
-	SELECT TO_TIMESTAMP('2021-01-13 09:30:00', 'YYYY-MM-DD HH:MI:SS') AS timestamp_example
-		UNION ALL
-	SELECT TO_TIMESTAMP('2021-04-10 09:30:00', 'YYYY-MM-DD HH:MI:SS') AS timestamp_example
-		UNION ALL
-	SELECT TO_TIMESTAMP('2021-12-28 09:30:00', 'YYYY-MM-DD HH:MI:SS') AS timestamp_example
+  SELECT TO_TIMESTAMP('2021-01-01 09:30:00', 'YYYY-MM-DD HH:MI:SS') AS timestamp_example
+        UNION ALL
+    SELECT TO_TIMESTAMP('2021-01-13 09:30:00', 'YYYY-MM-DD HH:MI:SS') AS timestamp_example
+        UNION ALL
+    SELECT TO_TIMESTAMP('2021-04-10 09:30:00', 'YYYY-MM-DD HH:MI:SS') AS timestamp_example
+        UNION ALL
+    SELECT TO_TIMESTAMP('2021-12-28 09:30:00', 'YYYY-MM-DD HH:MI:SS') AS timestamp_example
 )
 
 SELECT
@@ -165,11 +172,41 @@ FROM ts_example
 
 #### Calendar days vs 24-hour-windows difference
 
+-   use case where we want to look at 24 hour intervals as a "day" vs a calendar day
+-   in some cases, 24 hour intervals are more useful for assessing time to first action when users are spread through a day
+
 ```         
--- next step: 1/6
--- add example 
--- sign up vs first core action
--- show calendar days and 24 windows diff
+WITH user_events(user_id, event_type, event_timestamp) AS (
+    VALUES
+        (1, 'sign_up', '2024-01-01 08:00:00'::timestamp),
+        (1, 'first_action', '2024-01-01 15:30:00'::timestamp),  
+        (2, 'sign_up', '2024-01-02 09:15:00'::timestamp),
+        (2, 'first_action', '2024-01-03 11:45:00'::timestamp),  
+        (3, 'sign_up', '2024-01-03 07:20:00'::timestamp),
+        (3, 'first_action', '2024-01-06 18:55:00'::timestamp),
+        (4, 'sign_up', '2024-01-04 11:00:00'::timestamp)
+        -- User 4 has signed up but not completed the first action
+)
+
+, user_events_agg AS (
+  SELECT
+    user_id,
+    MIN(CASE WHEN event_type = 'sign_up' THEN event_timestamp END) AS first_sign_up_timestamp,
+    MIN(CASE WHEN event_type = 'first_action' THEN event_timestamp END) AS first_action_timestamp
+  FROM user_events
+  GROUP BY 1
+  ORDER BY 1
+)
+
+SELECT
+    *,
+    first_action_timestamp::DATE - first_sign_up_timestamp::DATE AS cal_days_till_first_action,
+    first_action_timestamp < first_sign_up_timestamp::DATE + 1 AS first_action_within_first_24_hours, 
+    EXTRACT(EPOCH FROM first_action_timestamp - first_sign_up_timestamp)::FLOAT / 3600 AS hrs_to_first_action,
+    -- i.e. 2 represents the 2nd 24 hour window since signup when the first action occurs
+    -- CEIL to start the count at 1; FLOOR would start the count at 0
+    CEIL(EXTRACT(EPOCH FROM first_action_timestamp - first_sign_up_timestamp)::FLOAT / (3600 * 24)) AS user_24hr_windows_at_first_action
+FROM user_events_agg
 ```
 
 #### Leap years
@@ -325,3 +362,7 @@ FROM monthly_sales
 -- use BETWEEN to grab 2022 months
 WHERE TO_DATE(year_month, 'YYYY-MM') BETWEEN '2022-01-01'::DATE AND '2022-12-01'::DATE
 ```
+
+#### BETWEEN
+
+-   TODO: add example where date is being used to filter a timestamp but the end value unexpectedly limits to a day before the end date
