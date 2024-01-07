@@ -70,12 +70,12 @@ FROM ts_example_3
 
 #### Date/Timestamp subtraction
 
-[Two main methods (subtracting two dates/timestamps or using AGE function)]{.underline}
+Two main methods (subtracting two dates/timestamps or using AGE function)
 
--   subtracting two dates/timestamps
+1.  Subtracting two dates/timestamps
     -   timestamps: returns an interval data type down to the smallest unit (starting at days when relevant)
     -   dates: returns number of calendar days
--   AGE function
+2.  AGE function
     -   calculates differences between two given dates/timestamps or one given date/timestamp and current date/timestamp
     -   works kind of like DATEDIFF in other databases
     -   returns interval data type (starting at years when relevant)
@@ -120,12 +120,52 @@ SELECT
 FROM include_intervals
 ```
 
+#### EPOCH
+
+-   used to convert date, timestamp, or interval value to seconds elapsed
+-   i.e. uniform units used when differences can span days vs hours
+-   concept of "epoch" comes from Unix; representing time elapsed since the epoch
+
+```         
+-- similar to previous example but using EPOCH certain use cases
+WITH practice_timestamps AS (
+    SELECT 
+        TO_TIMESTAMP('2022-04-30 07:30:03', 'YYYY-MM-DD HH:MI:SS') AS home_page_first_visit,
+        TO_TIMESTAMP('2022-05-23 10:01:12', 'YYYY-MM-DD HH:MI:SS') AS purchased_at,
+        TO_TIMESTAMP('2022-05-27 11:07:15', 'YYYY-MM-DD HH:MI:SS') AS core_action_first_completed_at,
+        -- TO_TIMESTAMP('2022-06-03 05:07:15', 'YYYY-MM-DD HH:MI:SS') AS core_action_first_completed_at,
+        TO_TIMESTAMP('2022-05-23 10:01:12', 'YYYY-MM-DD HH:MI:SS') + INTERVAL '1 YEAR' AS year_1_renewed_at
+)
+
+, include_intervals AS (
+    SELECT
+      *,
+      purchased_at::DATE - home_page_first_visit::DATE AS cal_days_from_home_first_visit_to_pur,
+      purchased_at - home_page_first_visit AS ts_sub_interval_pur_vs_home_first_vis,
+      core_action_first_completed_at::DATE - purchased_at::DATE AS cal_days_from_pur_to_core_action,  
+      core_action_first_completed_at - purchased_at AS ts_sub_interval_core_action_vs_pur,  
+      year_1_renewed_at - purchased_at AS ts_sub_interval_renew_vs_pur
+    FROM practice_timestamps
+)
+
+-- 24 hour interval = a subscription day
+-- 30 day interval = a subscription month
+SELECT
+  *,
+  EXTRACT(EPOCH FROM ts_sub_interval_pur_vs_home_first_vis)::FLOAT / (60) AS minutes_from_home_first_vis_to_pur,
+  EXTRACT(EPOCH FROM ts_sub_interval_pur_vs_home_first_vis)::FLOAT / (60*60) AS hours_from_home_first_vis_to_pur,
+  -- CEIL used to start at 1 
+  CEIL(EXTRACT(EPOCH FROM ts_sub_interval_core_action_vs_pur)::FLOAT / (60*60*24)) AS sub_day_core_action_first_completed_at,
+  CEIL(EXTRACT(EPOCH FROM ts_sub_interval_core_action_vs_pur)::FLOAT / (60*60*24*30)) AS sub_month_core_action_first_completed_at
+FROM include_intervals
+```
+
 #### Timezones
 
 -   many databases default to using UTC (doesn't have daylight savings)
 -   confirm with data engineers the default database time zone to be safe
 -   note timezones with daylight savings will have 2 standard abbreviations (i.e. PST daylight savings not in effect and PDT daylight savings in effect)
--   PostgreSQL does not have a built-in convert_timezone() function vs other database vendors do
+-   PostgreSQL does not have a built-in convert_timezone() function like some database vendors
 
 ```         
 -- PostgreSQL approach to convert from PDT to UTC
@@ -139,13 +179,6 @@ SELECT
 FROM example_ts
 ```
 
-**EPOCH**
-
--   Explain the concept behind EPOCH and it's usefulness
-
-```{-- next step 1/7: add examples of simpler date arithmetic using EPOCH}
-```
-
 ## Practical Use Cases
 
 #### Day of Quarter
@@ -155,7 +188,7 @@ FROM example_ts
 
 ```         
 WITH ts_example AS (
-  SELECT TO_TIMESTAMP('2021-01-01 09:30:00', 'YYYY-MM-DD HH:MI:SS') AS timestamp_example
+    SELECT TO_TIMESTAMP('2021-01-01 09:30:00', 'YYYY-MM-DD HH:MI:SS') AS timestamp_example
         UNION ALL
     SELECT TO_TIMESTAMP('2021-01-13 09:30:00', 'YYYY-MM-DD HH:MI:SS') AS timestamp_example
         UNION ALL
@@ -173,7 +206,7 @@ FROM ts_example
 #### Calendar days vs 24-hour-windows difference
 
 -   use case where we want to look at 24 hour intervals as a "day" vs a calendar day
--   in some cases, 24 hour intervals are more useful for assessing time to first action when users are spread through a day
+-   i.e. 24 hour units can be more useful to assess time to first action when users are spread through a day vs calendar day differences
 
 ```         
 WITH user_events(user_id, event_type, event_timestamp) AS (
@@ -202,73 +235,99 @@ SELECT
     *,
     first_action_timestamp::DATE - first_sign_up_timestamp::DATE AS cal_days_till_first_action,
     first_action_timestamp < first_sign_up_timestamp::DATE + 1 AS first_action_within_first_24_hours, 
-    EXTRACT(EPOCH FROM first_action_timestamp - first_sign_up_timestamp)::FLOAT / 3600 AS hrs_to_first_action,
+    EXTRACT(EPOCH FROM first_action_timestamp - first_sign_up_timestamp)::FLOAT / (60*60) AS hrs_to_first_action,
     -- i.e. 2 represents the 2nd 24 hour window since signup when the first action occurs
     -- CEIL to start the count at 1; FLOOR would start the count at 0
-    CEIL(EXTRACT(EPOCH FROM first_action_timestamp - first_sign_up_timestamp)::FLOAT / (3600 * 24)) AS user_24hr_windows_at_first_action
+    CEIL(EXTRACT(EPOCH FROM first_action_timestamp - first_sign_up_timestamp)::FLOAT / (60*60*24)) AS user_24hr_windows_at_first_action
 FROM user_events_agg
 ```
 
 #### Leap years
 
--   output leap years using leap year rule filtering
+-   output leap years using leap year rule filtering and identify the leap year equal to after the current year
 
 ```         
-WITH years AS (
-  SELECT generate_series(1900, 3000) AS year
+------------------------------------------
+-- leap year rule
+------------------------------------------
+-- if a year is evenly divisible by 4, it is a leap year, except:
+-- if the year is evenly divisible by 100, it is NOT a leap year, unless:
+-- the year is also evenly divisible by 400, in which case it is a leap year
+------------------------------------------
+
+-- leverage PostgreSQL generate_series function to create years sequence
+WITH leap_years_1900_to_3000 AS (
+  SELECT 
+      year
+  FROM generate_series(1900, 3000) AS year
+  WHERE (year % 4 = 0 AND year % 100 <> 0) OR (year % 400 = 0)
 )
-SELECT 
-    year
-FROM year
--- <<< leap year rule >>>
--- If a year is evenly divisible by 4, it is a leap year, except:
--- If the year is evenly divisible by 100, it is NOT a leap year, unless:
--- The year is also evenly divisible by 400, in which case it is a leap year.
-WHERE (year % 4 = 0 AND year % 100 <> 0) OR (year % 400 = 0);
+
+-- identify the leap year equal to after the current year
+SELECT
+  year
+FROM leap_years_1900_to_3000
+WHERE year >= EXTRACT(YEAR FROM CURRENT_DATE)
+ORDER BY year ASC
+LIMIT 1
 ```
 
 #### Round a date timestamp to the nearest calendar day
 
--   conditional
+-   like most coding problems there are multiple solution paths to same end result
+-   below solution path is a concise approach example
 
 ```         
 WITH sample_data AS (
     SELECT '2022-04-02 00:06:00'::timestamp AS original_timestamp
-        UNION
+       UNION ALL
     SELECT '2022-04-02 08:21:00'::timestamp AS original_timestamp
-        UNION 
-  SELECT '2022-04-02 16:30:00'::timestamp AS original_timestamp
+       UNION ALL
+  	SELECT '2022-04-02 11:59:59'::timestamp AS original_timestamp
+  		 UNION ALL
+  	SELECT '2022-04-02 12:00:00'::timestamp AS original_timestamp
+  		 UNION ALL
+  	SELECT '2022-04-02 16:30:00'::timestamp AS original_timestamp 
 )
 
 SELECT
     original_timestamp,
-    CASE
-        WHEN EXTRACT(hour FROM original_timestamp) < 12 THEN
-            date_trunc('day', original_timestamp)
-        ELSE
-            date_trunc('day', original_timestamp) + INTERVAL '1 day'
-    END AS rounded_to_nearest_calendar_day
-FROM sample_data;
+	  -- if timestamp in morning then +12 hours keeps the timestamp in same day
+	  -- if timestamp at noon or later then +12 hours pushes timestamp to the next day
+    (original_timestamp + INTERVAL '12 hours')::DATE AS rounded_to_nearest_calendar_day
+FROM sample_data
+ORDER BY 1
 ```
 
-#### Hard code date string to use as filter
+#### CTE to assist with date filtering
 
 -   useful when a query filters on a date in multiple locations
 -   update the date filter once vs multiple locations
 
 ```         
+-- CTE with filter data
 WITH filter_date AS (
-    -- cast string to date type
     SELECT '2023-03-12'::DATE as filter_var
+),
+
+sales_data AS (
+    SELECT 1 AS sale_id, '2023-03-11'::DATE AS sale_date, 100 AS amount
+    UNION ALL
+    SELECT 2, '2023-03-12'::DATE, 150
+    UNION ALL
+    SELECT 3, '2023-03-13'::DATE, 200
 )
 
+-- filter sales data use CTE date filter
 SELECT
-    filter_var
-FROM filter_date
+    *
+FROM sales_data
+WHERE sale_date = (SELECT filter_var FROM filter_date)
 ```
 
 #### Find all date gaps in a series of dates
 
+-   1//7 pick back up here
 -   left join to the complete date sequence and filter on NULLs in the table where we want to surface date gaps
 
 ```         
@@ -366,3 +425,7 @@ WHERE TO_DATE(year_month, 'YYYY-MM') BETWEEN '2022-01-01'::DATE AND '2022-12-01'
 #### BETWEEN
 
 -   TODO: add example where date is being used to filter a timestamp but the end value unexpectedly limits to a day before the end date
+
+ADDING and SUBTRACTING INTERVALS
+
+-   Include section on INTERVALS
