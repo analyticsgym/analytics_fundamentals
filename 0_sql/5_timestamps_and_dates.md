@@ -327,46 +327,54 @@ WHERE sale_date = (SELECT filter_var FROM filter_date)
 
 #### Find all date gaps in a series of dates
 
--   1//7 pick back up here
 -   left join to the complete date sequence and filter on NULLs in the table where we want to surface date gaps
 
 ```         
-DROP TABLE IF EXISTS temp_new_customers;
-CREATE TEMP TABLE temp_new_customers AS
+DROP TABLE IF EXISTS temp_date_series;
+CREATE TEMP TABLE temp_date_series AS (
+    SELECT
+        '2022-10-01'::DATE AS series_start,
+        '2022-12-31'::DATE AS series_end
+);
 
--- example reporting data on new customers by day 
-SELECT 
-  DATE_TRUNC('day', purchase_date) AS purchase_date,
-  ROUND((RANDOM()::NUMERIC * 10),2) AS first_time_purchasers
-FROM GENERATE_SERIES(
-        '2022-01-01'::timestamp, 
-        '2022-12-31'::timestamp, 
+-- example reporting data on new purchase volume by day
+DROP TABLE IF EXISTS temp_new_purchasers;
+CREATE TEMP TABLE temp_new_purchasers AS (
+	SELECT 
+	  purchase_date,
+	  ROUND((RANDOM()::NUMERIC * 100)) AS first_time_purchasers
+	FROM GENERATE_SERIES(
+        (SELECT series_start FROM temp_date_series), 
+        (SELECT series_end FROM temp_date_series), 
         '1 day'::interval
-    ) AS purchase_date;
+    ) AS purchase_date
+);
 
--- set seed to generate have same results on query reruns
+-- set seed to replicate results on query rerun
 SELECT SETSEED(0.1);
 
 -- randomly drop rows to create intentional date gaps
-DELETE FROM temp_new_customers
-WHERE RANDOM() < 0.025;
+DELETE FROM temp_new_purchasers
+WHERE RANDOM() < 0.05;
 
 -- generate date sequence without gaps
-WITH complete_date_sequence AS (
-SELECT 
-  DATE_TRUNC('day', complete_date) AS sequence_date
-FROM GENERATE_SERIES(
-      (SELECT MIN(purchase_date) FROM temp_new_customers),
-      (SELECT MAX(purchase_date) FROM temp_new_customers),
-      '1 day'::interval
-    ) AS complete_date
-)
+-- in practice, we'd use a calendar table here
+DROP TABLE IF EXISTS temp_complete_date_sequence;
+CREATE TEMP TABLE temp_complete_date_sequence AS (
+  SELECT 
+	sequence_date
+  FROM GENERATE_SERIES(
+        (SELECT series_start FROM temp_date_series), 
+        (SELECT series_end FROM temp_date_series), 
+        '1 day'::interval
+      ) AS sequence_date
+);
 
 -- return missing dates
 SELECT 
     c.sequence_date
-FROM complete_date_sequence AS c
-LEFT JOIN temp_new_customers AS t 
+FROM temp_complete_date_sequence AS c
+LEFT JOIN temp_new_purchasers AS t 
     ON t.purchase_date = c.sequence_date
 WHERE t.purchase_date IS NULL
 ```
@@ -381,15 +389,16 @@ WHERE t.purchase_date IS NULL
 SELECT 
     c.sequence_date,
     COALESCE(t.first_time_purchasers, 0) AS first_time_purchasers_clean
-FROM complete_date_sequence AS c
-LEFT JOIN temp_new_customers AS t 
+FROM temp_complete_date_sequence AS c
+LEFT JOIN temp_new_purchasers AS t 
     ON t.purchase_date = c.sequence_date
-ORDER BY first_time_purchasers_clean ASC
+ORDER BY c.sequence_date ASC
 ```
 
 #### Filter dates
 
--   remember BETWEEN clause is inclusive of beginning and end value
+- 1/8 pick back up here  
+- remember BETWEEN clause is inclusive of beginning and end value
 
 ```         
 WITH monthly_sales (year_month, sales_amount) AS (
