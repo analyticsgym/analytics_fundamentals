@@ -1,4 +1,7 @@
-Reminder: below is a recap of key timestamp/date functions in PostgreSQL (database vendors expected to have slightly different syntax). TODO: how to better format code; long horizontal lines are not ideal and wrapping making readability tricky
+### Reminders
+
+-   below is a recap of key timestamp/date functions in PostgreSQL (database vendors expected to have slightly different syntax)
+-   future todo: how to better format code; long horizontal lines are not ideal and wrapping making readability tricky
 
 #### EXTRACT
 
@@ -206,7 +209,7 @@ FROM ts_example
 #### Calendar days vs 24-hour-windows difference
 
 -   use case where we want to look at 24 hour intervals as a "day" vs a calendar day
--   i.e. 24 hour units can be more useful to assess time to first action when users are spread through a day vs calendar day differences
+-   i.e. 24 hour units can be more useful to assess time to first action when users are spread through a day vs calendar day differences (e.g. 11:30 pm to 1am represents 1 calendar day difference but is within the same 24 hour interval)
 
 ```         
 WITH user_events(user_id, event_type, event_timestamp) AS (
@@ -274,7 +277,7 @@ LIMIT 1
 
 #### Round a date timestamp to the nearest calendar day
 
--   like most coding problems there are multiple solution paths to same end result
+-   like most coding problems there are multiple solution paths to same end result here
 -   below solution path is a concise approach example
 
 ```         
@@ -283,17 +286,17 @@ WITH sample_data AS (
        UNION ALL
     SELECT '2022-04-02 08:21:00'::timestamp AS original_timestamp
        UNION ALL
-  	SELECT '2022-04-02 11:59:59'::timestamp AS original_timestamp
-  		 UNION ALL
-  	SELECT '2022-04-02 12:00:00'::timestamp AS original_timestamp
-  		 UNION ALL
-  	SELECT '2022-04-02 16:30:00'::timestamp AS original_timestamp 
+    SELECT '2022-04-02 11:59:59'::timestamp AS original_timestamp
+         UNION ALL
+    SELECT '2022-04-02 12:00:00'::timestamp AS original_timestamp
+         UNION ALL
+    SELECT '2022-04-02 16:30:00'::timestamp AS original_timestamp 
 )
 
 SELECT
     original_timestamp,
-	  -- if timestamp in morning then +12 hours keeps the timestamp in same day
-	  -- if timestamp at noon or later then +12 hours pushes timestamp to the next day
+      -- if timestamp is before noon then +12 hours keeps the timestamp in same day
+      -- if timestamp at noon or later then +12 hours pushes timestamp to the next day
     (original_timestamp + INTERVAL '12 hours')::DATE AS rounded_to_nearest_calendar_day
 FROM sample_data
 ORDER BY 1
@@ -327,7 +330,7 @@ WHERE sale_date = (SELECT filter_var FROM filter_date)
 
 #### Find all date gaps in a series of dates
 
--   left join to the complete date sequence and filter on NULLs in the table where we want to surface date gaps
+-   left join to the complete date sequence with NULL where clause to surface date gaps
 
 ```         
 DROP TABLE IF EXISTS temp_date_series;
@@ -340,10 +343,10 @@ CREATE TEMP TABLE temp_date_series AS (
 -- example reporting data on new purchase volume by day
 DROP TABLE IF EXISTS temp_new_purchasers;
 CREATE TEMP TABLE temp_new_purchasers AS (
-	SELECT 
-	  purchase_date,
-	  ROUND((RANDOM()::NUMERIC * 100)) AS first_time_purchasers
-	FROM GENERATE_SERIES(
+    SELECT 
+      purchase_date,
+      ROUND((RANDOM()::NUMERIC * 100)) AS first_time_purchasers
+    FROM GENERATE_SERIES(
         (SELECT series_start FROM temp_date_series), 
         (SELECT series_end FROM temp_date_series), 
         '1 day'::interval
@@ -362,7 +365,7 @@ WHERE RANDOM() < 0.05;
 DROP TABLE IF EXISTS temp_complete_date_sequence;
 CREATE TEMP TABLE temp_complete_date_sequence AS (
   SELECT 
-	sequence_date
+    sequence_date
   FROM GENERATE_SERIES(
         (SELECT series_start FROM temp_date_series), 
         (SELECT series_end FROM temp_date_series), 
@@ -395,13 +398,14 @@ LEFT JOIN temp_new_purchasers AS t
 ORDER BY c.sequence_date ASC
 ```
 
-#### Filter dates
+#### Filtering dates with BETWEEN
 
-- 1/8 pick back up here  
-- remember BETWEEN clause is inclusive of beginning and end value
+-   remember BETWEEN clause is inclusive of beginning and end value
+
+
 
 ```         
-WITH monthly_sales (year_month, sales_amount) AS (
+WITH monthly_sales(year_month, sales_amount) AS (
   VALUES
     ('2021-10', 20),
     ('2021-11', 30),
@@ -428,13 +432,57 @@ SELECT
     *
 FROM monthly_sales
 -- use BETWEEN to grab 2022 months
+-- TO_DATE() converts a string to a date
 WHERE TO_DATE(year_month, 'YYYY-MM') BETWEEN '2022-01-01'::DATE AND '2022-12-01'::DATE
 ```
 
-#### BETWEEN
+#### Common timestamp filtering mistake
 
--   TODO: add example where date is being used to filter a timestamp but the end value unexpectedly limits to a day before the end date
+-   BETWEEN date is being used to filter a timestamp but the end value unexpectedly limits to a day before the end date
 
-ADDING and SUBTRACTING INTERVALS
+```
+-- objective: filter to orders occurred on Jan 1, Jan 2, or Jan 3
 
--   Include section on INTERVALS
+WITH orders (order_id, order_timestamp) AS (
+  VALUES
+    (1, '2024-01-01 08:30:00'::timestamp),
+    (2, '2024-01-01 15:45:00'::timestamp),
+    (3, '2024-01-02 10:15:00'::timestamp),
+    (4, '2024-01-02 20:00:00'::timestamp),
+    (5, '2024-01-03 07:00:00'::timestamp),
+	  (6, '2024-01-03 12:00:00'::timestamp),
+    (7, '2024-01-04 11:00:00'::timestamp),
+	  (9, '2024-01-04 00:00:00'::timestamp),
+    (10, '2024-01-05 11:00:00'::timestamp)
+)
+
+-- does not deliver on objective; Jan 3 records not returned as desired
+SELECT *
+FROM orders
+WHERE order_timestamp BETWEEN '2024-01-01'::DATE AND '2024-01-03'::DATE;
+
+-- convert timestamp inline to date and filter works as desired
+SELECT *
+FROM orders
+WHERE order_timestamp::DATE BETWEEN '2024-01-01'::DATE AND '2024-01-03'::DATE;
+
+-- sometimes folks use the following logic
+-- technically does not achieve desire result
+-- jan 4 records could get returned if timestamp occur at exactly midnight
+SELECT *
+FROM orders
+-- end point filter set to 1 day after the desired end date range
+WHERE order_timestamp BETWEEN '2024-01-01'::DATE AND '2024-01-04'::DATE;
+
+-- another option without using BETWEEN
+SELECT *
+FROM orders
+WHERE 1=1
+	AND order_timestamp >= '2024-01-01'::DATE 
+	AND order_timestamp < '2024-01-04'::DATE;
+```
+
+
+### ADDING and SUBTRACTING INTERVALS
+
+-   next step 1/9: add use cases here
