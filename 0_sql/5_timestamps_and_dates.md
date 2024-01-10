@@ -482,7 +482,27 @@ WHERE 1=1
 	AND order_timestamp < '2024-01-04'::DATE;
 ```
 
-
 ### ADDING and SUBTRACTING INTERVALS
+- useful for date/timestamp math and filtering/windowing data
 
--   next step 1/9: add use cases here
+```
+-- adding interval units to a date
+SELECT 
+    '2024-01-10'::date + INTERVAL '1 year' AS plus_one_year,
+    '2024-01-10'::date + INTERVAL '1 month' AS plus_one_month,
+    '2024-01-10'::date + INTERVAL '1 week' AS plus_one_week,
+    '2024-01-10'::date + INTERVAL '1 day' AS plus_one_day;
+
+--subtracting interval units from a date
+SELECT 
+    '2024-01-10'::date - INTERVAL '1 year' AS minus_one_year,
+    '2024-01-10'::date - INTERVAL '1 month' AS minus_one_month,
+    '2024-01-10'::date - INTERVAL '1 week' AS minus_one_week,
+    '2024-01-10'::date - INTERVAL '1 day' AS minus_one_day;
+    
+-- similar approaches work for timestamps
+-- could also use other interval units like hour, minute, second
+SELECT 
+    CURRENT_TIMESTAMP + INTERVAL '1 hour' AS plus_one_hour,
+    CURRENT_TIMESTAMP - INTERVAL '1 hour' AS minus_one_hour;
+```
