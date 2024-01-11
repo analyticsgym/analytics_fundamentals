@@ -15,9 +15,10 @@ FROM <table_name>
 ```
 
 #### Types of window frames
-- window frame clause used to describe which records to include in the window
+- window frame clause used to describe which records to process in relation to the current row and partition given
+- without a partition or window frame specified, the window function will process the entire dataset for the given function in relation to the current row
 - ROWS frame: define by fixed number of rows relative to the current row (below frame boundary keywords can be used to specify number of rows)
-- RANGE frame: inclue records within boundary in relation to current row (below keywords can be used like ROWS)
+- RANGE frame: include records within boundary in relation to current row (below keywords can be used like ROWS)
 - GROUPS frame: defined by a fixed number of peer groups relative to the current row's peer group (not included as part of all DB vendors using SQL)
 
 #### Window frame boundaries

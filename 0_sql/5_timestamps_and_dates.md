@@ -402,8 +402,6 @@ ORDER BY c.sequence_date ASC
 
 -   remember BETWEEN clause is inclusive of beginning and end value
 
-
-
 ```         
 WITH monthly_sales(year_month, sales_amount) AS (
   VALUES
@@ -440,7 +438,7 @@ WHERE TO_DATE(year_month, 'YYYY-MM') BETWEEN '2022-01-01'::DATE AND '2022-12-01'
 
 -   BETWEEN date is being used to filter a timestamp but the end value unexpectedly limits to a day before the end date
 
-```
+```         
 -- objective: filter to orders occurred on Jan 1, Jan 2, or Jan 3
 
 WITH orders (order_id, order_timestamp) AS (
@@ -450,9 +448,9 @@ WITH orders (order_id, order_timestamp) AS (
     (3, '2024-01-02 10:15:00'::timestamp),
     (4, '2024-01-02 20:00:00'::timestamp),
     (5, '2024-01-03 07:00:00'::timestamp),
-	  (6, '2024-01-03 12:00:00'::timestamp),
+      (6, '2024-01-03 12:00:00'::timestamp),
     (7, '2024-01-04 11:00:00'::timestamp),
-	  (9, '2024-01-04 00:00:00'::timestamp),
+      (9, '2024-01-04 00:00:00'::timestamp),
     (10, '2024-01-05 11:00:00'::timestamp)
 )
 
@@ -478,14 +476,15 @@ WHERE order_timestamp BETWEEN '2024-01-01'::DATE AND '2024-01-04'::DATE;
 SELECT *
 FROM orders
 WHERE 1=1
-	AND order_timestamp >= '2024-01-01'::DATE 
-	AND order_timestamp < '2024-01-04'::DATE;
+    AND order_timestamp >= '2024-01-01'::DATE 
+    AND order_timestamp < '2024-01-04'::DATE;
 ```
 
 ### ADDING and SUBTRACTING INTERVALS
-- useful for date/timestamp math and filtering/windowing data
 
-```
+-   useful for date/timestamp math and filtering/windowing data
+
+```         
 -- adding interval units to a date
 SELECT 
     '2024-01-10'::date + INTERVAL '1 year' AS plus_one_year,
