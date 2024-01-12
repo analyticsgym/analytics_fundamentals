@@ -14,9 +14,15 @@ SELECT
 FROM <table_name>
 ```
 
+#### Window function partition
+- th partition describes the result set of data to apply the function to
+- without a partition specified the entire result set is used as the partition
+
+#### Window frame
+- window frame clause (optional) used to describe which records to process in relation to the current row and partition given
+- when not specified the default window frame is used for each window function (see below for default behavior without a window frame clause)
+
 #### Types of window frames
-- window frame clause used to describe which records to process in relation to the current row and partition given
-- without a partition or window frame specified, the window function will process the entire dataset for the given function in relation to the current row
 - ROWS frame: define by fixed number of rows relative to the current row (below frame boundary keywords can be used to specify number of rows)
 - RANGE frame: include records within boundary in relation to current row (below keywords can be used like ROWS)
 - GROUPS frame: defined by a fixed number of peer groups relative to the current row's peer group (not included as part of all DB vendors using SQL)
@@ -35,8 +41,8 @@ FROM <table_name>
 - not available across all DB vendors
 - examples include: EXCLUDE CURRENT ROW, EXCLUDE GROUP, EXCLUDE TIES
 
-#### Aggregation functions as window functions
-- COUNT, SUM, AVG, etc
+#### COUNT()
+- add 1/13
 
 ```
 -- DROP TABLE IF EXISTS friends_example_table;
@@ -65,8 +71,15 @@ SELECT
 FROM friends_example_table
 ```
 
+#### SUM()
+- add 1/13
+
+### AVG()
+- add 1/13
+
 #### ROW_NUMBER() 
 - assigns a unique integer to each row in the result set
+- default window frame:
 
 ```
 DROP TABLE IF EXISTS temp_sales_data;
@@ -100,6 +113,7 @@ ORDER BY sales_amount DESC, sales_rep;
 #### RANK() 
 - assigns a rank to each row within a result set, with ties receiving the same rank
 - note that subsequent ranks get skipped when ties occur
+- default window frame:
 
 ```
 SELECT
@@ -113,6 +127,7 @@ ORDER BY sales_amount DESC, sales_rep;
 
 #### DENSE_RANK() 
 - assigns a rank to each row within a result set, with ties receiving the same rank, but without gaps between ranks
+- default window frame:
 
 ```
 SELECT
@@ -127,6 +142,7 @@ ORDER BY sales_amount DESC, sales_rep;
 
 #### PERCENT_RANK() 
 - returns a percentage value between 0 and 1, representing the position of the current row relative to the other rows in the result set, ordered by a specific column or columns
+- default window frame:
 
 ```
 SELECT
@@ -146,6 +162,7 @@ ORDER BY sales_amount DESC, sales_rep;
 - returns value between 0 and 1
 - count of rows with values <= ith row value / count of rows in the window or partition
 - this is not the same as cumulative percent total (see practical examples section for using window functions to derive cumulative percent total)
+- default window frame:
 
 ```
 WITH salary AS (
@@ -162,6 +179,7 @@ FROM salary
 #### NTILE(n) 
 - divides the result set into n groups of roughly equal size and assigns a group number to each row
 - pay close attention to how ordering is done within the partition (i.e. depending on use case, should largest values be in first or last NTILE?)
+- default window frame:
 
 ```
 WITH fake_book_sales(book_id, book_title, copies_sold) AS (
@@ -199,6 +217,7 @@ FROM perf
 #### LAG() | LEAD()
 - LAG: returns the value of the expression evaluated at the row that is offset rows before the current row
 - LEAD: returns the value of the expression evaluated at the row that is offset rows after the current row
+- default window frame:
 
 ```
 WITH example_watch_history(user_id, user_name, show_id, show_title, first_watched_date) AS (
@@ -248,6 +267,7 @@ FROM example_watch_history
 - FIRST_VALUE: returns the value of the expression evaluated at the first row of the window frame
 - LAST_VALUE: returns the value of the expression evaluated at the last row of the window frame
 - NTH_VALUE: returns the value of the expression evaluated at the nth row of the window frame
+- default window frame: 
 
 ```
 SELECT
@@ -341,6 +361,7 @@ ORDER BY user_id
 - PERCENTILE_DIST: returns an existing data point from the dataset without interpolation
 - PERCENTILE_CONT: provides a more precise percentile value by allowing interpolation (i.e. 50th percentile doesn't land exactly on a number)
 - percentiles represent the proportion of values in a distribution that are less than the percentile value
+- default window frame:
 
 ```
 WITH student_scores(student_id, test_score) AS (
