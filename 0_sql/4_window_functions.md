@@ -7,9 +7,12 @@
 SELECT
 	<desired_columns>,
 	WINDOW_FUNCTION() OVER(
-		PARTITION BY <used to specify if the function should be applied to cuts of the data>
-		ORDER BY <used to specify ordering of data (i.e. ranking approaches)>
-		ROWS <used to specify which rows the within the partition to apply the function>
+		-- used to specify if the function should be applied to cuts of the data
+		PARTITION BY
+		-- used to specify ordering of data
+		ORDER BY 
+		-- used to specify which rows the within the partition to apply the function
+		Window Frame Type: ROWS, RANGE, or GROUPS
 	) AS window_metric_x
 FROM <table_name>
 ```
@@ -28,58 +31,147 @@ FROM <table_name>
 - GROUPS frame: defined by a fixed number of peer groups relative to the current row's peer group (not included as part of all DB vendors using SQL)
 
 #### Window frame boundaries
-- Default window frame boundary **with** ORDER BY clause: "UNBOUNDED PRECEDING" to "CURRENT ROW"
-- Default window frame boundary **without** ORDER BY clause used: entire window partition (e.g. "UNBOUNDED PRECEDING" to "UNBOUNDED FOLLOWING")
 - UNBOUNDED PRECEDING: includes all rows before the current row
 - UNBOUNDED FOLLOWING: includes all rows after the current row
 - CURRENT ROW: includes only the current row 
 - N PRECEEDING: include N number of rows before current row
 - N FOLLOWING: include N number of rows after current row
+- Typical window frame boundary **with** ORDER BY clause: "UNBOUNDED PRECEDING" to "CURRENT ROW"
+- Typical window frame boundary **without** ORDER BY clause used: entire window partition (e.g. "UNBOUNDED PRECEDING" to "UNBOUNDED FOLLOWING")
 
 #### Frame exclusions
 - PostgreSQL also supports the frame exclusion keywords which can be used to exclude rows from the window frame operation
 - not available across all DB vendors
 - examples include: EXCLUDE CURRENT ROW, EXCLUDE GROUP, EXCLUDE TIES
 
+#### Window function outputs
+- important note: the same window function (i.e. COUNT) can have drastically different output values depending on how the function is specified/which clauses are used (see below)
+
 #### COUNT()
-- add 1/13
+- used to count the number of rows in a result set
+- note different behavior for different specifications of COUNT() function
 
 ```
--- DROP TABLE IF EXISTS friends_example_table;
-CREATE TEMP TABLE friends_example_table (
-  name TEXT NOT NULL,
-  gender CHAR(1) NOT NULL,
-  street_address TEXT,
-  attended_four_year_college BOOLEAN NOT NULL
-);
-
-INSERT INTO friends_example_table (name, gender, street_address, attended_four_year_college)
-VALUES
-  ('John Doe', 'M', '123 Main St', true),
-  ('Jane Smith', 'F', NULL, false),
-  ('Rain Smith', 'M', NULL, false),
-  ('Sue Johnson', 'F', '456 Elm St', true),
-  ('Bob Johnson', 'M', '456 Elm St', true),
-  ('Sara Lee', 'F', NULL, true),
-  ('Mark Brown', 'M', '789 Maple Ave', false);
+WITH customer_orders(order_id, customer_id, order_date) AS (
+  VALUES 
+  (1, 101, '2024-01-01'),
+  (2, 102, '2024-01-03'),
+  (3, 101, '2024-01-04'),
+  (4, 103, '2024-01-04'),
+  (5, 102, '2024-01-05'),
+  (6, 104, '2024-01-05'),
+  (7, 101, '2024-01-07'),
+  -- add NULL values for COUNT example
+  (NULL, 101, NULL)
+)
 
 SELECT
-	*,
-	COUNT(street_address) OVER(
-		PARTITION BY gender
-	) AS street_address_count_by_gender_group
-FROM friends_example_table
+  *,
+  ----------------------------------------
+  -- no partition, order by, or window frame specified
+  -- note input agrument change: * vs column name
+  ----------------------------------------
+  COUNT(*) OVER() AS number_of_rows,
+  COUNT(order_id) OVER() AS number_of_non_null_orders,
+  COUNT(order_date) OVER() AS number_of_non_null_order_dates,
+  ----------------------------------------
+  -- total customer orders
+  ----------------------------------------
+  COUNT(order_id) OVER(
+    PARTITION BY customer_id
+  ) total_orders_per_customer,
+  ----------------------------------------
+  -- with order by clause count applied to current row and all prior rows
+  ----------------------------------------
+  COUNT(order_id) OVER(
+    PARTITION BY customer_id
+    ORDER BY order_date ASC
+  ) rolling_total_orders_per_customer
+FROM customer_orders
 ```
 
 #### SUM()
-- add 1/13
+- calculates the total of a numeric column in a result set
+- similar to COUNT() function, note different behavior for different specifications of SUM() function
+
+```
+WITH sales_data(sale_id, employee_id, sale_amount, sale_date, discount_amount) AS (
+  VALUES 
+  (0, 101, 500, '2024-01-01'::DATE, 30),
+  (1, 101, 200, '2024-01-01'::DATE, 20),
+  (2, 102, 150, '2024-01-03'::DATE, NULL),
+  (3, 101, 300, '2024-01-04'::DATE, 30),
+  (4, 103, 250, '2024-01-04'::DATE, 25),
+  (5, 102, 200, '2024-01-05'::DATE, NULL),
+  (6, 104, 350, '2024-01-06'::DATE, 35),
+  (7, 101, 400, '2024-01-07'::DATE, NULL),
+  (8, 105, 150, '2024-01-08'::DATE, 15),
+  (9, 104, 300, '2024-01-09'::DATE, 30),
+  (10, 104, 100, '2024-01-10'::DATE, NULL)
+)
+
+SELECT
+  *,
+  ----------------------------------------
+  -- no partition, order by, or window frame specified
+  ----------------------------------------
+  SUM(sale_amount) OVER() AS total_sales,
+  SUM(discount_amount) OVER() AS total_discounts,
+  ----------------------------------------
+  -- with order by clause
+  ----------------------------------------
+  SUM(sale_amount) OVER (ORDER BY sale_id, sale_date) AS running_total_sales,
+  ----------------------------------------
+  -- examples changing partition, order by, window frame, conditional logic
+  -- add spacing for readability
+  ----------------------------------------
+  SUM(sale_amount) OVER(
+    PARTITION BY sale_date
+  ) total_sales_per_day,
+  
+  SUM(sale_amount) OVER(
+    PARTITION BY employee_id
+  ) total_sales_per_employee,
+  
+  SUM(sale_amount) OVER(
+    PARTITION BY employee_id
+    ORDER BY sale_id, sale_date
+  ) running_total_sales_per_employee,
+  
+  SUM(sale_amount) OVER (
+    ORDER BY sale_date
+    RANGE BETWEEN INTERVAL '2' DAY PRECEDING AND CURRENT ROW
+  ) AS trailing_3_days_sales_total,
+  
+  SUM(sale_amount) OVER (
+    PARTITION BY employee_id
+    ORDER BY sale_date
+    RANGE BETWEEN INTERVAL '1' DAY PRECEDING AND INTERVAL '1' DAY PRECEDING
+  ) AS employee_previous_day_sales,
+  
+  SUM(sale_amount) OVER (
+    PARTITION BY employee_id
+	ORDER BY sale_date
+    RANGE BETWEEN INTERVAL '2' DAY PRECEDING AND INTERVAL '1' DAY PRECEDING
+  ) AS employee_previous_2_day_sales,
+  
+  SUM(
+	  CASE 
+	  	WHEN sale_date = '2024-01-01' 
+	  	THEN sale_amount 
+	  	ELSE 0 
+	  END
+  ) OVER (
+  ) AS jan_1_sales_total
+
+FROM sales_data
+```
 
 ### AVG()
-- add 1/13
+- add 1/14
 
 #### ROW_NUMBER() 
 - assigns a unique integer to each row in the result set
-- default window frame:
 
 ```
 DROP TABLE IF EXISTS temp_sales_data;
@@ -113,7 +205,6 @@ ORDER BY sales_amount DESC, sales_rep;
 #### RANK() 
 - assigns a rank to each row within a result set, with ties receiving the same rank
 - note that subsequent ranks get skipped when ties occur
-- default window frame:
 
 ```
 SELECT
@@ -127,7 +218,6 @@ ORDER BY sales_amount DESC, sales_rep;
 
 #### DENSE_RANK() 
 - assigns a rank to each row within a result set, with ties receiving the same rank, but without gaps between ranks
-- default window frame:
 
 ```
 SELECT
@@ -142,7 +232,6 @@ ORDER BY sales_amount DESC, sales_rep;
 
 #### PERCENT_RANK() 
 - returns a percentage value between 0 and 1, representing the position of the current row relative to the other rows in the result set, ordered by a specific column or columns
-- default window frame:
 
 ```
 SELECT
@@ -162,7 +251,6 @@ ORDER BY sales_amount DESC, sales_rep;
 - returns value between 0 and 1
 - count of rows with values <= ith row value / count of rows in the window or partition
 - this is not the same as cumulative percent total (see practical examples section for using window functions to derive cumulative percent total)
-- default window frame:
 
 ```
 WITH salary AS (
@@ -179,7 +267,6 @@ FROM salary
 #### NTILE(n) 
 - divides the result set into n groups of roughly equal size and assigns a group number to each row
 - pay close attention to how ordering is done within the partition (i.e. depending on use case, should largest values be in first or last NTILE?)
-- default window frame:
 
 ```
 WITH fake_book_sales(book_id, book_title, copies_sold) AS (
@@ -217,7 +304,6 @@ FROM perf
 #### LAG() | LEAD()
 - LAG: returns the value of the expression evaluated at the row that is offset rows before the current row
 - LEAD: returns the value of the expression evaluated at the row that is offset rows after the current row
-- default window frame:
 
 ```
 WITH example_watch_history(user_id, user_name, show_id, show_title, first_watched_date) AS (
@@ -267,7 +353,6 @@ FROM example_watch_history
 - FIRST_VALUE: returns the value of the expression evaluated at the first row of the window frame
 - LAST_VALUE: returns the value of the expression evaluated at the last row of the window frame
 - NTH_VALUE: returns the value of the expression evaluated at the nth row of the window frame
-- default window frame: 
 
 ```
 SELECT
@@ -361,7 +446,6 @@ ORDER BY user_id
 - PERCENTILE_DIST: returns an existing data point from the dataset without interpolation
 - PERCENTILE_CONT: provides a more precise percentile value by allowing interpolation (i.e. 50th percentile doesn't land exactly on a number)
 - percentiles represent the proportion of values in a distribution that are less than the percentile value
-- default window frame:
 
 ```
 WITH student_scores(student_id, test_score) AS (
@@ -876,3 +960,7 @@ FROM example_data AS ed
 INNER JOIN percentiles AS p
 	ON 1=1
 ```
+
+#### Solve COUNT DISTINCT window function need without a window function
+- 
+

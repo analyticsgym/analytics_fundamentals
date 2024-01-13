@@ -163,7 +163,9 @@ INSERT INTO net_worth_temp_table (net_worth_millions) VALUES (10), (20), (1), (6
 ```
 
 #### Aggregate functions with filters
+- Needs update the below code is a mess
 
+```
 -- CREATE TEMP TABLE orders_test ( -- id SERIAL PRIMARY KEY, -- customer TEXT NOT NULL, -- total NUMERIC(10, 2) NOT NULL, -- date DATE NOT NULL -- );
 
 -- INSERT INTO orders_test (customer, total, date) -- VALUES -- ('Alice', 10.00, '2022-01-01'), -- ('Bob', 20.00, '2022-01-01'), -- ('Alice', 15.00, '2022-01-02'), -- ('Charlie', 25.00, '2022-01-02'), -- ('Alice', 30.00, '2022-01-03');
@@ -171,6 +173,7 @@ INSERT INTO net_worth_temp_table (net_worth_millions) VALUES (10), (20), (1), (6
 -- SELECT customer, AVG(total) FILTER (WHERE date \>= '2022-01-02') -- FROM orders_test -- GROUP BY customer;
 
 SELECT customer, SUM(total) FILTER (WHERE date = '2022-01-01') AS jan_1_sales, SUM(total) FILTER (WHERE date = '2022-01-02') AS jan_2_sales, SUM(total) FILTER (WHERE date = '2022-01-03') AS jan_3_sales FROM orders_test GROUP BY customer;
+```
 
 #### Sales growth vs baseline year
 
