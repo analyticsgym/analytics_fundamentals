@@ -3,12 +3,14 @@ Folks often first build the hard skill areas (sql, stats, visualization, analysi
 
 Top analysts build a strong understanding across the hard and soft skill foundation areas.
 
-### What data tools to learn first?
+### What data tools to learn first?[^1]
 Early on, it's overwhelming to figure out what tools to learn and in what order.
 
 I’d recommend prioritizing the tools that help you get to delivering business value the fastest.
 
 The below learning order is often a good starting point for most folks.
+
+[^3]: future todo: why consider learning open source/free tools first vs paid tools.
 
 ##### 1. Spreadsheet software (Excel or Google Sheets)
 Spreadsheet software is the most common data tool across business departments. 
@@ -66,9 +68,9 @@ Pro tip: add the practice code/memo to GitHub or Google Drive so you can quickly
 
 Naturally, the knowledge further sinks in when you have practiced and applied the new skill to real-world problems[^1].
 
-[^1]: future todo: investigate the learning science behind skill retention with routine use vs skill retention without routine use.
+[^2]: future todo: investigate the learning science behind skill retention with routine use vs skill retention without routine use.
 
-### Always Be Learning[^2]
+### Always Be Learning[^3]
 Continuous learning seems to be the most common behavior trait among top performers across any discipline. 
 
 Learning methods vary by top performer and discipline: some folks read, listen, watch, practice, or talk to experts to acquire knowledge.
@@ -81,6 +83,6 @@ Top performers then apply the learning/knowledge in a way that produces elite re
 
 “When I need to learn about a new subject, I’ll definitely devour some books on the topic, but I almost always supplement this reading by seeking out dialogue with leading experts in the field.” [Reid Hoffman: Blitzscaling](https://www.amazon.com/dp/B0791239V7/ref=dp-kindle-redirect?_encoding=UTF8&btkr=1)
 
-[^2]: future todo: include additional learning quotes/inspiration from non-white males.
+[^3]: future todo: include additional learning quotes/inspiration from non-white males.
 
 #AlwaysBeLearning
