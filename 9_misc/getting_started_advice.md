@@ -10,7 +10,7 @@ I’d recommend prioritizing the tools that help you get to delivering business 
 
 The below learning order is often a good starting point for most folks.
 
-[^3]: future todo: why consider learning open source/free tools first vs paid tools.
+[^1]: future todo: why consider learning open source/free tools first vs paid tools.
 
 ##### 1. Spreadsheet software (Excel or Google Sheets)
 Spreadsheet software is the most common data tool across business departments. 
@@ -66,7 +66,7 @@ Pro tip: add the practice code/memo to GitHub or Google Drive so you can quickly
 
 <ins>Apply: use the new skill on the job.</ins>
 
-Naturally, the knowledge further sinks in when you have practiced and applied the new skill to real-world problems[^1].
+Naturally, the knowledge further sinks in when you have practiced and applied the new skill to real-world problems[^2].
 
 [^2]: future todo: investigate the learning science behind skill retention with routine use vs skill retention without routine use.
 
