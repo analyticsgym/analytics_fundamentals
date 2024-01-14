@@ -328,7 +328,7 @@ FROM clean_social_media_posts
 #### RANK() 
 - assigns a rank to each row within a result set, with ties receiving the same rank
 - note that subsequent ranks get skipped when ties occur
-- pick bakc up here 1/15
+- pick back up here 1/15
 
 ```
 SELECT
