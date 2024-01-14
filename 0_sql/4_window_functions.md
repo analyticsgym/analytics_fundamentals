@@ -1,9 +1,9 @@
 #### Window functions basics
 - used to apply functions across a window or result set of data
 - window function with a partition applies the function independently to each partition/cut
+- example code pattern below
 
 ```
--- window function pattern
 SELECT
 	<desired_columns>,
 	WINDOW_FUNCTION() OVER(
@@ -18,7 +18,8 @@ FROM <table_name>
 ```
 
 #### Window function partition
-- th partition describes the result set of data to apply the function to
+- the partition describes the result set of data to apply the function to
+- we can think of a partition as a cut or segment of the data
 - without a partition specified the entire result set is used as the partition
 
 #### Window frame
@@ -45,11 +46,11 @@ FROM <table_name>
 - examples include: EXCLUDE CURRENT ROW, EXCLUDE GROUP, EXCLUDE TIES
 
 #### Window function outputs
-- important note: the same window function (i.e. COUNT) can have drastically different output values depending on how the function is specified/which clauses are used (see below)
+- important note: the same window function (i.e. COUNT) can have different output values depending argument/clause specifications (see below)
 
 #### COUNT()
 - used to count the number of rows in a result set
-- note different behavior for different specifications of COUNT() function
+- note different results for different specifications of COUNT() function
 
 ```
 WITH customer_orders(order_id, customer_id, order_date) AS (
@@ -68,20 +69,22 @@ WITH customer_orders(order_id, customer_id, order_date) AS (
 SELECT
   *,
   ----------------------------------------
-  -- no partition, order by, or window frame specified
-  -- note input agrument change: * vs column name
+  -- numnber of result set rows using *
   ----------------------------------------
   COUNT(*) OVER() AS number_of_rows,
+  ----------------------------------------
+  -- column name agrument used to count non-NULL values
+  ----------------------------------------
   COUNT(order_id) OVER() AS number_of_non_null_orders,
   COUNT(order_date) OVER() AS number_of_non_null_order_dates,
   ----------------------------------------
-  -- total customer orders
+  -- total customer orders using partition by clause
   ----------------------------------------
   COUNT(order_id) OVER(
     PARTITION BY customer_id
   ) total_orders_per_customer,
   ----------------------------------------
-  -- with order by clause count applied to current row and all prior rows
+  -- total orders per customer with order date less than or equal to row date
   ----------------------------------------
   COUNT(order_id) OVER(
     PARTITION BY customer_id
@@ -92,7 +95,7 @@ FROM customer_orders
 
 #### SUM()
 - calculates the total of a numeric column in a result set
-- similar to COUNT() function, note different behavior for different specifications of SUM() function
+- can be used for metrics beyond simple totals (e.g. running total, moving window totals, conditional sum, etc)
 
 ```
 WITH sales_data(sale_id, employee_id, sale_amount, sale_date, discount_amount) AS (
@@ -113,48 +116,58 @@ WITH sales_data(sale_id, employee_id, sale_amount, sale_date, discount_amount) A
 SELECT
   *,
   ----------------------------------------
-  -- no partition, order by, or window frame specified
+  -- overall totals of a column
   ----------------------------------------
   SUM(sale_amount) OVER() AS total_sales,
   SUM(discount_amount) OVER() AS total_discounts,
   ----------------------------------------
-  -- with order by clause
+  -- rolling totals of a column
   ----------------------------------------
-  SUM(sale_amount) OVER (ORDER BY sale_id, sale_date) AS running_total_sales,
+  SUM(sale_amount) OVER (
+    ORDER BY sale_id, sale_date
+  ) AS running_total_sales,
   ----------------------------------------
-  -- examples changing partition, order by, window frame, conditional logic
-  -- add spacing for readability
+  -- total sales per day
   ----------------------------------------
   SUM(sale_amount) OVER(
     PARTITION BY sale_date
   ) total_sales_per_day,
-  
+  ----------------------------------------
+  -- total sales per employee
+  ----------------------------------------
   SUM(sale_amount) OVER(
     PARTITION BY employee_id
   ) total_sales_per_employee,
-  
+  ----------------------------------------
+  -- running total sales per employee
+  ----------------------------------------
   SUM(sale_amount) OVER(
     PARTITION BY employee_id
     ORDER BY sale_id, sale_date
   ) running_total_sales_per_employee,
-  
+  ----------------------------------------
+  -- trailing 3 days sales total (including current row day)
+  ----------------------------------------
   SUM(sale_amount) OVER (
     ORDER BY sale_date
     RANGE BETWEEN INTERVAL '2' DAY PRECEDING AND CURRENT ROW
   ) AS trailing_3_days_sales_total,
-  
+  ----------------------------------------
+  -- additional examples using RANGE days window frame vs ROWS frame
+  ----------------------------------------
   SUM(sale_amount) OVER (
     PARTITION BY employee_id
     ORDER BY sale_date
     RANGE BETWEEN INTERVAL '1' DAY PRECEDING AND INTERVAL '1' DAY PRECEDING
   ) AS employee_previous_day_sales,
-  
   SUM(sale_amount) OVER (
     PARTITION BY employee_id
 	ORDER BY sale_date
     RANGE BETWEEN INTERVAL '2' DAY PRECEDING AND INTERVAL '1' DAY PRECEDING
   ) AS employee_previous_2_day_sales,
-  
+  ----------------------------------------
+  -- conditional logic using CASE statement within SUM() window function
+  ----------------------------------------
   SUM(
 	  CASE 
 	  	WHEN sale_date = '2024-01-01' 
@@ -163,48 +176,159 @@ SELECT
 	  END
   ) OVER (
   ) AS jan_1_sales_total
-
 FROM sales_data
 ```
 
 ### AVG()
-- add 1/14
-
-#### ROW_NUMBER() 
-- assigns a unique integer to each row in the result set
+- derive the mean of a numeric column in a result set
+- useful for keeping granular data in a result set to compare vs a group level average
+- also useful for assessing trends via moving/trailing averages
 
 ```
-DROP TABLE IF EXISTS temp_sales_data;
-CREATE TEMP TABLE temp_sales_data (
-    id SERIAL PRIMARY KEY,
-    sales_rep VARCHAR(255),
-    sales_amount NUMERIC(10, 2)
-);
-
-INSERT INTO temp_sales_data (sales_rep, sales_amount)
-VALUES ('Alice', 25000),
-       ('Bob', 30000),
-       ('Carol', 45000),
-       ('David', 60000),
-       ('Eve', 55000),
-       ('Frank', 70000),
-       ('Grace', 80000),
-       ('Hill', 80000),
-       ('Iris', 21000),
-       ('Jan', 90000);
+WITH performance_data(review_id, employee_id, performance_score, review_date) AS (
+  VALUES 
+  (1, 101, 3.5, '2024-01-01'),
+  (2, 102, 4.0, '2024-01-03'),
+  (3, 101, 4.5, '2024-01-04'),
+  (4, 103, 3.8, '2024-01-04'),
+  (5, 102, 4.2, '2024-01-05'),
+  (6, 104, 3.6, '2024-01-06'),
+  (7, 101, 4.0, '2024-01-07'),
+  (8, 105, 3.9, '2024-01-08'),
+  (9, 104, 4.1, '2024-01-09'),
+  (10, 103, 3.7, '2024-01-10')
+)
 
 SELECT
-    sales_rep,
-    sales_amount,
-    -- if sales amount tie then revert to alphabetical name  
-    ROW_NUMBER() OVER(ORDER BY sales_amount DESC, sales_rep) AS sales_rank
-FROM temp_sales_data
-ORDER BY sales_amount DESC, sales_rep;
+  *,
+  ----------------------------------------
+  -- avg performance score across all reviews
+  ----------------------------------------
+  AVG(performance_score) OVER() AS avg_score_all_reviews,
+  ----------------------------------------
+  -- avg performance score per employee
+  ----------------------------------------
+  AVG(performance_score) OVER(
+    PARTITION BY employee_id
+  ) AS avg_score_per_employee,
+  ----------------------------------------
+  -- rolling avg performance score per employee
+  ----------------------------------------
+  AVG(performance_score) OVER(
+    PARTITION BY employee_id
+    ORDER BY review_date
+  ) AS rolling_avg_score_per_employee,
+  ----------------------------------------
+  -- avg performance score on a specific date
+  ----------------------------------------
+  AVG(performance_score) OVER(
+    PARTITION BY review_date
+  ) AS avg_score_on_date,
+  ----------------------------------------
+  -- cumulative avg up to current date
+  ----------------------------------------
+  AVG(performance_score) OVER(
+    ORDER BY review_date
+    ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+  ) AS overall_avg_score_to_date,
+  ----------------------------------------
+  -- avg performance score for the last three reviews
+  ----------------------------------------
+  AVG(performance_score) OVER(
+    ORDER BY review_date
+    ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
+  ) AS avg_last_3_reviews,
+  ----------------------------------------
+  -- avg performance score for the next three reviews
+  ----------------------------------------
+  AVG(performance_score) OVER(
+    ORDER BY review_date
+    ROWS BETWEEN CURRENT ROW AND 2 FOLLOWING
+  ) AS avg_next_3_reviews
+FROM performance_data
+```
+
+#### ROW_NUMBER() 
+- assigns a unique sequential integer to each row in the result set
+- often used for ranking and/or number ordering of rows in a result set
+- can be used to identify duplicate rows in a result set
+
+```sql
+-- assume older posts always have smaller post_ids
+WITH social_media_posts(post_id, user_id, likes, post_date) AS (
+  VALUES 
+  (1, 101, 120, '2024-01-01'),
+  -- add duplicate row for row number example
+  (1, 101, 120, '2024-01-01'),
+  (2, 102, 150, '2024-01-02'),
+  (3, 101, 200, '2024-01-02'),
+  (4, 103, 180, '2024-01-03'),
+  (5, 102, 140, '2024-01-04'),
+  (6, 104, 160, '2024-01-04'),
+  (7, 101, 190, '2024-01-04'),
+  (8, 105, 110, '2024-01-05'),
+  (9, 104, 130, '2024-01-05'),
+  (10, 103, 175, '2024-01-06'),
+  (11, 101, 165, '2024-01-06'),
+  (12, 102, 155, '2024-01-07'),
+  (13, 103, 145, '2024-01-07'),
+  (14, 104, 135, '2024-01-08'),
+  (15, 105, 125, '2024-01-08')
+)
+
+-- use row numbner to get drop duplicate rows
+, clean_social_media_posts AS (
+  SELECT
+    post_id, 
+    user_id, 
+    likes, 
+    post_date
+  -- sub query to assign a unique sequential integer to each row
+  FROM (
+    SELECT
+      *,
+      ROW_NUMBER() OVER(
+        PARTITION BY post_id, user_id, likes, post_date
+        ORDER BY post_id
+      ) AS row_num
+    FROM social_media_posts
+  ) AS sub_q
+  -- grab first row for each unique combo of partition columns
+  WHERE row_num = 1
+)
+
+SELECT
+  *,
+  ----------------------------------------
+  -- user post order
+  ----------------------------------------
+  ROW_NUMBER() OVER(
+    PARTITION BY user_id
+    ORDER BY post_date ASC, 
+	  		 post_id ASC
+  ) AS user_post_order,
+  ----------------------------------------
+  -- post ranking by likes (ties go to oldest post)
+  ----------------------------------------
+  ROW_NUMBER() OVER(
+    ORDER BY likes DESC, 
+	  		 post_date ASC, 
+	  		 post_id ASC
+  ) AS overall_post_rank_by_likes,
+  ----------------------------------------
+  -- daily post order
+  ----------------------------------------
+  ROW_NUMBER() OVER(
+    PARTITION BY post_date
+    ORDER BY post_id ASC
+  ) AS post_order_by_day
+FROM clean_social_media_posts
 ```
 
 #### RANK() 
 - assigns a rank to each row within a result set, with ties receiving the same rank
 - note that subsequent ranks get skipped when ties occur
+- pick bakc up here 1/15
 
 ```
 SELECT
