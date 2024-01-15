@@ -52,7 +52,7 @@ FROM <table_name>
 - used to count the number of rows in a result set
 - note different results for different specifications of COUNT() function
 
-```
+```sql
 WITH customer_orders(order_id, customer_id, order_date) AS (
   VALUES 
   (1, 101, '2024-01-01'),
@@ -97,7 +97,7 @@ FROM customer_orders
 - calculates the total of a numeric column in a result set
 - can be used for metrics beyond simple totals (e.g. running total, moving window totals, conditional sum, etc)
 
-```
+```sql
 WITH sales_data(sale_id, employee_id, sale_amount, sale_date, discount_amount) AS (
   VALUES 
   (0, 101, 500, '2024-01-01'::DATE, 30),
@@ -184,7 +184,7 @@ FROM sales_data
 - useful for keeping granular data in a result set to compare vs a group level average
 - also useful for assessing trends via moving/trailing averages
 
-```
+```sql
 WITH performance_data(review_id, employee_id, performance_score, review_date) AS (
   VALUES 
   (1, 101, 3.5, '2024-01-01'),
@@ -327,21 +327,42 @@ FROM clean_social_media_posts
 
 #### RANK() 
 - assigns a rank to each row within a result set, with ties receiving the same rank
-- note that subsequent ranks get skipped when ties occur
-- pick back up here 1/15
+- note that subsequent ranks get skipped based on number on tied entries 
+- i.e. when three sales reps tie for rank 1 below then the next rank assigned will be 4
 
-```
+```sql
+DROP TABLE IF EXISTS temp_sales_data;
+CREATE TEMP TABLE temp_sales_data (
+    id SERIAL PRIMARY KEY,
+    sales_rep VARCHAR(255),
+    sales_amount NUMERIC(10, 2)
+);
+
+INSERT INTO temp_sales_data (sales_rep, sales_amount)
+VALUES ('Alice', 25000),
+       ('Bob', 30000),
+       ('Carol', 45000),
+       ('David', 60000),
+       ('Eve', 55000),
+       ('Frank', 70000),
+       ('Grace', 100000),
+       ('Hill', 100000),
+       ('Tammy', 100000),
+       ('Iris', 21000),
+       ('Jan', 90000);
+
 SELECT
     sales_rep,
     sales_amount,
     -- allow for same rank if ties
     RANK() OVER(ORDER BY sales_amount DESC) AS sales_rank
 FROM temp_sales_data
-ORDER BY sales_amount DESC, sales_rep;
+ORDER BY sales_amount DESC, sales_rep
 ```
 
 #### DENSE_RANK() 
 - assigns a rank to each row within a result set, with ties receiving the same rank, but without gaps between ranks
+- 1/16
 
 ```
 SELECT
