@@ -361,8 +361,9 @@ ORDER BY sales_amount DESC, sales_rep
 ```
 
 #### DENSE_RANK() 
-- assigns a rank to each row within a result set, with ties receiving the same rank, but without gaps between ranks
-- 1/16
+- assigns a rank to each row within a result set
+- main difference between RANK and DENSE_RANK: with DENSE_RANK, ties receive the same rank without gaps between ranks
+- i.e. when three sales reps tie for rank 1 below then the next rank assigned will be 2
 
 ```
 SELECT
@@ -375,27 +376,87 @@ FROM temp_sales_data
 ORDER BY sales_amount DESC, sales_rep;
 ```
 
-#### PERCENT_RANK() 
-- returns a percentage value between 0 and 1, representing the position of the current row relative to the other rows in the result set, ordered by a specific column or columns
+#### PERCENTILE_DIST() | PERCENTILE_CONT()
+- PERCENTILE_DIST: returns an existing data point from the dataset without interpolation
+- PERCENTILE_CONT: provides a more precise percentile value by allowing interpolation (i.e. 50th percentile doesn't land exactly on a number)
+- percentiles represent the proportion of values in a distribution that are less than the percentile value
+- 1/17 update further
 
 ```
-SELECT
-    sales_rep,
-    sales_amount,
-    -- allow for same rank if ties
-    RANK() OVER(ORDER BY sales_amount DESC) AS sales_rank,
-    DENSE_RANK() OVER(ORDER BY sales_amount DESC) AS sales_dense_rank,
-    PERCENT_RANK() OVER(ORDER BY sales_amount DESC) AS pct_rank,
-		PERCENT_RANK() OVER(ORDER BY sales_amount DESC) <= 0.2 AS flag_top_20_pct_seller
-FROM temp_sales_data
-ORDER BY sales_amount DESC, sales_rep;
+WITH student_scores(student_id, test_score) AS (
+            VALUES
+            (1, 85),
+            (2, 78),
+            (3, 92),
+            (4, 88),
+            (5, 74),
+            (6, 81),
+            (7, 67),
+            (8, 95),
+            (9, 89),
+            (10, 72),
+            (11, 90),
+            (12, 77),
+            (13, 83),
+            (14, 65),
+            (15, 80)
+)
+
+SELECT 
+	DISTINCT
+	-- continuous percentile
+	PERCENTILE_CONT(0.05) WITHIN GROUP (ORDER BY test_score) AS p05_score,
+	PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY test_score) AS p25_score,
+	PERCENTILE_CONT(0.50) WITHIN GROUP (ORDER BY test_score) AS median_score,
+	PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY test_score) AS p75_score,
+	PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY test_score) AS p95_score,
+	-- discrete percentile
+        PERCENTILE_DISC(0.05) WITHIN GROUP (ORDER BY test_score) AS discrete_05_score,
+	PERCENTILE_DISC(0.25) WITHIN GROUP (ORDER BY test_score) AS discrete_25_score,
+	PERCENTILE_DISC(0.50) WITHIN GROUP (ORDER BY test_score) AS discrete_median_score,
+	PERCENTILE_DISC(0.75) WITHIN GROUP (ORDER BY test_score) AS discrete_75_score,
+	PERCENTILE_DISC(0.95) WITHIN GROUP (ORDER BY test_score) AS discrete_95_score
+FROM student_scores
+```
+
+#### PERCENT_RANK() 
+- returns a percentage value between 0 and 1 representing the position row position vs other rows in the result set
+- (row rank−1)/(total rows in the partition−1)
+- first row in the result set will always have a PERCENT_RANK of 0
+- last row in the result set will always have a PERCENT_RANK of 1
+
+```sql
+WITH product_sales(product_id, sale_date, quantity_sold) AS (
+  VALUES 
+  (1, '2024-01-01', 10),
+  (2, '2024-01-02', 15),
+  (3, '2024-01-02', 20),
+  (4, '2024-01-03', 18),
+  (5, '2024-01-04', 14),
+  (6, '2024-01-04', 16),
+  (7, '2024-01-04', 19),
+  (8, '2024-01-05', 11),
+  (9, '2024-01-05', 13),
+  (10, '2024-01-06', 17),
+  (11, '2024-01-06', 16),
+  (12, '2024-01-07', 15),
+  (13, '2024-01-07', 14),
+  (14, '2024-01-08', 13),
+  (15, '2024-01-08', 12)
+)
+SELECT 
+  product_id, 
+  quantity_sold, 
+  -- manually calculate percent rank
+  (RANK() OVER (ORDER BY quantity_sold DESC) - 1)::FLOAT / 
+  (COUNT(*) OVER () - 1) as longway_percent_rank,
+  -- use window function
+  PERCENT_RANK() OVER (ORDER BY quantity_sold DESC) AS percent_rank
+FROM product_sales
 ```
 
 #### CUME_DIST()
-- calculate the relative position or percentile rank of a value within a dataset
-- returns value between 0 and 1
-- count of rows with values <= ith row value / count of rows in the window or partition
-- this is not the same as cumulative percent total (see practical examples section for using window functions to derive cumulative percent total)
+- 1/17 update
 
 ```
 WITH salary AS (
@@ -405,6 +466,7 @@ WITH salary AS (
 
 SELECT
 	salary_dollars,
+	-- check
 	CUME_DIST() OVER(ORDER BY salary_dollars) AS cumulative_distribution_value
 FROM salary
 ```
@@ -587,47 +649,7 @@ FROM user_movies_watched
 ORDER BY user_id
 ```
 
-#### PERCENTILE_DIST() | PERCENTILE_CONT()
-- PERCENTILE_DIST: returns an existing data point from the dataset without interpolation
-- PERCENTILE_CONT: provides a more precise percentile value by allowing interpolation (i.e. 50th percentile doesn't land exactly on a number)
-- percentiles represent the proportion of values in a distribution that are less than the percentile value
 
-```
-WITH student_scores(student_id, test_score) AS (
-            VALUES
-            (1, 85),
-            (2, 78),
-            (3, 92),
-            (4, 88),
-            (5, 74),
-            (6, 81),
-            (7, 67),
-            (8, 95),
-            (9, 89),
-            (10, 72),
-            (11, 90),
-            (12, 77),
-            (13, 83),
-            (14, 65),
-            (15, 80)
-)
-
-SELECT 
-	DISTINCT
-	-- continuous percentile
-	PERCENTILE_CONT(0.05) WITHIN GROUP (ORDER BY test_score) AS p05_score,
-	PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY test_score) AS p25_score,
-	PERCENTILE_CONT(0.50) WITHIN GROUP (ORDER BY test_score) AS median_score,
-	PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY test_score) AS p75_score,
-	PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY test_score) AS p95_score,
-	-- discrete percentile
-        PERCENTILE_DISC(0.05) WITHIN GROUP (ORDER BY test_score) AS discrete_05_score,
-	PERCENTILE_DISC(0.25) WITHIN GROUP (ORDER BY test_score) AS discrete_25_score,
-	PERCENTILE_DISC(0.50) WITHIN GROUP (ORDER BY test_score) AS discrete_median_score,
-	PERCENTILE_DISC(0.75) WITHIN GROUP (ORDER BY test_score) AS discrete_75_score,
-	PERCENTILE_DISC(0.95) WITHIN GROUP (ORDER BY test_score) AS discrete_95_score
-FROM student_scores
-```
 
 ## Practical Use Cases
 
