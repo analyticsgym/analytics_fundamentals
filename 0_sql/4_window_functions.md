@@ -327,7 +327,7 @@ FROM clean_social_media_posts
 
 #### RANK() 
 - assigns a rank to each row within a result set, with ties receiving the same rank
-- note that subsequent ranks get skipped based on number on tied entries 
+- note that subsequent ranks get skipped based on number of tied entries 
 - i.e. when three sales reps tie for rank 1 below then the next rank assigned will be 4
 
 ```sql
