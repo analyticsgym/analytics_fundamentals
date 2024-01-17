@@ -376,54 +376,14 @@ FROM temp_sales_data
 ORDER BY sales_amount DESC, sales_rep;
 ```
 
-#### PERCENTILE_DIST() | PERCENTILE_CONT()
-- PERCENTILE_DIST: returns an existing data point from the dataset without interpolation
-- PERCENTILE_CONT: provides a more precise percentile value by allowing interpolation (i.e. 50th percentile doesn't land exactly on a number)
-- percentiles represent the proportion of values in a distribution that are less than the percentile value
-- 1/17 update further
 
-```
-WITH student_scores(student_id, test_score) AS (
-            VALUES
-            (1, 85),
-            (2, 78),
-            (3, 92),
-            (4, 88),
-            (5, 74),
-            (6, 81),
-            (7, 67),
-            (8, 95),
-            (9, 89),
-            (10, 72),
-            (11, 90),
-            (12, 77),
-            (13, 83),
-            (14, 65),
-            (15, 80)
-)
 
-SELECT 
-	DISTINCT
-	-- continuous percentile
-	PERCENTILE_CONT(0.05) WITHIN GROUP (ORDER BY test_score) AS p05_score,
-	PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY test_score) AS p25_score,
-	PERCENTILE_CONT(0.50) WITHIN GROUP (ORDER BY test_score) AS median_score,
-	PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY test_score) AS p75_score,
-	PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY test_score) AS p95_score,
-	-- discrete percentile
-        PERCENTILE_DISC(0.05) WITHIN GROUP (ORDER BY test_score) AS discrete_05_score,
-	PERCENTILE_DISC(0.25) WITHIN GROUP (ORDER BY test_score) AS discrete_25_score,
-	PERCENTILE_DISC(0.50) WITHIN GROUP (ORDER BY test_score) AS discrete_median_score,
-	PERCENTILE_DISC(0.75) WITHIN GROUP (ORDER BY test_score) AS discrete_75_score,
-	PERCENTILE_DISC(0.95) WITHIN GROUP (ORDER BY test_score) AS discrete_95_score
-FROM student_scores
-```
-
-#### PERCENT_RANK() 
-- returns a percentage value between 0 and 1 representing the position row position vs other rows in the result set
+#### PERCENT_RANK()
+- returns a percentage value between 0 and 1 for the row position vs other rows in the result set
 - (row rank−1)/(total rows in the partition−1)
 - first row in the result set will always have a PERCENT_RANK of 0
 - last row in the result set will always have a PERCENT_RANK of 1
+- CUME_DIST() 
 
 ```sql
 WITH product_sales(product_id, sale_date, quantity_sold) AS (
@@ -458,17 +418,60 @@ FROM product_sales
 #### CUME_DIST()
 - 1/17 update
 
-```
+```sql
 WITH salary AS (
-	SELECT unnest(ARRAY[50000, 55000, 60000, 65000, 70000, 
-											75000, 80000, 85000, 90000, 950000]) AS salary_dollars
+	SELECT unnest(ARRAY[50000, 50000, 55000, 60000, 65000, 70000, 
+											75000, 80000, 85000, 90000]) AS salary_dollars
 )
 
 SELECT
 	salary_dollars,
-	-- check
 	CUME_DIST() OVER(ORDER BY salary_dollars) AS cumulative_distribution_value
 FROM salary
+```
+
+#### PERCENTILE_DIST() | PERCENTILE_CONT()
+- PERCENTILE_DIST: returns an existing data point from the dataset without interpolation
+- PERCENTILE_CONT: provides a more precise percentile value by allowing interpolation (i.e. 50th percentile doesn't land exactly on a number)
+- percentiles represent the proportion of values in a distribution that are less than the percentile value
+- explain interpolation (TODO)
+- 1/17 update further
+
+```sql
+WITH student_scores(student_id, test_score) AS (
+            VALUES
+            (1, 85),
+            (2, 78),
+            (3, 92),
+            (4, 88),
+            (5, 74),
+            (6, 81),
+            (7, 67),
+            (8, 95),
+            (9, 89),
+            (10, 72),
+            (11, 90),
+            (12, 77),
+            (13, 83),
+            (14, 65),
+            (15, 80)
+)
+
+SELECT 
+	DISTINCT
+	-- continuous percentile
+	PERCENTILE_CONT(0.05) WITHIN GROUP (ORDER BY test_score) AS p05_score,
+	PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY test_score) AS p25_score,
+	PERCENTILE_CONT(0.50) WITHIN GROUP (ORDER BY test_score) AS median_score,
+	PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY test_score) AS p75_score,
+	PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY test_score) AS p95_score,
+	-- discrete percentile
+        PERCENTILE_DISC(0.05) WITHIN GROUP (ORDER BY test_score) AS discrete_05_score,
+	PERCENTILE_DISC(0.25) WITHIN GROUP (ORDER BY test_score) AS discrete_25_score,
+	PERCENTILE_DISC(0.50) WITHIN GROUP (ORDER BY test_score) AS discrete_median_score,
+	PERCENTILE_DISC(0.75) WITHIN GROUP (ORDER BY test_score) AS discrete_75_score,
+	PERCENTILE_DISC(0.95) WITHIN GROUP (ORDER BY test_score) AS discrete_95_score
+FROM student_scores
 ```
 
 #### NTILE(n) 
@@ -1129,5 +1132,7 @@ INNER JOIN percentiles AS p
 ```
 
 #### Solve COUNT DISTINCT window function need without a window function
-- 
+- TODO
+
+#### Handling NULLs in window functions order by clause
 
