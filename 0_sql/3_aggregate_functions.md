@@ -46,6 +46,52 @@ SELECT
 FROM pet_goats
 ```
 
+#### Median and Percentiles
+
+-   PERCENTILE_DIST: returns an existing data point at or exceeding the percentile threshold (does not use interpolation)
+-   PERCENTILE_CONT: returns a percentile value with interpolation if needed
+-   percentiles represent the proportion of values in a distribution that are less than the percentile value
+-   interpolation vs extrapolation: interpolation estimates a value between two known values vs extrapolation estimates a value beyond known values
+-   continuous vs discrete percentile: continuous percentile is the proportion of values less than the percentile value vs discrete percentile is the proportion of values less than or equal to the percentile value
+-   median = 50th percentile = 0.5 continuous percentile
+
+``` sql
+WITH student_scores(student_id, test_score) AS (
+            VALUES
+            (1, 85),
+            (2, 78),
+            (3, 92),
+            (4, 88),
+            (5, 74),
+            (6, 81),
+            (7, 67),
+            (8, 95),
+            (9, 89),
+            (10, 72),
+            (11, 90),
+            (12, 77),
+            (13, 83),
+            (14, 65),
+            (15, 80)
+)
+
+SELECT 
+    DISTINCT
+    -- continuous percentile
+    PERCENTILE_CONT(0.05) WITHIN GROUP (ORDER BY test_score) AS p05_score,
+    PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY test_score) AS p25_score,
+    PERCENTILE_CONT(0.50) WITHIN GROUP (ORDER BY test_score) AS median_score,
+    PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY test_score) AS p75_score,
+    PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY test_score) AS p95_score,
+    -- discrete percentile
+    PERCENTILE_DISC(0.05) WITHIN GROUP (ORDER BY test_score) AS discrete_05_score,
+    PERCENTILE_DISC(0.25) WITHIN GROUP (ORDER BY test_score) AS discrete_25_score,
+    PERCENTILE_DISC(0.50) WITHIN GROUP (ORDER BY test_score) AS discrete_median_score,
+    PERCENTILE_DISC(0.75) WITHIN GROUP (ORDER BY test_score) AS discrete_75_score,
+    PERCENTILE_DISC(0.95) WITHIN GROUP (ORDER BY test_score) AS discrete_95_score
+FROM student_scores
+```
+
 #### Variance and Standard Deviation
 
 -   VAR_POP and STDDEV_POP used for entire population datasets.
@@ -163,9 +209,10 @@ INSERT INTO net_worth_temp_table (net_worth_millions) VALUES (10), (20), (1), (6
 ```
 
 #### Aggregate functions with filters
-- Needs update the below code is a mess
 
-```
+-   Needs update the below code is a mess
+
+```         
 -- CREATE TEMP TABLE orders_test ( -- id SERIAL PRIMARY KEY, -- customer TEXT NOT NULL, -- total NUMERIC(10, 2) NOT NULL, -- date DATE NOT NULL -- );
 
 -- INSERT INTO orders_test (customer, total, date) -- VALUES -- ('Alice', 10.00, '2022-01-01'), -- ('Bob', 20.00, '2022-01-01'), -- ('Alice', 15.00, '2022-01-02'), -- ('Charlie', 25.00, '2022-01-02'), -- ('Alice', 30.00, '2022-01-03');
