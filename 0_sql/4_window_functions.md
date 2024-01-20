@@ -1,33 +1,33 @@
 #### Window functions basics
 
--   used to apply functions across a window or result set of data
--   window function with a partition applies the function independently to each partition/cut
--   example code pattern below
+-   used to apply functions OVER a result set of data (e.g. window of data)
+-   all window functions have an OVER clause
+-   the OVER clause has 3 main parts: partition, order, and frame
+-   depending on the function, argument input used to specify the column or expression to operate on
 
 ```         
-SELECT
-    <desired_columns>,
-    WINDOW_FUNCTION() OVER(
-        -- used to specify if the function should be applied to cuts of the data
-        PARTITION BY
-        -- used to specify ordering of data
-        ORDER BY 
-        -- used to specify which rows the within the partition to apply the function
-        Window Frame Type: ROWS, RANGE, or GROUPS
-    ) AS window_metric_x
-FROM <table_name>
+-- skeleton window function structure
+WINDOW_FUNCTION(argument(s)_if_needed) OVER(
+    PARTITION BY X
+    ORDER BY Y
+    FRAME TYPE
+) AS window_metric_x
 ```
 
-#### Window function partition
+#### Partition
 
--   the partition describes the result set of data to apply the function to
+-   the partition describes the result set of data to apply the function
 -   we can think of a partition as a cut or segment of the data
--   without a partition specified the entire result set is used as the partition
 
-#### Window frame
+#### Order
 
--   window frame clause (optional) used to describe which records to process in relation to the current row and partition given
--   when not specified the default window frame is used for each window function (see below for default behavior without a window frame clause)
+-   orders the rows within each partition / result set (e.g. how to order rows for a ranking window function)
+-   inclusion or exclusion of the order by clause can change the behavior of the function (i.e. without an order by clause certain aggregate functions will be applied to the entire result set vs with the order by clause the aggregate function returns a running aggregate)
+
+#### Frame
+
+-   window frame clause is used to describe which records to process in relation to the current row
+-   when not specified the default window frame is used for each window function
 
 #### Types of window frames
 
@@ -53,7 +53,7 @@ FROM <table_name>
 
 #### Window function outputs
 
--   important note: the same window function (i.e. COUNT) can have different output values depending argument/clause specifications (see below)
+-   important note: the same window function (i.e. COUNT) can have different output values based on various argument, partition, order by, and frame differences (see below)
 
 #### COUNT()
 
@@ -192,7 +192,7 @@ FROM sales_data
 
 -   derive the mean of a numeric column in a result set
 -   useful for keeping granular data in a result set to compare vs a group level average
--   also useful for assessing trends via moving/trailing averages
+-   also useful for assessing trends via running/trailing averages
 
 ``` sql
 WITH performance_data(review_id, employee_id, performance_score, review_date) AS (
@@ -421,29 +421,34 @@ FROM salary
 #### NTILE(n)
 
 -   divides the result set into n groups of roughly equal size and assigns a group number to each row
--   pay close attention to how ordering is done within the partition (i.e. depending on use case, should largest values be in first or last NTILE?)
+-   note how ordering is done within the partition (i.e. depending on use case, should largest values be in first or last NTILE?)
 
-```         
-WITH fake_book_sales(book_id, book_title, copies_sold) AS (
-            VALUES
-            (101, 'The Catcher in the Rye', 800),
-            (102, 'To Kill a Mockingbird', 1200),
-            (103, 'The Great Gatsby', 600),
-            (104, '1984', 900),
-            (105, 'Pride and Prejudice', 500),
-            (106, 'Animal Farm', 1000),
-            (107, 'Brave New World', 750),
-            (108, 'Moby-Dick', 450),
-            (109, 'Crime and Punishment', 550),
-            (110, 'Lord of the Flies', 700),
-            (111, 'A Raisin in the Sun', 1700),
-            (112, 'The Grapes of Wrath', 1050)
+```sql         
+-- made up data
+WITH fake_book_sales(book_id, book_title, copies_sold, publish_date) AS (
+    VALUES
+    (101, 'The Catcher in the Rye', 800, '1951-07-16'),
+    (102, 'To Kill a Mockingbird', 1200, '1960-07-11'),
+    (103, 'The Great Gatsby', 600, '1925-04-10'),
+    (104, '1984', 900, '1949-06-08'),
+    (105, 'Pride and Prejudice', 500, '1813-01-28'),
+    (106, 'Animal Farm', 1000, '1945-08-17'),
+    (107, 'Brave New World', 750, '1932-10-01'),
+    (108, 'Moby-Dick', 450, '1851-10-18'),
+    (109, 'Crime and Punishment', 550, '1866-01-01'),
+    (110, 'Lord of the Flies', 700, '1954-09-17'),
+    (111, 'A Raisin in the Sun', 1700, '1959-03-11'),
+    (112, 'The Grapes of Wrath', 1000, '1939-04-14')
 )
 
 , perf AS (
 SELECT
   *,
-  NTILE(4) OVER(ORDER BY copies_sold DESC) AS performance_quartile
+  -- smallest NTILE value for books with highest sales
+  -- break ties with most recent books getting the lower ntile
+  NTILE(4) OVER(
+    ORDER BY copies_sold DESC, publish_date DESC
+  ) AS performance_quartile
 FROM fake_book_sales
 )
 
@@ -454,12 +459,14 @@ SELECT
     -- tiers based on ntile ranking quartiles
     'tier_' || performance_quartile AS performance_tier
 FROM perf
+ORDER BY copies_sold DESC
 ```
 
 #### LAG() \| LEAD()
 
 -   LAG: returns the value of the expression evaluated at the row that is offset rows before the current row
 -   LEAD: returns the value of the expression evaluated at the row that is offset rows after the current row
+- pick up here 1/21
 
 ```         
 WITH example_watch_history(user_id, user_name, show_id, show_title, first_watched_date) AS (
@@ -598,6 +605,10 @@ SELECT
 FROM user_movies_watched
 ORDER BY user_id
 ```
+
+#### MIN and MAX
+
+-   TODO: add example where min and max are used for min max normalization
 
 ## Practical Use Cases
 
@@ -1088,14 +1099,16 @@ INNER JOIN percentiles AS p
 ```
 
 #### Solve COUNT DISTINCT window function need without a window function
-- TODO
+
+-   TODO
 
 #### Handling NULLs in window functions order by clause
-- TODO
+
+-   TODO
 
 #### Table 9-52. Hypothetical-Set Aggregate Functions
-- TODO
-- review the table in the link below for more information on the hypothetical set aggregate functions
-- https://www.postgresql.org/docs/13/functions-aggregate.html#FUNCTIONS-HYPOTHETICAL-TABLE
-- What's the difference between the hypothetical set aggregate functions and the window functions?
 
+-   TODO
+-   review the table in the link below for more information on the hypothetical set aggregate functions
+-   <https://www.postgresql.org/docs/13/functions-aggregate.html#FUNCTIONS-HYPOTHETICAL-TABLE>
+-   What's the difference between the hypothetical set aggregate functions and the window functions?
