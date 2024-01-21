@@ -421,9 +421,9 @@ FROM salary
 #### NTILE(n)
 
 -   divides the result set into n groups of roughly equal size and assigns a group number to each row
--   note how ordering is done within the partition (i.e. depending on use case, should largest values be in first or last NTILE?)
+-   note how ordering is done within the partition/result set (i.e. depending on use case, should largest values be in first or last NTILE?)
 
-```sql         
+``` sql
 -- made up data
 WITH fake_book_sales(book_id, book_title, copies_sold, publish_date) AS (
     VALUES
@@ -464,151 +464,150 @@ ORDER BY copies_sold DESC
 
 #### LAG() \| LEAD()
 
--   LAG: returns the value of the expression evaluated at the row that is offset rows before the current row
--   LEAD: returns the value of the expression evaluated at the row that is offset rows after the current row
-- pick up here 1/21
+-   LAG: returns column value of the row offset by N row(s) BEFORE the current row
+-   LEAD: returns column value of the row offset by N row(s) AFTER the current row
 
-```         
-WITH example_watch_history(user_id, user_name, show_id, show_title, first_watched_date) AS (
-    VALUES
-        -- user 1 example 
-          (1, 'Alice', 101, 'Stranger Things', '2023-04-01'),
-        (1, 'Alice', 102, 'The Crown', '2023-04-02'),
-        (1, 'Alice', 103, 'The Witcher', '2023-04-03'),
-        (1, 'Alice', 104, 'Money Heist', '2023-04-04'),
-        -- user 2 example
-        (2, 'Bob', 105, 'Breaking Bad', '2023-04-01'),
-        (2, 'Bob', 106, 'The Queen''s Gambit', '2023-04-02'),
-        (2, 'Bob', 107, 'Narcos', '2023-04-03'),
-        (2, 'Bob', 108, 'Dark', '2023-04-04'),
-        -- user 3 example
-        (3, 'Charlie', 109, 'Ozark', '2023-04-01'),
-        (3, 'Charlie', 110, 'The Mandalorian', '2023-04-02'),
-        (3, 'Charlie', 111, 'The Boys', '2023-04-03'),
-        (3, 'Charlie', 112, 'Fleabag', '2023-04-04'),
-        -- user 4 example
-        (4, 'Dave', 113, 'Killing Eve', '2023-04-01'),
-        (4, 'Dave', 114, 'The Umbrella Academy', '2023-04-02'),
-        (4, 'Dave', 115, 'Mindhunter', '2023-04-03'),
-        (4, 'Dave', 116, 'The Haunting of Bly Manor', '2023-04-04'),
-        -- user 5 example
-        (5, 'Eve', 117, 'The Witcher', '2023-04-01'),
-        (5, 'Eve', 118, 'Bridgerton', '2023-04-02'),
-        (5, 'Eve', 119, 'The Expanse', '2023-04-03'),
-        (5, 'Eve', 120, 'Schitt''s Creek', '2023-04-04')
-)
+```sql         
+DROP TABLE IF EXISTS temp_example_watch_history;
+CREATE TEMP TABLE temp_example_watch_history (
+    user_id INT,
+    user_name VARCHAR,
+    show_id INT,
+    show_title VARCHAR,
+    first_watched_date DATE
+);
 
+-- Insert data into the temporary table
+INSERT INTO temp_example_watch_history(user_id, user_name, show_id, show_title, first_watched_date) VALUES
+    -- user 1 example 
+    (1, 'Alice', 101, 'Stranger Things', '2023-04-01'),
+    (1, 'Alice', 102, 'The Crown', '2023-04-02'),
+    (1, 'Alice', 103, 'The Witcher', '2023-04-03'),
+    (1, 'Alice', 104, 'Money Heist', '2023-04-04'),
+    -- user 2 example
+    (2, 'Bob', 105, 'Breaking Bad', '2023-04-01'),
+    (2, 'Bob', 106, 'The Queen''s Gambit', '2023-04-02'),
+    (2, 'Bob', 107, 'Narcos', '2023-04-03'),
+    (2, 'Bob', 108, 'Dark', '2023-04-04'),
+    -- user 3 example
+    (3, 'Charlie', 109, 'Ozark', '2023-04-01'),
+    (3, 'Charlie', 110, 'The Mandalorian', '2023-04-02'),
+    (3, 'Charlie', 111, 'The Boys', '2023-04-03'),
+    (3, 'Charlie', 112, 'Fleabag', '2023-04-04'),
+    -- user 4 example
+    (4, 'Dave', 113, 'Killing Eve', '2023-04-01'),
+    (4, 'Dave', 114, 'The Umbrella Academy', '2023-04-02'),
+    (4, 'Dave', 115, 'Mindhunter', '2023-04-03'),
+    (4, 'Dave', 116, 'The Haunting of Bly Manor', '2023-04-04'),
+    -- user 5 example
+    (5, 'Eve', 117, 'The Witcher', '2023-04-01'),
+    (5, 'Eve', 118, 'Bridgerton', '2023-04-02'),
+    (5, 'Eve', 119, 'The Expanse', '2023-04-03'),
+    (5, 'Eve', 120, 'Schitt''s Creek', '2023-04-04');
+
+-- concat show title and id to handle duplicate titles
+-- not in the example data but possible
 SELECT
     *,
-    -- assumes show titles are unique in the example dataset
-    LAG(show_title) OVER (
-        PARTITION BY user_id 
-        ORDER BY first_watched_date
+    COALESCE(
+        LAG(show_title || '_' || show_id) OVER (
+            PARTITION BY user_id 
+            ORDER BY first_watched_date
+        ),
+        'First Show Watched_000'
     ) AS prev_show_watched,
-  LEAD(show_title) OVER (
-        PARTITION BY user_id 
-        ORDER BY first_watched_date
+    COALESCE(
+        LEAD(show_title || '_' || show_id) OVER (
+            PARTITION BY user_id 
+            ORDER BY first_watched_date
+        ),
+        'Last Show Watched_000'
     ) AS next_show_watched
-FROM example_watch_history
+FROM temp_example_watch_history
+ORDER BY user_id, first_watched_date
 ```
 
 #### FIRST_VALUE() \| LAST_VALUE(expr) \| NTH_VALUE()
 
--   FIRST_VALUE: returns the value of the expression evaluated at the first row of the window frame
--   LAST_VALUE: returns the value of the expression evaluated at the last row of the window frame
--   NTH_VALUE: returns the value of the expression evaluated at the nth row of the window frame
+-   FIRST_VALUE: returns the first value in an ordered set of values
+-   LAST_VALUE: returns the last value in an ordered set of values
+-   NTH_VALUE: returns the Nth value in an ordered set of values
 
-```         
+```sql         
 SELECT
     *,
-    -- assumes show titles are unique in the example dataset
-    LAG(show_title) OVER (
-        PARTITION BY user_id 
-        ORDER BY first_watched_date
-    ) AS prev_show_watched,
-  LEAD(show_title) OVER (
-        PARTITION BY user_id 
-        ORDER BY first_watched_date
-    ) AS next_show_watched,
-    FIRST_VALUE(show_title) OVER(
+    FIRST_VALUE(show_title || '_' || show_id) OVER(
         PARTITION BY user_id 
         ORDER BY first_watched_date 
         ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
     ) AS first_show_watched,
-    NTH_VALUE(show_title, 2) OVER(
+    NTH_VALUE(show_title || '_' || show_id, 2) OVER(
         PARTITION BY user_id 
         ORDER BY first_watched_date
         ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
     ) AS second_show_watched,
-    NTH_VALUE(show_title, 3) OVER(
+    NTH_VALUE(show_title || '_' || show_id, 3) OVER(
         PARTITION BY user_id 
         ORDER BY first_watched_date
         ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
     ) AS third_show_watched,
-  LAST_VALUE(show_title) OVER(
+    LAST_VALUE(show_title || '_' || show_id) OVER(
         PARTITION BY user_id 
         ORDER BY first_watched_date
         ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
     ) AS last_show_watched
--- CTE generated above
-FROM example_watch_history
-```
-
-```         
--- example 2
-WITH user_movies_watched(user_id, movie_num, movie_name) AS (
-    VALUES
-    (1, 1, 'Movie1'),
-    (1, 2, 'Movie2'),
-    (1, 3, 'Movie3'),
-    (1, 4, 'Movie4'),
-    (1, 5, NULL), -- The user did not watch a 5th movie
-    (2, 1, 'Movie5'),
-    (2, 2, 'Movie6'),
-    (2, 3, NULL), -- The user did not watch a 3rd movie
-    (2, 4, NULL), -- The user did not watch a 4th movie
-    (2, 5, NULL), -- The user did not watch a 5th movie
-    (3, 1, 'Movie7'),
-    (3, 2, 'Movie8'),
-    (3, 3, 'Movie9'),
-    (3, 4, 'Movie10'),
-    (3, 5, 'Movie11')
-)
-
-SELECT
-  DISTINCT
-  user_id,
-  FIRST_VALUE(movie_name) OVER (
-      PARTITION BY user_id 
-      ORDER BY movie_num
-  ) AS first_movie,
-  NTH_VALUE(movie_name, 2) OVER (
-      PARTITION BY user_id 
-      ORDER BY movie_num
-      ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
-  ) AS second_movie,
-  NTH_VALUE(movie_name, 3) OVER (
-      PARTITION BY user_id 
-      ORDER BY movie_num
-      ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
-  ) AS third_movie,
-  NTH_VALUE(movie_name, 4) OVER (
-      PARTITION BY user_id 
-      ORDER BY movie_num
-      ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
-  ) AS fourth_movie,
-  NTH_VALUE(movie_name, 5) OVER (
-      PARTITION BY user_id 
-      ORDER BY movie_num
-      ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
-  ) AS fifth_movie
-FROM user_movies_watched
-ORDER BY user_id
+-- temp table generate above
+FROM temp_example_watch_history
 ```
 
 #### MIN and MAX
+- MIN: find minimum value in a partition / result set
+- MAX: find maximum value in a partition / result set
+- example below use MIN and MAX window functions for min-max normalization
 
--   TODO: add example where min and max are used for min max normalization
+```sql
+WITH fake_stocks(stock_name, date, closing_price) AS (
+    VALUES
+    ('NetGrid', '2023-01-01',  98.50),
+    ('NetGrid', '2023-01-02', 100.75),
+    ('NetGrid', '2023-01-03',  99.20),
+    ('NetGrid', '2023-01-04',  97.80),
+    ('NetGrid', '2023-01-05', 101.00),
+    ('ByteTech', '2023-01-01', 210.40),
+    ('ByteTech', '2023-01-02', 215.55),
+    ('ByteTech', '2023-01-03', 212.30),
+    ('ByteTech', '2023-01-04', 214.00),
+    ('ByteTech', '2023-01-05', 216.75),
+    ('QuantumCore', '2023-01-01', 550.00),
+    ('QuantumCore', '2023-01-02', 560.25),
+    ('QuantumCore', '2023-01-03', 555.50),
+    ('QuantumCore', '2023-01-04', 558.75),
+    ('QuantumCore', '2023-01-05', 563.00),
+    ('SkyData', '2023-01-01', 1020.50),
+    ('SkyData', '2023-01-02', 1035.00),
+    ('SkyData', '2023-01-03', 1025.75),
+    ('SkyData', '2023-01-04', 1040.30),
+    ('SkyData', '2023-01-05', 1038.80),
+    ('GlobalLink', '2023-01-01', 3050.00),
+    ('GlobalLink', '2023-01-02', 3080.25),
+    ('GlobalLink', '2023-01-03', 3065.75),
+    ('GlobalLink', '2023-01-04', 3075.30),
+    ('GlobalLink', '2023-01-05', 3090.80)
+)
+
+, price_ranges AS (
+    SELECT
+        *,
+        MIN(closing_price) OVER(PARTITION BY stock_name) as min_price,
+        MAX(closing_price) OVER(PARTITION BY stock_name) as max_price
+    FROM tech_stocks
+)
+
+SELECT
+    *
+    (closing_price - min_price)::FLOAT / (max_price - min_price) AS normalized_price
+FROM price_ranges
+```
 
 ## Practical Use Cases
 
@@ -616,6 +615,7 @@ ORDER BY user_id
 
 -   approach with PostgreSQL
 -   database vendors have slightly different approaches (i.e. Redshift has RATIO_TO_REPORT() which can be used for pct total calcs)
+-   pick back up here 1/22
 
 ```         
 WITH example_data (item, amount) AS (
