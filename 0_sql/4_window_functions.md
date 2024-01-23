@@ -2,6 +2,7 @@
 
 -   used to apply functions OVER a result set of data (e.g. window of data)
 -   all window functions have an OVER clause
+-   number of window function output rows = number of input rows vs aggregate functions return single summarized output
 -   the OVER clause has 3 main parts: partition, order, and frame
 -   depending on the function, argument input used to specify the column or expression to operate on
 
