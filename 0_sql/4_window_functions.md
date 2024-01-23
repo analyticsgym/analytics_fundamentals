@@ -2,7 +2,7 @@
 
 -   used to apply functions OVER a result set of data (e.g. window of data)
 -   all window functions have an OVER clause
--   number of window function output rows = number of input rows vs aggregate functions return single summarized output
+-   number of window function output rows = number of input rows (vs aggregate functions return single summarized output)
 -   the OVER clause has 3 main parts: partition, order, and frame
 -   depending on the function, argument input used to specify the column or expression to operate on
 
@@ -341,7 +341,7 @@ FROM clean_social_media_posts
 
 -   assigns a rank to each row within a result set, with ties receiving the same rank
 -   note that subsequent ranks get skipped based on number of tied entries
--   i.e. when three sales reps tie for rank 1 below then the next rank assigned will be 4
+-   i.e. when three sales reps tie for rank 1 then the next rank assigned is 4
 
 ``` sql
 DROP TABLE IF EXISTS temp_sales_data;
@@ -376,10 +376,10 @@ ORDER BY sales_amount DESC, sales_rep
 #### DENSE_RANK()
 
 -   assigns a rank to each row within a result set
--   main difference between RANK and DENSE_RANK: with DENSE_RANK, ties receive the same rank without gaps between ranks
--   i.e. when three sales reps tie for rank 1 below then the next rank assigned will be 2
+-   main difference between RANK and DENSE_RANK: DENSE_RANK ties receive the same rank without gaps between ranks
+-   i.e. when three sales reps tie for rank 1 the next rank assigned is 2
 
-```         
+```sql         
 SELECT
     sales_rep,
     sales_amount,
@@ -478,7 +478,6 @@ CREATE TEMP TABLE temp_example_watch_history (
     first_watched_date DATE
 );
 
--- Insert data into the temporary table
 INSERT INTO temp_example_watch_history(user_id, user_name, show_id, show_title, first_watched_date) VALUES
     -- user 1 example 
     (1, 'Alice', 101, 'Stranger Things', '2023-04-01'),
@@ -507,7 +506,7 @@ INSERT INTO temp_example_watch_history(user_id, user_name, show_id, show_title, 
     (5, 'Eve', 120, 'Schitt''s Creek', '2023-04-04');
 
 -- concat show title and id to handle duplicate titles
--- not in the example data but possible
+-- not in the example data but possible in practice
 SELECT
     *,
     COALESCE(
@@ -564,7 +563,7 @@ FROM temp_example_watch_history
 #### MIN and MAX
 - MIN: find minimum value in a partition / result set
 - MAX: find maximum value in a partition / result set
-- example below use MIN and MAX window functions for min-max normalization
+- example below using MIN and MAX window functions for min-max normalization
 
 ```sql
 WITH fake_stocks(stock_name, date, closing_price) AS (
@@ -596,18 +595,18 @@ WITH fake_stocks(stock_name, date, closing_price) AS (
     ('GlobalLink', '2023-01-05', 3090.80)
 )
 
-, price_ranges AS (
+, setup_stock_price_ranges AS (
     SELECT
         *,
         MIN(closing_price) OVER(PARTITION BY stock_name) as min_price,
         MAX(closing_price) OVER(PARTITION BY stock_name) as max_price
-    FROM tech_stocks
+    FROM fake_stocks
 )
 
 SELECT
-    *
+    *,
     (closing_price - min_price)::FLOAT / (max_price - min_price) AS normalized_price
-FROM price_ranges
+FROM setup_stock_price_ranges
 ```
 
 ## Practical Use Cases
@@ -616,53 +615,48 @@ FROM price_ranges
 
 -   approach with PostgreSQL
 -   database vendors have slightly different approaches (i.e. Redshift has RATIO_TO_REPORT() which can be used for pct total calcs)
--   pick back up here 1/22
 
-```         
+```sql      
 WITH example_data (item, amount) AS (
   VALUES
     ('Item A', 50),
     ('Item B', 100),
     ('Item C', 150),
     ('Item D', 200),
-      ('Item E', 13)
+    ('Item E', 13)
 )
+
 SELECT 
     item,
     amount, 
     ROUND((100.0 * amount / SUM(amount) OVER()),2) AS percent_total 
 FROM example_data
-ORDER BY percent_total  DESC;
+ORDER BY percent_total DESC
 ```
 
 #### Cumulative percent total using window functions
 
 -   rolling sum window function compared to total aggregation
 
-```         
+```sql         
 WITH salary AS (
     SELECT unnest(ARRAY[50000, 55000, 60000, 65000, 70000, 
                         75000, 80000, 85000, 90000, 950000]) AS salary_dollars
 )
 
-, total_salary_spend AS (
-    SELECT SUM(salary_dollars) AS total FROM salary
-)
-
 SELECT
     salary_dollars,
-    SUM(salary_dollars) OVER(
-        -- including order by creates a cumulative/rolling sum starting at 
-        -- first row in the window frame and ending at current row
-        ORDER BY salary_dollars ASC
-    )::FLOAT / (SELECT total FROM total_salary_spend)*100 AS cumulative_percent_total
+    SUM(salary_dollars) OVER (
+        ORDER BY salary_dollars
+    )::FLOAT / SUM(salary_dollars) OVER () * 100 AS cumulative_percent_total
 FROM salary
-ORDER BY salary_dollars ASC
+ORDER BY salary_dollars
 ```
 
 #### Quartiles with lower and upper bound descriptors
 
 -   approach to provide additional context when generating quartiles
+-   next step bookmark 1/24 
 
 ```         
 DROP TABLE IF EXISTS top_20_quarterbacks;
