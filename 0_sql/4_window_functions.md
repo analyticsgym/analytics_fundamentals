@@ -617,7 +617,7 @@ FROM setup_stock_price_ranges
 -   database vendors have slightly different approaches (i.e. Redshift has RATIO_TO_REPORT() which can be used for pct total calcs)
 
 ```sql      
-WITH example_data (item, amount) AS (
+WITH example_data(item, amount) AS (
   VALUES
     ('Item A', 50),
     ('Item B', 100),
@@ -653,22 +653,12 @@ FROM salary
 ORDER BY salary_dollars
 ```
 
-#### Quartiles with lower and upper bound descriptors
-
+#### Quartiles with lower and upper bound values
 -   approach to provide additional context when generating quartiles
--   next step bookmark 1/24 
 
-```         
-DROP TABLE IF EXISTS top_20_quarterbacks;
-CREATE TEMP TABLE top_20_quarterbacks (
-    id SERIAL PRIMARY KEY,
-    player_name VARCHAR(255),
-    team VARCHAR(255),
-    total_td INTEGER
-);
-
+```sql         
 -- source: https://www.statmuse.com/nfl/ask/nfl-qb-total-touchdown-leaders-2022
-INSERT INTO top_20_quarterbacks (player_name, team, total_td)
+WITH top_20_quarterbacks(player_name, team, total_td)
 VALUES ('Patrick Mahomes', 'KC', 45),
        ('Josh Allen', 'BUF', 42),
        ('Joe Burrow', 'CIN', 40),
@@ -690,8 +680,7 @@ VALUES ('Patrick Mahomes', 'KC', 45),
        ('Marcus Mariota', 'ATL', 19),
        ('Davis Mills', 'HOU', 19);
 
--- pretend list above is representative of all quarterbacks
-WITH ntile_setup AS (
+, ntile_setup AS (
 SELECT
     *,
     NTILE(4) OVER(ORDER BY total_td DESC) AS quartile
@@ -707,25 +696,16 @@ SELECT
         PARTITION BY quartile
     ) AS quartile_upper_bound
 FROM ntile_setup
-ORDER BY 
-    total_td DESC, 
-    id
+ORDER BY total_td DESC, player_name
 ```
 
 #### Moving Average
+-   moving batting average across last 3 seasons
 
--   moving batting average across 3 seasons
-
-```         
-DROP TABLE IF EXISTS temp_bonds;
-CREATE TEMP TABLE temp_bonds (
-  season int,
-  batting_average numeric(4,3)
-);
-
+```sql         
 -- first 20 seasons stats for Barry Bonds
 -- https://www.baseball-reference.com/players/b/bondsba01.shtml
-INSERT INTO temp_bonds (season, batting_average)
+WITH barry_bonds(season, batting_average) AS (
 VALUES
   (1986, 0.223),
   (1987, 0.261),
@@ -746,15 +726,16 @@ VALUES
   (2002, 0.370),
   (2003, 0.341),
   (2004, 0.362),
-  (2005, 0.286);
+  (2005, 0.286)
+)
 
 SELECT
     season,
-    batting_average,
+    ROUND(batting_average,3) AS batting_average,
     -- logic to return NULL when fewer than 3 seasons
     CASE 
         WHEN season_order >= 3 
-        THEN batting_avg_moving_average_3 
+        THEN ROUND(batting_avg_moving_average_3::NUMERIC,3)
         ELSE NULL
     END AS batting_avg_moving_average_3_seasons 
 FROM (
@@ -764,14 +745,15 @@ FROM (
             ORDER BY season ASC
         ) AS season_order,
         AVG(batting_average::FLOAT) OVER (
-            ORDER BY season ASC
-            ROWS BETWEEN 2 PRECEDING and CURRENT ROW
+			ORDER BY season ASC
+			ROWS BETWEEN 2 PRECEDING and CURRENT ROW
         ) AS batting_avg_moving_average_3
-    FROM temp_bonds
-) AS sub_q 
+    FROM barry_bonds
+) AS sub_q
 ```
 
 #### New yearly revenue record
+- next step bookmark 1/25
 
 ```         
 DROP TABLE IF EXISTS temp_revenue;
