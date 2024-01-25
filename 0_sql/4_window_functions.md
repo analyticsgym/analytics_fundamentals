@@ -753,19 +753,13 @@ FROM (
 ```
 
 #### New yearly revenue record
-- next step bookmark 1/25
+- find the rolling max revenue for prior years and compare to current row year
 
-```         
-DROP TABLE IF EXISTS temp_revenue;
-CREATE TEMP TABLE temp_revenue (
-  year INTEGER,
-  revenue NUMERIC(10, 2)
-);
-
+```sql         
 -- to get reproducible results
 SELECT SETSEED(0.25);
 
-INSERT INTO temp_revenue (year, revenue)
+WITH yearly_revenue(year, revenue) AS (
 VALUES
   (1992, RANDOM() * 1000000.00),
   (1993, RANDOM() * 1200000.00),
@@ -785,20 +779,10 @@ VALUES
   (2007, RANDOM() * 8000000.00),
   (2008, RANDOM() * 8500000.00),
   (2009, RANDOM() * 9000000.00),
-  (2010, RANDOM() * 9500000.00),
-  (2011, RANDOM() * 10000000.00),
-  (2012, RANDOM() * 10500000.00),
-  (2013, RANDOM() * 11000000.00),
-  (2014, RANDOM() * 11500000.00),
-  (2015, RANDOM() * 12000000.00),
-  (2016, RANDOM() * 12500000.00),
-  (2017, RANDOM() * 13000000.00),
-  (2018, RANDOM() * 13500000.00),
-  (2019, RANDOM() * 14000000.00),
-  (2020, RANDOM() * 14500000.00),
-  (2021, RANDOM() * 15000000.00);
+  (2010, RANDOM() * 9500000.00)
+)
 
-WITH yearly_revenue AS (
+WITH yearly_revenue_setup AS (
 SELECT
     year,
     revenue,
@@ -809,7 +793,6 @@ SELECT
 FROM temp_revenue
 )
 
--- results expected to vary on each query run due to random function used above
 SELECT
     *,
     CASE 
@@ -817,25 +800,27 @@ SELECT
         THEN TRUE
         ELSE FALSE
     END AS new_all_time_revenue_high_flag
-FROM yearly_revenue
+FROM yearly_revenue_setup
 ```
 
 #### Last 7 Day Total Sales
 
 -   note use of frame logic using RANGE BETWEEN which is conditional on date vs row position
 
-```         
+```sql
+-- to get reproducible results
+SELECT SETSEED(0.1);
+
 DROP TABLE IF EXISTS temp_daily_sales;
 CREATE TEMP TABLE temp_daily_sales AS
-
 SELECT 
-    DATE_TRUNC('day', sale_date) AS sales_day,
-        ROUND((RANDOM()::NUMERIC * 1000),2) AS sale_amount
+    sales_day,
+    ROUND((RANDOM()::NUMERIC * 1000),2) AS sale_amount
 FROM GENERATE_SERIES(
-        '2022-01-01'::timestamp, 
-        '2022-04-04'::timestamp, 
+        '2022-01-01'::DATE, 
+        '2022-04-04'::DATE, 
         '1 day'::interval
-    ) AS sale_date;
+    ) AS sales_day;
 
 -- randomly drop rows to create intentional date gaps
 DELETE FROM temp_daily_sales
@@ -854,6 +839,7 @@ FROM temp_daily_sales
 #### Store Sales Performance
 
 -   ranking, ntiles, running total, etc
+-   1/26 next step
 
 ```         
 DROP TABLE IF EXISTS temp_store_sales_2022;
