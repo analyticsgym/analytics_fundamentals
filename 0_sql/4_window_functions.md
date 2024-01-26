@@ -838,10 +838,9 @@ FROM temp_daily_sales
 
 #### Store Sales Performance
 
--   ranking, ntiles, running total, etc
--   1/26 next step
+-   using multiple window functions: ranking, ntiles, running total, etc
 
-```         
+```sql         
 DROP TABLE IF EXISTS temp_store_sales_2022;
 CREATE TEMP TABLE temp_store_sales_2022 (
   location_id INTEGER,
@@ -856,8 +855,7 @@ SELECT
   location_id,
   2022::INT AS sales_year,
   ROUND(RANDOM()::NUMERIC * 100000, 2) AS total_sales
-FROM 
-  generate_series(1, 40) AS location_id;
+FROM generate_series(1, 40) AS location_id;
   
 SELECT 
     *,
@@ -884,26 +882,45 @@ FROM temp_store_sales_2022
 ORDER BY total_sales DESC
 ```
 
-#### YoY sales growth table
+#### YoY sales growth using window function
+- note use of lag function to get prior year sales
+- could also be solved using a self join
 
-```         
--- example output from a query to aggregate sales by year
+```sql         
 WITH sales AS (
     SELECT 
         UNNEST(ARRAY[23456, 43567, 65812, 79234, 567394]) AS annual_sales,
         UNNEST(ARRAY[1999, 2000, 2001, 2002, 2003]) AS year
 )
 
+-- NULLs expected for first year prior year sales and YoY growth
 SELECT
-    year,
+    'window_fun_results' AS label,
+	year,
     annual_sales,
-    ((annual_sales - LAG(annual_sales) OVER(ORDER BY year ASC))::FLOAT / annual_sales)*100 AS yoy_sales_growth
+	LAG(annual_sales) OVER(ORDER BY year ASC) AS prior_year_sales,
+    ((annual_sales - LAG(annual_sales) OVER(ORDER BY year ASC)::FLOAT) 
+       / LAG(annual_sales) OVER(ORDER BY year ASC)) * 100 AS yoy_sales_growth
 FROM sales
+
+UNION ALL 
+
+SELECT 
+	'self_join_results' AS label,
+	current_year.year,
+	current_year.annual_sales,
+	prior_year.annual_sales AS prior_year_sales,
+	((current_year.annual_sales - prior_year.annual_sales)::FLOAT
+		/ prior_year.annual_sales) * 100 AS yoy_sales_growth
+FROM sales AS current_year
+LEFT JOIN sales AS prior_year
+	ON prior_year.year = (current_year.year - 1)
 ```
 
 #### Sales by month and add YTD sales column
 
 -   note use of partition by year and frame boundary
+-   1/26 next step
 
 ```         
 WITH sales_data AS (
