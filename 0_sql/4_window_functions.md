@@ -895,9 +895,9 @@ WITH sales AS (
 
 -- NULLs expected for first year prior year sales and YoY growth
 SELECT
-    'window_fun_results' AS label,
+  'window_fun_results' AS label,
 	year,
-    annual_sales,
+  annual_sales,
 	LAG(annual_sales) OVER(ORDER BY year ASC) AS prior_year_sales,
     ((annual_sales - LAG(annual_sales) OVER(ORDER BY year ASC)::FLOAT) 
        / LAG(annual_sales) OVER(ORDER BY year ASC)) * 100 AS yoy_sales_growth
@@ -918,173 +918,125 @@ LEFT JOIN sales AS prior_year
 ```
 
 #### Sales by month and add YTD sales column
-
 -   note use of partition by year and frame boundary
--   1/26 next step
 
-```         
-WITH sales_data AS (
-    SELECT
-        '2022-10-01'::date AS sales_month,
-        1000 AS sales
-    UNION ALL
-    SELECT
-        '2022-11-01'::date,
-        1200
-    UNION ALL
-    SELECT
-        '2022-12-01'::date,
-        1400
-    UNION ALL
-    SELECT
-        '2023-01-01'::date,
-        1100
+```sql         
+WITH sales_data(sales_month, sales) AS (
+    VALUES
+    ('2022-10-01'::date, 1000),
+    ('2022-11-01'::date, 1200),
+    ('2022-12-01'::date, 1400),
+    ('2023-01-01'::date, 1100)
 )
 
 SELECT
     sales_month,
     sales,
     SUM(sales) OVER (
-        PARTITION BY EXTRACT(year FROM sales_month)
+    -- note partition by year
+		PARTITION BY EXTRACT(year FROM sales_month)
         ORDER BY sales_month
-        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+    -- frame default with order by; being explicit for readability
+		ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
     ) AS ytd_sales
 FROM sales_data
-ORDER BY sales_month;
+ORDER BY sales_month
 ```
 
-#### Sales by month and add prior year sales column
+#### Sales by month output with prior year sales column for visual comparison
+- leverage lag function to get prior year sales; note partition spec
 
-```         
+```sql         
+-- set seed so sales amount is consistent on query reruns
+SELECT SETSEED(0.99);
+
+-- generates sequence of 24 months
 WITH months AS (
-SELECT
-    generate_series(
-        date_trunc('month', current_date - INTERVAL '2 years'),
-        current_date,
-        INTERVAL '1 month'
-    ) AS month_var
+		SELECT
+			generate_series(
+				date_trunc('month', '2024-01-01'::DATE - INTERVAL '24 months'),
+				'2024-01-01'::DATE - INTERVAL '1 month',
+				'1 month'
+			)::DATE AS sales_month
 )
 
+-- assign random sales amount to each month
 , example_sales_data AS (
-SELECT
-    month_var,
-    ROUND((RANDOM() * 10000)::NUMERIC, 2) AS sales_amount
-FROM months
-)
-
-SELECT
-    *,
-    -- NULLs expected for first year in example data
-    -- use joins if gap in months expected
-    LAG(sales_amount, 1) OVER (
-        PARTITION BY EXTRACT(month FROM month_var)
-        ORDER BY month_var
-    ) AS prior_year_sales
-FROM example_sales_data
-WHERE month_var > first_month
-ORDER BY month_var DESC;
-```
-
-#### Window function using GROUPS frame clause to create long vs wide output
-
--   above examples for PERCENTILE_CONT & PERCENTILE_DISC highlight wide format output
-
-```         
-WITH student_scores(student_id, test_score) AS (
-            VALUES
-            (1, 85),
-            (2, 78),
-            (3, 92),
-            (4, 88),
-            (5, 74),
-            (6, 81),
-            (7, 67),
-            (8, 95),
-            (9, 89),
-            (10, 72),
-            (11, 90),
-            (12, 77),
-            (13, 83),
-            (14, 65),
-            (15, 80)
-)
-
-, percentile_names(name, value) AS (
-    VALUES
-    ('p05', 0.05),
-    ('p25', 0.25),
-    ('median', 0.50),
-    ('p75', 0.75),
-    ('p95', 0.95)
-)
-
-, percentile_type(pct_type) AS (
-    VALUES
-    ('continuous'), 
-    ('discrete')
-)
-
-, percentile_type_and_name AS (
     SELECT
-        pn.*,
-        pt.*
-    FROM percentile_names AS pn
-    CROSS JOIN percentile_type AS pt
+      sales_month,
+      ROUND((RANDOM() * 10000)::NUMERIC, 2) AS sales_amount,
+      MIN(sales_month) OVER() AS first_sales_month
+    FROM months
+)
+
+-- sub query to do where clause filter after window function compute
+SELECT
+	sales_month,
+	sales_amount,
+	prior_year_sales
+FROM (
+	SELECT
+		*,
+		LAG(sales_amount) OVER(
+			PARTITION BY EXTRACT(month FROM sales_month)
+			ORDER BY sales_month
+		) AS prior_year_sales
+	FROM example_sales_data
+	ORDER BY sales_month
+) AS sub_q
+-- returns rows where we have prior year sales
+WHERE sales_month >= first_sales_month + INTERVAL '12 months'
+```
+
+#### Workaround for COUNT DISTINCT window function use case
+- using ROW_NUMBER() and a conditional SUM()
+
+```sql
+WITH sales_data(transaction_id, customer_id, transaction_date, amount) AS (
+    VALUES
+    (1, 'C001', '2024-01-10'::DATE, 100),
+    (2, 'C001', '2024-02-01'::DATE, 150),
+    (3, 'C002', '2024-02-04'::DATE, 200),
+    (4, 'C002', '2024-02-18'::DATE, 300),
+    (5, 'C003', '2024-03-03'::DATE, 250),
+    (6, 'C003', '2024-03-05'::DATE, 350),
+    (7, 'C003', '2024-03-15'::DATE, 400),
+    (8, 'C004', '2024-04-10'::DATE, 500),
+    (9, 'C004', '2024-04-15'::DATE, 550),
+    (10, 'C001', '2024-04-20'::DATE, 600)
+)
+
+, sales_data_setup AS (
+	SELECT
+		*,
+		ROW_NUMBER() OVER(
+			PARTITION BY customer_id, DATE_TRUNC('month', transaction_date)
+			ORDER BY transaction_date ASC
+		) AS by_month_customer_purchase_order
+	FROM sales_data
 )
 
 SELECT
-    ptn.pct_type AS percentile_type,
-    ptn.name AS percentile_name,
-    CASE
-        WHEN ptn.pct_type = 'continuous' 
-                THEN PERCENTILE_CONT(ptn.value) WITHIN GROUP (ORDER BY ss.test_score)
-        WHEN ptn.pct_type = 'discrete'
-        THEN PERCENTILE_DISC(ptn.value) WITHIN GROUP (ORDER BY ss.test_score)
-    END AS percentile_value
-FROM student_scores AS ss
-CROSS JOIN percentile_type_and_name AS ptn
-GROUP BY ptn.pct_type, ptn.name, ptn.value
-ORDER BY ptn.pct_type, ptn.value;
+	*,
+	AVG(amount) OVER (PARTITION BY customer_id) AS avg_amount_per_customer,
+	SUM(amount) OVER (PARTITION BY customer_id) AS total_amount_per_customer,
+	COUNT(*) OVER (PARTITION BY customer_id) AS transaction_count_per_customer,
+	-- count unique purchase months by customer
+	SUM(
+		CASE 
+			WHEN by_month_customer_purchase_order = 1
+			THEN 1
+			ELSE 0
+		END
+	) OVER(
+		PARTITION BY customer_id
+	) AS unqiue_months_with_purchases_per_customer
+FROM sales_data_setup
+ORDER BY transaction_id
 ```
-
-#### Capping values
-
--   useful when dataset has long tails and there's a desire to reduce the influence of extreme outlier values on metrics
--   example logic: if a value is below 10th percentile cap the value at the 10th percentile; if a value is above 90th percentile cap the value at the 90th percentile
-
-```         
-WITH example_data(result) AS (
-   VALUES 
-    (1), (2), (3), (4), (5), (6), (7), (8), (9), (10), 
-    (11), (12), (13), (14), (15), (16), (17), (18), (19), (20)
-)
-
-, percentiles AS (
-SELECT 
-    percentile_cont(0.10) WITHIN GROUP (ORDER BY result) AS perc_10,
-    percentile_cont(0.90) WITHIN GROUP (ORDER BY result) AS perc_90
-FROM example_data
-)
-
-SELECT 
-  result, 
-  CASE 
-    WHEN result < perc_10 THEN perc_10
-    WHEN result > perc_90 THEN perc_90
-    ELSE result
-  END as capped_result
-FROM example_data AS ed
-INNER JOIN percentiles AS p
-    ON 1=1
-```
-
-#### Solve COUNT DISTINCT window function need without a window function
-
--   TODO
 
 #### Handling NULLs in window functions order by clause
-
--   TODO
+- 1/28 next step
 
 #### Table 9-52. Hypothetical-Set Aggregate Functions
 

@@ -419,3 +419,101 @@ FROM conversion_data
 GROUP BY 1
 ORDER BY window_start_date ASC
 ```
+
+## TODO / Revisit
+
+#### Revisit!!!
+
+- revisit; how is this practical? When would you use this?  
+- above examples for PERCENTILE_CONT & PERCENTILE_DISC highlight wide format output
+
+```         
+WITH student_scores(student_id, test_score) AS (
+            VALUES
+            (1, 85),
+            (2, 78),
+            (3, 92),
+            (4, 88),
+            (5, 74),
+            (6, 81),
+            (7, 67),
+            (8, 95),
+            (9, 89),
+            (10, 72),
+            (11, 90),
+            (12, 77),
+            (13, 83),
+            (14, 65),
+            (15, 80)
+)
+
+, percentile_names(name, value) AS (
+    VALUES
+    ('p05', 0.05),
+    ('p25', 0.25),
+    ('median', 0.50),
+    ('p75', 0.75),
+    ('p95', 0.95)
+)
+
+, percentile_type(pct_type) AS (
+    VALUES
+    ('continuous'), 
+    ('discrete')
+)
+
+, percentile_type_and_name AS (
+    SELECT
+        pn.*,
+        pt.*
+    FROM percentile_names AS pn
+    CROSS JOIN percentile_type AS pt
+)
+
+SELECT
+    ptn.pct_type AS percentile_type,
+    ptn.name AS percentile_name,
+    CASE
+        WHEN ptn.pct_type = 'continuous' 
+                THEN PERCENTILE_CONT(ptn.value) WITHIN GROUP (ORDER BY ss.test_score)
+        WHEN ptn.pct_type = 'discrete'
+        THEN PERCENTILE_DISC(ptn.value) WITHIN GROUP (ORDER BY ss.test_score)
+    END AS percentile_value
+FROM student_scores AS ss
+CROSS JOIN percentile_type_and_name AS ptn
+GROUP BY ptn.pct_type, ptn.name, ptn.value
+ORDER BY ptn.pct_type, ptn.value;
+```
+
+#### Capping values
+
+-   useful when dataset has long tails and there's a desire to reduce the influence of extreme outlier values on metrics
+-   example logic: if a value is below 10th percentile cap the value at the 10th percentile; if a value is above 90th percentile cap the value at the 90th percentile
+
+```         
+WITH example_data(result) AS (
+   VALUES 
+    (1), (2), (3), (4), (5), (6), (7), (8), (9), (10), 
+    (11), (12), (13), (14), (15), (16), (17), (18), (19), (20)
+)
+
+, percentiles AS (
+SELECT 
+    percentile_cont(0.10) WITHIN GROUP (ORDER BY result) AS perc_10,
+    percentile_cont(0.90) WITHIN GROUP (ORDER BY result) AS perc_90
+FROM example_data
+)
+
+SELECT 
+  result, 
+  CASE 
+    WHEN result < perc_10 THEN perc_10
+    WHEN result > perc_90 THEN perc_90
+    ELSE result
+  END as capped_result
+FROM example_data AS ed
+INNER JOIN percentiles AS p
+    ON 1=1
+```
+
+
