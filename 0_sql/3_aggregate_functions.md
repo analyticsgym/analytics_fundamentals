@@ -516,4 +516,34 @@ INNER JOIN percentiles AS p
     ON 1=1
 ```
 
+#### Hypothetical-Set Aggregate Functions
+- look similar to window functions but are not window functions
+- calculating the result of a hypothetical value as if it were part of the set of likes
+- TODO: explore further; included in other DBs, explain difference with window functions
+
+```sql
+WITH social_media_posts(post_id, user_id, likes, post_date) AS (
+  VALUES 
+  (1, 101, 120, '2024-01-01'),
+  (2, 102, 150, '2024-01-02'),
+  (3, 101, 200, '2024-01-02'),
+  (4, 103, 180, '2024-01-03'),
+  (5, 102, 140, '2024-01-04'),
+  (6, 104, 160, '2024-01-04'),
+  (7, 101, 190, '2024-01-04'),
+  (8, 105, 110, '2024-01-05'),
+  (9, 104, 130, '2024-01-05'),
+  (10, 103, 175, '2024-01-06'),
+  (11, 101, 165, '2024-01-06'),
+  (12, 102, 155, '2024-01-07'),
+  (13, 103, 145, '2024-01-07'),
+  (14, 104, 135, '2024-01-08'),
+  (15, 105, 125, '2024-01-08')
+)
+SELECT 
+	rank(500) WITHIN GROUP (ORDER BY likes DESC) AS test1,
+	rank(105) WITHIN GROUP (ORDER BY likes DESC) AS test2
+FROM social_media_posts;
+```
+
 

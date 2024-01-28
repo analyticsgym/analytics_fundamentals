@@ -379,7 +379,7 @@ ORDER BY sales_amount DESC, sales_rep
 -   main difference between RANK and DENSE_RANK: DENSE_RANK ties receive the same rank without gaps between ranks
 -   i.e. when three sales reps tie for rank 1 the next rank assigned is 2
 
-```sql         
+``` sql
 SELECT
     sales_rep,
     sales_amount,
@@ -468,7 +468,7 @@ ORDER BY copies_sold DESC
 -   LAG: returns column value of the row offset by N row(s) BEFORE the current row
 -   LEAD: returns column value of the row offset by N row(s) AFTER the current row
 
-```sql         
+``` sql
 DROP TABLE IF EXISTS temp_example_watch_history;
 CREATE TEMP TABLE temp_example_watch_history (
     user_id INT,
@@ -533,7 +533,7 @@ ORDER BY user_id, first_watched_date
 -   LAST_VALUE: returns the last value in an ordered set of values
 -   NTH_VALUE: returns the Nth value in an ordered set of values
 
-```sql         
+``` sql
 SELECT
     *,
     FIRST_VALUE(show_title || '_' || show_id) OVER(
@@ -561,11 +561,12 @@ FROM temp_example_watch_history
 ```
 
 #### MIN and MAX
-- MIN: find minimum value in a partition / result set
-- MAX: find maximum value in a partition / result set
-- example below using MIN and MAX window functions for min-max normalization
 
-```sql
+-   MIN: find minimum value in a partition / result set
+-   MAX: find maximum value in a partition / result set
+-   example below using MIN and MAX window functions for min-max normalization
+
+``` sql
 WITH fake_stocks(stock_name, date, closing_price) AS (
     VALUES
     ('NetGrid', '2023-01-01',  98.50),
@@ -616,7 +617,7 @@ FROM setup_stock_price_ranges
 -   approach with PostgreSQL
 -   database vendors have slightly different approaches (i.e. Redshift has RATIO_TO_REPORT() which can be used for pct total calcs)
 
-```sql      
+``` sql
 WITH example_data(item, amount) AS (
   VALUES
     ('Item A', 50),
@@ -638,7 +639,7 @@ ORDER BY percent_total DESC
 
 -   rolling sum window function compared to total aggregation
 
-```sql         
+``` sql
 WITH salary AS (
     SELECT unnest(ARRAY[50000, 55000, 60000, 65000, 70000, 
                         75000, 80000, 85000, 90000, 950000]) AS salary_dollars
@@ -654,9 +655,10 @@ ORDER BY salary_dollars
 ```
 
 #### Quartiles with lower and upper bound values
+
 -   approach to provide additional context when generating quartiles
 
-```sql         
+``` sql
 -- source: https://www.statmuse.com/nfl/ask/nfl-qb-total-touchdown-leaders-2022
 WITH top_20_quarterbacks(player_name, team, total_td)
 VALUES ('Patrick Mahomes', 'KC', 45),
@@ -700,9 +702,10 @@ ORDER BY total_td DESC, player_name
 ```
 
 #### Moving Average
+
 -   moving batting average across last 3 seasons
 
-```sql         
+``` sql
 -- first 20 seasons stats for Barry Bonds
 -- https://www.baseball-reference.com/players/b/bondsba01.shtml
 WITH barry_bonds(season, batting_average) AS (
@@ -745,17 +748,18 @@ FROM (
             ORDER BY season ASC
         ) AS season_order,
         AVG(batting_average::FLOAT) OVER (
-			ORDER BY season ASC
-			ROWS BETWEEN 2 PRECEDING and CURRENT ROW
+            ORDER BY season ASC
+            ROWS BETWEEN 2 PRECEDING and CURRENT ROW
         ) AS batting_avg_moving_average_3
     FROM barry_bonds
 ) AS sub_q
 ```
 
 #### New yearly revenue record
-- find the rolling max revenue for prior years and compare to current row year
 
-```sql         
+-   find the rolling max revenue for prior years and compare to current row year
+
+``` sql
 -- to get reproducible results
 SELECT SETSEED(0.25);
 
@@ -807,7 +811,7 @@ FROM yearly_revenue_setup
 
 -   note use of frame logic using RANGE BETWEEN which is conditional on date vs row position
 
-```sql
+``` sql
 -- to get reproducible results
 SELECT SETSEED(0.1);
 
@@ -840,7 +844,7 @@ FROM temp_daily_sales
 
 -   using multiple window functions: ranking, ntiles, running total, etc
 
-```sql         
+``` sql
 DROP TABLE IF EXISTS temp_store_sales_2022;
 CREATE TEMP TABLE temp_store_sales_2022 (
   location_id INTEGER,
@@ -883,10 +887,11 @@ ORDER BY total_sales DESC
 ```
 
 #### YoY sales growth using window function
-- note use of lag function to get prior year sales
-- could also be solved using a self join
 
-```sql         
+-   note use of lag function to get prior year sales
+-   could also be solved using a self join
+
+``` sql
 WITH sales AS (
     SELECT 
         UNNEST(ARRAY[23456, 43567, 65812, 79234, 567394]) AS annual_sales,
@@ -896,9 +901,9 @@ WITH sales AS (
 -- NULLs expected for first year prior year sales and YoY growth
 SELECT
   'window_fun_results' AS label,
-	year,
+    year,
   annual_sales,
-	LAG(annual_sales) OVER(ORDER BY year ASC) AS prior_year_sales,
+    LAG(annual_sales) OVER(ORDER BY year ASC) AS prior_year_sales,
     ((annual_sales - LAG(annual_sales) OVER(ORDER BY year ASC)::FLOAT) 
        / LAG(annual_sales) OVER(ORDER BY year ASC)) * 100 AS yoy_sales_growth
 FROM sales
@@ -906,21 +911,22 @@ FROM sales
 UNION ALL 
 
 SELECT 
-	'self_join_results' AS label,
-	current_year.year,
-	current_year.annual_sales,
-	prior_year.annual_sales AS prior_year_sales,
-	((current_year.annual_sales - prior_year.annual_sales)::FLOAT
-		/ prior_year.annual_sales) * 100 AS yoy_sales_growth
+    'self_join_results' AS label,
+    current_year.year,
+    current_year.annual_sales,
+    prior_year.annual_sales AS prior_year_sales,
+    ((current_year.annual_sales - prior_year.annual_sales)::FLOAT
+        / prior_year.annual_sales) * 100 AS yoy_sales_growth
 FROM sales AS current_year
 LEFT JOIN sales AS prior_year
-	ON prior_year.year = (current_year.year - 1)
+    ON prior_year.year = (current_year.year - 1)
 ```
 
 #### Sales by month and add YTD sales column
+
 -   note use of partition by year and frame boundary
 
-```sql         
+``` sql
 WITH sales_data(sales_month, sales) AS (
     VALUES
     ('2022-10-01'::date, 1000),
@@ -934,30 +940,31 @@ SELECT
     sales,
     SUM(sales) OVER (
     -- note partition by year
-		PARTITION BY EXTRACT(year FROM sales_month)
+        PARTITION BY EXTRACT(year FROM sales_month)
         ORDER BY sales_month
     -- frame default with order by; being explicit for readability
-		ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
     ) AS ytd_sales
 FROM sales_data
 ORDER BY sales_month
 ```
 
 #### Sales by month output with prior year sales column for visual comparison
-- leverage lag function to get prior year sales; note partition spec
 
-```sql         
+-   leverage lag function to get prior year sales; note partition spec
+
+``` sql
 -- set seed so sales amount is consistent on query reruns
 SELECT SETSEED(0.99);
 
 -- generates sequence of 24 months
 WITH months AS (
-		SELECT
-			generate_series(
-				date_trunc('month', '2024-01-01'::DATE - INTERVAL '24 months'),
-				'2024-01-01'::DATE - INTERVAL '1 month',
-				'1 month'
-			)::DATE AS sales_month
+        SELECT
+            generate_series(
+                date_trunc('month', '2024-01-01'::DATE - INTERVAL '24 months'),
+                '2024-01-01'::DATE - INTERVAL '1 month',
+                '1 month'
+            )::DATE AS sales_month
 )
 
 -- assign random sales amount to each month
@@ -971,27 +978,28 @@ WITH months AS (
 
 -- sub query to do where clause filter after window function compute
 SELECT
-	sales_month,
-	sales_amount,
-	prior_year_sales
+    sales_month,
+    sales_amount,
+    prior_year_sales
 FROM (
-	SELECT
-		*,
-		LAG(sales_amount) OVER(
-			PARTITION BY EXTRACT(month FROM sales_month)
-			ORDER BY sales_month
-		) AS prior_year_sales
-	FROM example_sales_data
-	ORDER BY sales_month
+    SELECT
+        *,
+        LAG(sales_amount) OVER(
+            PARTITION BY EXTRACT(month FROM sales_month)
+            ORDER BY sales_month
+        ) AS prior_year_sales
+    FROM example_sales_data
+    ORDER BY sales_month
 ) AS sub_q
 -- returns rows where we have prior year sales
 WHERE sales_month >= first_sales_month + INTERVAL '12 months'
 ```
 
 #### Workaround for COUNT DISTINCT window function use case
-- using ROW_NUMBER() and a conditional SUM()
 
-```sql
+-   using ROW_NUMBER() and a conditional SUM()
+
+``` sql
 WITH sales_data(transaction_id, customer_id, transaction_date, amount) AS (
     VALUES
     (1, 'C001', '2024-01-10'::DATE, 100),
@@ -1007,36 +1015,79 @@ WITH sales_data(transaction_id, customer_id, transaction_date, amount) AS (
 )
 
 , sales_data_setup AS (
-	SELECT
-		*,
-		ROW_NUMBER() OVER(
-			PARTITION BY customer_id, DATE_TRUNC('month', transaction_date)
-			ORDER BY transaction_date ASC
-		) AS by_month_customer_purchase_order
-	FROM sales_data
+    SELECT
+        *,
+        ROW_NUMBER() OVER(
+            PARTITION BY customer_id, DATE_TRUNC('month', transaction_date)
+            ORDER BY transaction_date ASC
+        ) AS by_month_customer_purchase_order
+    FROM sales_data
 )
 
 SELECT
-	*,
-	AVG(amount) OVER (PARTITION BY customer_id) AS avg_amount_per_customer,
-	SUM(amount) OVER (PARTITION BY customer_id) AS total_amount_per_customer,
-	COUNT(*) OVER (PARTITION BY customer_id) AS transaction_count_per_customer,
-	-- count unique purchase months by customer
-	SUM(
-		CASE 
-			WHEN by_month_customer_purchase_order = 1
-			THEN 1
-			ELSE 0
-		END
-	) OVER(
-		PARTITION BY customer_id
-	) AS unqiue_months_with_purchases_per_customer
+    *,
+    AVG(amount) OVER (PARTITION BY customer_id) AS avg_amount_per_customer,
+    SUM(amount) OVER (PARTITION BY customer_id) AS total_amount_per_customer,
+    COUNT(*) OVER (PARTITION BY customer_id) AS transaction_count_per_customer,
+    -- count unique purchase months by customer
+    SUM(
+        CASE 
+            WHEN by_month_customer_purchase_order = 1
+            THEN 1
+            ELSE 0
+        END
+    ) OVER(
+        PARTITION BY customer_id
+    ) AS unqiue_months_with_purchases_per_customer
 FROM sales_data_setup
 ORDER BY transaction_id
 ```
 
-#### Handling NULLs in window functions order by clause
-- 1/28 next step
+#### Handling NULLs in window functions
+
+-   argument input:
+    -   SQL standard includes a RESPECT NULLS or IGNORE NULLS clause for certain window functions
+    -   IGNORE NULLS not implemented in PostgreSQL; included in other DB vendor SQL (i.e. Redshift, etc)
+    -   NULL treatment is specific to the function use case (i.e. AVG(column_x) ignores NULLs vs COUNT(*) includes NULLs)
+-   partition:
+    -   NULLs included in a partition column are treated as a single group
+-   order by:
+    - by default, NULLs are sorted last in ascending order and first in descending order
+    - override default with NULLS FIRST or NULLS LAST
+-   window frame:
+    -   
+
+```sql
+WITH social_media_posts(post_id, user_id, likes, post_date) AS (
+  VALUES 
+  (1, 101, NULL, '2024-01-01'),
+  (2, 102, 150, '2024-01-02'),
+  (3, 101, 200, '2024-01-02'),
+  (4, 103, NULL, '2024-01-03'),
+  (5, 102, 140, '2024-01-04'),
+  (6, 104, 160, '2024-01-04'),
+  (7, 101, 190, '2024-01-04'),
+  (8, 105, 110, '2024-01-05'),
+  (9, 104, 130, '2024-01-05'),
+  (10, 103, 175, '2024-01-06'),
+  (11, 101, 165, '2024-01-06'),
+  (12, 102, 155, '2024-01-07'),
+  (13, 103, 145, '2024-01-07'),
+  (14, 104, 130, '2024-01-08'),
+  (15, 105, 125, '2024-01-08')
+)
+
+SELECT
+	*,
+	DENSE_RANK() OVER(
+		PARTITION BY user_id
+		-- force NULLs to sort at end vs default DESC NULLS first
+		ORDER BY likes DESC NULLS LAST
+		-- could also use
+		-- ORDER BY COALESCE(likes, 0) DESC
+	) AS user_post_likes_rank
+FROM social_media_posts
+```
 
 #### Table 9-52. Hypothetical-Set Aggregate Functions
 
