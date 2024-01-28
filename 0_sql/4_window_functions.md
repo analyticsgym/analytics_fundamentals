@@ -1045,19 +1045,21 @@ ORDER BY transaction_id
 
 #### Handling NULLs in window functions
 
+-   given the nuances, worth building test cases to validate results for the dataset one is working with
 -   argument input:
     -   SQL standard includes a RESPECT NULLS or IGNORE NULLS clause for certain window functions
     -   IGNORE NULLS not implemented in PostgreSQL; included in other DB vendor SQL (i.e. Redshift, etc)
-    -   NULL treatment is specific to the function use case (i.e. AVG(column_x) ignores NULLs vs COUNT(*) includes NULLs)
+    -   NULL treatment is specific to the function use case (i.e. AVG(column_x) ignores NULLs vs COUNT(\*) includes NULLs)
 -   partition:
     -   NULLs included in a partition column are treated as a single group
 -   order by:
-    - by default, NULLs are sorted last in ascending order and first in descending order
-    - override default with NULLS FIRST or NULLS LAST
+    -   by default, NULLs are sorted last in ascending order and first in descending order
+    -   override default behavior with NULLS FIRST or NULLS LAST
 -   window frame:
-    -   
+    -   NULLs tend to be treated as normal rows
+    -   results can differ for ROWS, RANGE, and GROUPS frame types (worth validating expected behavior)
 
-```sql
+``` sql
 WITH social_media_posts(post_id, user_id, likes, post_date) AS (
   VALUES 
   (1, 101, NULL, '2024-01-01'),
@@ -1078,20 +1080,13 @@ WITH social_media_posts(post_id, user_id, likes, post_date) AS (
 )
 
 SELECT
-	*,
-	DENSE_RANK() OVER(
-		PARTITION BY user_id
-		-- force NULLs to sort at end vs default DESC NULLS first
-		ORDER BY likes DESC NULLS LAST
-		-- could also use
-		-- ORDER BY COALESCE(likes, 0) DESC
-	) AS user_post_likes_rank
+    *,
+    DENSE_RANK() OVER(
+        PARTITION BY user_id
+        -- force NULLs to sort at end vs default DESC NULLS first
+        ORDER BY likes DESC NULLS LAST
+        -- could also use
+        -- ORDER BY COALESCE(likes, 0) DESC
+    ) AS user_post_likes_rank
 FROM social_media_posts
 ```
-
-#### Table 9-52. Hypothetical-Set Aggregate Functions
-
--   TODO
--   review the table in the link below for more information on the hypothetical set aggregate functions
--   <https://www.postgresql.org/docs/13/functions-aggregate.html#FUNCTIONS-HYPOTHETICAL-TABLE>
--   What's the difference between the hypothetical set aggregate functions and the window functions?
