@@ -1048,7 +1048,7 @@ ORDER BY transaction_id
 -   given the nuances, worth building test cases to validate results for the dataset one is working with
 -   argument input:
     -   SQL standard includes a RESPECT NULLS or IGNORE NULLS clause for certain window functions
-    -   IGNORE NULLS not implemented in PostgreSQL; included in other DB vendor SQL (i.e. Redshift, etc)
+    -   IGNORE NULLS not implemented in PostgreSQL; often included in other DB vendor SQL (i.e. Redshift, etc)
     -   NULL treatment is specific to the function use case (i.e. AVG(column_x) ignores NULLs vs COUNT(\*) includes NULLs)
 -   partition:
     -   NULLs included in a partition column are treated as a single group
@@ -1057,7 +1057,7 @@ ORDER BY transaction_id
     -   override default behavior with NULLS FIRST or NULLS LAST
 -   window frame:
     -   NULLs tend to be treated as normal rows
-    -   results can differ for ROWS, RANGE, and GROUPS frame types (worth validating expected behavior)
+    -   however, results can differ for ROWS, RANGE, and GROUPS frame types (worth validating expected behavior)
 
 ``` sql
 WITH social_media_posts(post_id, user_id, likes, post_date) AS (

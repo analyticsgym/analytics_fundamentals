@@ -2,35 +2,36 @@
 
 #### Aggregate functions overview
 
--   Calculations across rows which result in single number output.
--   i.e. SUM, AVG, MAX, MIN , etc
+-   return a single result output from set of input values
+-   common calculation based aggregate functions: COUNT, SUM, AVG, MAX, MIN , etc
+-   other types of aggregate functions: STRING_AGG, ARRAY_AGG, etc
 
 #### Aggregates/metrics with NULL values
 
--   By default, most Postgres SQL aggregate functions ignore NULL values.
--   COALESCE can be used set NULLs to a default value to be included in calcs.
--   Important to consider if NULLs should or should not be included in calcs when SQL functions.
+-   by default, most aggregate functions ignore NULL values
+-   COALESCE can be used set NULLs to a default value to be included in calcs
+-   important to consider if NULLs should or should not be included in calcs when SQL functions
 
-```         
-WITH pet_goats AS (
-    SELECT 'becky' AS name, 4 AS pet_goats
-        UNION
-    SELECT 'jill' AS name, 2 AS pet_goats
-        UNION
-    SELECT 'becky' AS name, NULL AS pet_goats
-        UNION
-    SELECT 'tom' AS name, 1 AS pet_goats
+```sql         
+WITH pet_goats(name, pet_goats) AS (
+  VALUES
+    ('becky', 4),
+    ('jill', 2),
+    ('becky', NULL),
+    ('tom', 1)
 )
 
 -- as expected, average shifts based on how NULLs are handled
 SELECT
-    AVG(pet_goats::FLOAT) AS avg_pet_goats_per_person,
-    AVG(COALESCE(pet_goats, 0)::FLOAT) AS avg_pet_goats_per_person_inclusive_of_non_owners
+    -- ignores NULL values by default
+	AVG(pet_goats::FLOAT) AS avg_pet_goats_per_pet_person,
+	-- NULL values set to 0
+	AVG(COALESCE(pet_goats, 0)::FLOAT) AS avg_pet_goats_per_person_including_of_non_owners
 FROM pet_goats
 ```
 
 #### COUNT
-
+-   Next step 2/1 bookmark
 -   Subtle differences of how COUNT functions can be applied based on use case.
 -   COUNT(\*) counts number of rows.
 -   COUNT(<column_name>) count of non-NULL column values.
