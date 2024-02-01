@@ -13,13 +13,16 @@
 -   important to consider if NULLs should or should not be included in calcs when SQL functions
 
 ```sql         
-WITH pet_goats(name, pet_goats) AS (
-  VALUES
+CREATE TEMP TABLE temp_pet_goats AS
+SELECT *
+FROM (VALUES
     ('becky', 4),
     ('jill', 2),
     ('becky', NULL),
-    ('tom', 1)
-)
+    ('tom', 1),
+    (NULL, 9),
+    ('jill', 3)
+) AS t(name, pet_goats);
 
 -- as expected, average shifts based on how NULLs are handled
 SELECT
@@ -27,24 +30,23 @@ SELECT
 	AVG(pet_goats::FLOAT) AS avg_pet_goats_per_pet_person,
 	-- NULL values set to 0
 	AVG(COALESCE(pet_goats, 0)::FLOAT) AS avg_pet_goats_per_person_including_of_non_owners
-FROM pet_goats
+FROM temp_pet_goats
 ```
 
 #### COUNT
--   Next step 2/1 bookmark
--   Subtle differences of how COUNT functions can be applied based on use case.
--   COUNT(\*) counts number of rows.
--   COUNT(<column_name>) count of non-NULL column values.
--   COUNT(DISTINCT <column_name>) count unique of non-NULL column values.
+-   Subtle differences of how COUNT functions can be applied based on use case
+-   COUNT(\*) counts number of rows
+-   COUNT(<column_name>) count of non-NULL column values
+-   COUNT(DISTINCT <column_name>) count unique of non-NULL column values
 
-```         
+```sql         
 SELECT
-    COUNT(*) AS cte_row_count,
-    COUNT(pet_goats) AS number_of_pet_goat_owners,
-    COUNT(*) - COUNT(pet_goats) AS number_of_non_pet_goat_owners,
-    COUNT(DISTINCT name) AS number_of_unique_pet_goat_owner_names
--- example CTE generated above
-FROM pet_goats
+    COUNT(*) AS row_count, -- inclusive of NULL values
+    COUNT(name) AS number_of_pet_goat_owner_names, -- excludes NULL values by default
+    COUNT(DISTINCT name) AS number_of_unique_pet_goat_owner_names, -- excludes NULL values by default
+    COUNT(*) - COUNT(name) AS number_of_null_pet_goat_owner_names
+-- temp table generate above
+FROM temp_pet_goats
 ```
 
 #### Median and Percentiles
@@ -52,11 +54,11 @@ FROM pet_goats
 -   PERCENTILE_DIST: returns an existing data point at or exceeding the percentile threshold (does not use interpolation)
 -   PERCENTILE_CONT: returns a percentile value with interpolation if needed
 -   percentiles represent the proportion of values in a distribution that are less than the percentile value
--   interpolation vs extrapolation: interpolation estimates a value between two known values vs extrapolation estimates a value beyond known values
+-   sidebar on interpolation vs extrapolation: interpolation estimates a value between two known values vs extrapolation estimates a value beyond known values
 -   continuous vs discrete percentile: continuous percentile is the proportion of values less than the percentile value vs discrete percentile is the proportion of values less than or equal to the percentile value
 -   median = 50th percentile = 0.5 continuous percentile
 
-``` sql
+```sql
 WITH student_scores(student_id, test_score) AS (
             VALUES
             (1, 85),
@@ -94,7 +96,7 @@ FROM student_scores
 ```
 
 #### Variance and Standard Deviation
-
+-   2/2 next step bookmark
 -   VAR_POP and STDDEV_POP used for entire population datasets.
 -   VAR_SAMP and STDDEV_SAMP used for samples (adjustments made for sample size vs population metrics).
 -   In general, for large sample sizes/data sets, population vs sample variance/standard deviation will be similar.
