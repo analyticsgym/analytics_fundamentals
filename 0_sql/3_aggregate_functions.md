@@ -97,12 +97,12 @@ FROM student_scores
 
 #### Variance and Standard Deviation
 -   2/2 next step bookmark
--   VAR_POP and STDDEV_POP used for entire population datasets.
--   VAR_SAMP and STDDEV_SAMP used for samples (adjustments made for sample size vs population metrics).
--   In general, for large sample sizes/data sets, population vs sample variance/standard deviation will be similar.
--   Standard deviation is a helpful metric for assessing the variability/dispersion of a dataset alongside measures of centrality (i.e. averages, etc).
+-   VAR_POP and STDDEV_POP used for entire population datasets
+-   VAR_SAMP and STDDEV_SAMP used for samples (adjustments made for sample size vs population metrics)
+-   For large sample sizes/data sets, population vs sample variance/standard deviation expected to be similar
+-   Standard deviation is a helpful metric for assessing the variability/dispersion of a dataset alongside measures of centrality (i.e. averages, etc)
 
-```         
+```sql         
 WITH batting_sample AS (
     SELECT 
         UNNEST(ARRAY[1,2,3,4,5,6,7,8,9,10,11,12]) AS player,
@@ -118,13 +118,11 @@ FROM batting_sample
 ```
 
 #### Binary Flags with MAX
+-   Common approach for creating product usage flags
 
--   Common approach for creating product usage flags.
-
-```         
--- update witb cleaner code
-WITH installs AS (
-  SELECT * FROM (
+```sql         
+-- update with cleaner code
+WITH installs(user_id, install_date, platform) AS (
       VALUES
         (1, '2023-01-01', 'iOS'),
         (1, '2023-01-02', 'Android'),
@@ -134,8 +132,7 @@ WITH installs AS (
         (4, '2023-01-05', 'iOS'),
         (4, '2023-01-05', 'Fire TV'),
         (4, '2023-01-05', 'Android TV')
-  ) AS t(user_id, install_date, platform)
-)
+  )
 
 SELECT
   user_id,
@@ -145,35 +142,18 @@ SELECT
   MAX(CASE WHEN platform = 'Android TV' THEN 1 ELSE 0 END) AS flag_apple_tv_installed,
   MAX(CASE WHEN platform = 'Fire TV' THEN 1 ELSE 0 END) AS flag_fire_tv_installed
 FROM installs
-GROUP BY user_id;
+GROUP BY user_id
 ```
-
-#### Misc notes
-
--   creating bins
--   
 
 #### Conditional aggregate functions
+- For example, how to derive spreadsheet functions such as COUNTIF, SUMIF, AVGIF, etc 
+- Filter vs CASE WHEN
+- 2/2 next step bookmark
 
-### Aggregate functions on Numerics, Integers, Floats
 
--   integer data types for counting or summing small whole numbers
--   floating-point data types for calculations involving decimal numbers
--   numeric data types for precise calculations involving large or small numbers
-
-```         
-Include examples
-```
-
-#### AVG on INT vs FLOAT
-
--   by default Postgres SQL will round integer average to nearest whole number
--   cast to FLOAT to ensure decimal places are returned
--   note: some query tools will not round average to nearest whole number
-
-```         
 
 #### Flagging outliers
+- To be added
 
 #### GROUPING SETS
 - used to output agggregation result for different granularities within the same group by clause (i.e. agg sales for group 1 overall, agg sales for group 1 and 2, etc)
@@ -519,6 +499,9 @@ INNER JOIN percentiles AS p
     ON 1=1
 ```
 
+#### Binning values
+- TODO
+
 #### Hypothetical-Set Aggregate Functions
 - look similar to window functions but are not window functions
 - calculating the result of a hypothetical value as if it were part of the set of likes
@@ -549,4 +532,13 @@ SELECT
 FROM social_media_posts;
 ```
 
+#### Aggregate functions and data types
+- for large datasets, the data type can have a significant impact on performance
+- for example AVG on a large dataset of integers will be faster than AVG on a large dataset of floats
+- decide on the optimal input data type for desired output use case and performance trade-offs
+
+#### AVG on INT vs FLOAT
+- by default Postgres SQL will round integer average to nearest whole number
+- cast to numeric or FLOAT to ensure decimal places are returned
+- note: some query tools will not round average to nearest whole number
 
