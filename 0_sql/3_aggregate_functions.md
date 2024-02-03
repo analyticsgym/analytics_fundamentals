@@ -146,19 +146,68 @@ GROUP BY user_id
 ```
 
 #### Conditional aggregate functions
-- For example, how to derive spreadsheet functions such as COUNTIF, SUMIF, AVGIF, etc 
-- Filter vs CASE WHEN
-- 2/2 next step bookmark
+- For example, how to derive spreadsheet functions like COUNTIF, SUMIF, AVGIF, etc 
+- Most approach is to use CASE WHEN statements within aggregate functions
+- PostgreSQL also has FILTER clause for aggregate functions to filter data before aggregation
 
+```sql
+-- conditional aggregation with CASE WHEN
+WITH state_parks(park_id, park_name, state, visitors, revenue, has_camping) AS (
+  VALUES 
+  (1, 'Park A', 'FL', 5000, 150000, true),
+  (2, 'Park B', 'CA', 8000, 200000, false),
+  (3, 'Park C', 'CA', 12000, 300000, true),
+  (4, 'Park D', 'CA', 4000, 80000, false),
+  (5, 'Park E', 'MA', 7000, 250000, true),
+  (6, 'Park F', 'MA', 3000, 50000, false),
+  (7, 'Park G', 'TN', 9500, 280000, true),
+  (8, 'Park H', 'TN', 6000, 120000, false)
+)
 
+SELECT 
+  state,
+  SUM(CASE WHEN has_camping = true THEN visitors ELSE 0 END) AS total_visitors_park_with_camping,
+  SUM(CASE WHEN has_camping = true THEN revenue ELSE 0 END) AS total_revenue_park_with_camping,
+  SUM(CASE WHEN has_camping != true THEN visitors ELSE 0 END) AS total_visitors_park_without_camping,
+  SUM(CASE WHEN has_camping != true THEN revenue ELSE 0 END) AS total_revenue_park_without_camping
+FROM state_parks
+GROUP BY state
+ORDER BY total_visitors_park_with_camping DESC
+```
+
+```sql
+-- conditional aggregation with FILTER clause
+WITH transactions(transaction_id, user_id, amount, category, user_type) AS (
+  VALUES 
+  (1, 101, 100.00, 'Groceries', 'Individual'),
+  (2, 102, 150.00, 'Electronics', 'Business'),
+  (3, 103, 200.00, 'Groceries', 'Individual'),
+  (4, 101, 50.00, 'Utilities', 'Individual'),
+  (5, 102, 300.00, 'Electronics', 'Business'),
+  (6, 103, 400.00, 'Travel', 'Individual'),
+  (7, 101, 1000.00, 'Travel', 'Business'),
+  (8, 102, 80.00, 'Groceries', 'Individual'),
+  (9, 103, 90.00, 'Utilities', 'Business')
+)
+
+SELECT 
+  category,
+  COUNT(*) AS transaction_count,
+  COUNT(DISTINCT user_id) AS user_count,
+  COUNT(*) FILTER (WHERE amount > 100) AS count_transactions_over_100,
+  AVG(amount) FILTER (WHERE amount < 1000) AS avg_amount_under_1k,
+  AVG(amount) FILTER (WHERE user_type = 'Business') AS avg_business_user_type_amount
+FROM transactions
+GROUP BY category
+```
 
 #### Flagging outliers
-- To be added
+- Next step bookmark 2/4
 
 #### GROUPING SETS
-- used to output agggregation result for different granularities within the same group by clause (i.e. agg sales for group 1 overall, agg sales for group 1 and 2, etc)
+- used to output aggregation result for different granularities within the same group by clause (i.e. agg sales for group 1 overall, agg sales for group 1 and 2, etc)
 - could also use UNIONs to row bind results of varying granularity together with matching column names (more verbose code needed)
-- not available in Amazon Redshift (use UNION ALL approach instead)
+
 ```
 
 WITH zip_sales(state, city, total_sales, fake_zipcode) AS ( VALUES ('NY', 'New York', 50000.00, 12345), ('NY', 'Buffalo', 20000.00, 45678), ('CA', 'Los Angeles', 75000.00, 54321), ('CA', 'San Francisco', 60000.00, 56789), ('TX', 'Houston', 45000.00, 11222), ('TX', 'Houston', 45000.00, 11223), ('TX', 'Dallas', 40000.00, 33444) )

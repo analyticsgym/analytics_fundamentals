@@ -1090,3 +1090,38 @@ SELECT
     ) AS user_post_likes_rank
 FROM social_media_posts
 ```
+
+#### Filtering window function results
+
+-   both WHERE and HAVING clause filtering occurs before window function logic is applied
+-   HAVING clause filtering primarily used to filter results of an aggregate function
+-   subquery and CTEs tend to be used to filter window function results
+-   some DB vendors like Amazon Redshift support inline window function filtering ([see QUALIFY clause](https://docs.aws.amazon.com/redshift/latest/dg/r_QUALIFY_clause.html))
+
+``` sql
+WITH sales_table(region, sales) AS (
+  VALUES 
+  ('North', 6000),
+  ('North', 5000),
+  ('South', 7000),
+  ('South', 3000),
+  ('East', 4000),
+  ('East', 4500),
+  ('West', 8000),
+  ('West', 2000)
+)
+, sales_avg AS (
+  SELECT region, 
+         AVG(sales::FLOAT) OVER (
+            PARTITION BY region 
+            ORDER BY sales DESC
+          ) AS top_sale_avg
+  FROM sales_table
+)
+
+-- typical window function result filtering pattern
+SELECT 
+    region, top_sale_avg
+FROM sales_avg
+WHERE top_sale_avg > 5000
+```
