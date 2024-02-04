@@ -12,7 +12,7 @@
 -   COALESCE can be used set NULLs to a default value to be included in calcs
 -   important to consider if NULLs should or should not be included in calcs when SQL functions
 
-```sql         
+``` sql
 CREATE TEMP TABLE temp_pet_goats AS
 SELECT *
 FROM (VALUES
@@ -27,19 +27,20 @@ FROM (VALUES
 -- as expected, average shifts based on how NULLs are handled
 SELECT
     -- ignores NULL values by default
-	AVG(pet_goats::FLOAT) AS avg_pet_goats_per_pet_person,
-	-- NULL values set to 0
-	AVG(COALESCE(pet_goats, 0)::FLOAT) AS avg_pet_goats_per_person_including_of_non_owners
+    AVG(pet_goats::FLOAT) AS avg_pet_goats_per_pet_person,
+    -- NULL values set to 0
+    AVG(COALESCE(pet_goats, 0)::FLOAT) AS avg_pet_goats_per_person_including_of_non_owners
 FROM temp_pet_goats
 ```
 
 #### COUNT
+
 -   Subtle differences of how COUNT functions can be applied based on use case
 -   COUNT(\*) counts number of rows
 -   COUNT(<column_name>) count of non-NULL column values
 -   COUNT(DISTINCT <column_name>) count unique of non-NULL column values
 
-```sql         
+``` sql
 SELECT
     COUNT(*) AS row_count, -- inclusive of NULL values
     COUNT(name) AS number_of_pet_goat_owner_names, -- excludes NULL values by default
@@ -58,7 +59,7 @@ FROM temp_pet_goats
 -   continuous vs discrete percentile: continuous percentile is the proportion of values less than the percentile value vs discrete percentile is the proportion of values less than or equal to the percentile value
 -   median = 50th percentile = 0.5 continuous percentile
 
-```sql
+``` sql
 WITH student_scores(student_id, test_score) AS (
             VALUES
             (1, 85),
@@ -96,13 +97,13 @@ FROM student_scores
 ```
 
 #### Variance and Standard Deviation
--   2/2 next step bookmark
+
 -   VAR_POP and STDDEV_POP used for entire population datasets
 -   VAR_SAMP and STDDEV_SAMP used for samples (adjustments made for sample size vs population metrics)
--   For large sample sizes/data sets, population vs sample variance/standard deviation expected to be similar
--   Standard deviation is a helpful metric for assessing the variability/dispersion of a dataset alongside measures of centrality (i.e. averages, etc)
+-   for large sample sizes/data sets, population vs sample variance/standard deviation expected to be similar
+-   standard deviation is a helpful metric for assessing the variability/dispersion of a dataset alongside measures of centrality (i.e. averages, etc)
 
-```sql         
+``` sql
 WITH batting_sample AS (
     SELECT 
         UNNEST(ARRAY[1,2,3,4,5,6,7,8,9,10,11,12]) AS player,
@@ -118,9 +119,10 @@ FROM batting_sample
 ```
 
 #### Binary Flags with MAX
+
 -   Common approach for creating product usage flags
 
-```sql         
+``` sql
 -- update with cleaner code
 WITH installs(user_id, install_date, platform) AS (
       VALUES
@@ -146,12 +148,14 @@ GROUP BY user_id
 ```
 
 #### Conditional aggregate functions
-- For example, how to derive spreadsheet functions like COUNTIF, SUMIF, AVGIF, etc 
-- Most approach is to use CASE WHEN statements within aggregate functions
-- PostgreSQL also has FILTER clause for aggregate functions to filter data before aggregation
 
-```sql
--- conditional aggregation with CASE WHEN
+-   spreadsheet functions such as COUNTIF, SUMIF, AVGIF, etc
+-   most common approach uses CASE WHEN statements within aggregate functions
+-   postgreSQL also has FILTER clause for aggregate functions to filter data before aggregation
+
+Conditional aggregation with CASE WHEN
+
+``` sql
 WITH state_parks(park_id, park_name, state, visitors, revenue, has_camping) AS (
   VALUES 
   (1, 'Park A', 'FL', 5000, 150000, true),
@@ -175,8 +179,9 @@ GROUP BY state
 ORDER BY total_visitors_park_with_camping DESC
 ```
 
-```sql
--- conditional aggregation with FILTER clause
+Conditional aggregation with FILTER clause
+
+``` sql
 WITH transactions(transaction_id, user_id, amount, category, user_type) AS (
   VALUES 
   (1, 101, 100.00, 'Groceries', 'Individual'),
@@ -202,23 +207,88 @@ GROUP BY category
 ```
 
 #### Flagging outliers
-- Next step bookmark 2/4
+
+-   outliers tend to be defined as unusual observations different from the rest of the data (specific to the data distribution and domain context)
+-   several methods can be used to identify outliers (e.g. z-scores, IQR, etc)
+-   method tradeoffs based on data distribution, domain context, and business requirements
+
+Example outlier logic
+
+1.  data point greater than 2 standard deviations from the mean (useful for normally distributed data)
+2.  data point below p25 - 1.5 \* IQR or above p75 + 1.5 \* IQR (useful for skewed data)
+
+``` sql
+WITH youtube_video_views(video_id, view_count) AS (
+  VALUES 
+  (1, 1200),
+  (2, 1100),
+  (3, 1150),
+  (4, 1300),
+  (5, 1250),
+  (6, 1350),
+  (7, 1400),
+  (8, 1450),
+  (9, 1500),
+  (10, 1550),
+  (11, 5000),
+  (12, 5100),
+  (13, 100),
+  (14, 1600),
+  (15, 1650),
+  (16, 1700),
+  (17, 1750),
+  (18, 1800),
+  (19, 1850),
+  (20, 6000)
+)
+
+, stats AS (
+  SELECT 
+    AVG(view_count::FLOAT) AS avg_views,
+    STDDEV(view_count::FLOAT) AS sd_views,
+    percentile_cont(0.25) WITHIN GROUP (ORDER BY view_count) AS q1,
+    percentile_cont(0.75) WITHIN GROUP (ORDER BY view_count) AS q3
+  FROM youtube_video_views
+)
+
+SELECT 
+    v.*,
+    CASE 
+      WHEN 
+        (v.view_count > s.avg_views + (2*sd_views) OR 
+         v.view_count < s.avg_views - (2*sd_views))
+      THEN 'Yes'
+      ELSE 'No'
+    END AS outlier_flag_method_1,
+    -- method 2 likely a better fit for this dataset
+    CASE 
+      WHEN 
+        (v.view_count > (q3 + (q3 - q1)*1.5) OR 
+         v.view_count < (q1 - (q3 - q1)*1.5))
+      THEN 'Yes'
+      ELSE 'No'
+    END AS outlier_flag_method_2
+FROM youtube_video_views AS v
+INNER JOIN stats AS s
+    ON 1=1
+ORDER BY v.view_count DESC
+```
 
 #### GROUPING SETS
-- used to output aggregation result for different granularities within the same group by clause (i.e. agg sales for group 1 overall, agg sales for group 1 and 2, etc)
-- could also use UNIONs to row bind results of varying granularity together with matching column names (more verbose code needed)
+- next step bookmark 2/5
+-   used to output aggregation result for different granularities within the same group by clause (i.e. agg sales for group 1 overall, agg sales for group 1 and 2, etc)
+-   could also use UNIONs to row bind results of varying granularity together with matching column names (more verbose code needed)
 
-```
+```         
 
 WITH zip_sales(state, city, total_sales, fake_zipcode) AS ( VALUES ('NY', 'New York', 50000.00, 12345), ('NY', 'Buffalo', 20000.00, 45678), ('CA', 'Los Angeles', 75000.00, 54321), ('CA', 'San Francisco', 60000.00, 56789), ('TX', 'Houston', 45000.00, 11222), ('TX', 'Houston', 45000.00, 11223), ('TX', 'Dallas', 40000.00, 33444) )
 
 SELECT fake_zipcode, city, state, SUM(total_sales) AS sales_agg FROM zip_sales GROUP BY GROUPING SETS( (fake_zipcode), (city, state), (state) )
-
-```         
-
-UNION ALL when GROUPING SETS function not available
 ```
 
+UNION ALL when GROUPING SETS function not available
+
+``` sql
 -- using CTE data from above code SELECT 'fake_zipcode' AS grain_label, fake_zipcode::VARCHAR, NULL AS city, NULL AS state, total_sales AS sales_agg -- group by aggregation not needed here given data is at the zip level FROM zip_sales
 
 UNION ALL
@@ -228,10 +298,9 @@ SELECT 'city and state' AS grain_label, NULL AS fake_zipcode, city, state, SUM(t
 UNION ALL
 
 SELECT 'state' AS grain_label, NULL AS fake_zipcode, NULL AS city, state, SUM(total_sales) AS sales_agg FROM zip_sales GROUP BY 1,2,3,4
+```
 
-```         
-
-
+``` sql
 DROP TABLE IF EXISTS net_worth_temp_table;
 CREATE TEMP TABLE net_worth_temp_table (
   name_id SERIAL PRIMARY KEY,
@@ -244,7 +313,7 @@ INSERT INTO net_worth_temp_table (net_worth_millions) VALUES (10), (20), (1), (6
 
 -   Needs update the below code is a mess
 
-```         
+``` sql
 -- CREATE TEMP TABLE orders_test ( -- id SERIAL PRIMARY KEY, -- customer TEXT NOT NULL, -- total NUMERIC(10, 2) NOT NULL, -- date DATE NOT NULL -- );
 
 -- INSERT INTO orders_test (customer, total, date) -- VALUES -- ('Alice', 10.00, '2022-01-01'), -- ('Bob', 20.00, '2022-01-01'), -- ('Alice', 15.00, '2022-01-02'), -- ('Charlie', 25.00, '2022-01-02'), -- ('Alice', 30.00, '2022-01-03');
@@ -291,7 +360,7 @@ INNER JOIN baseline_year AS b
 -   z-scores used to asses how far away data points are from the mean in terms of standard deviations from the mean
 -   i.e. z-score of 0: data point is equal to the mean, z-score of 1: data point 1 standard deviation above the mean, z-score of -1: data point 1 standard deviation below the mean
 
-```         
+``` sql
 WITH batting_sample AS (
     SELECT 
         UNNEST(ARRAY[1,2,3,4,5,6,7,8,9,10,11,12]) AS player,
@@ -456,8 +525,8 @@ ORDER BY window_start_date ASC
 
 #### Revisit!!!
 
-- revisit; how is this practical? When would you use this?  
-- above examples for PERCENTILE_CONT & PERCENTILE_DISC highlight wide format output
+-   revisit; how is this practical? When would you use this?\
+-   above examples for PERCENTILE_CONT & PERCENTILE_DISC highlight wide format output
 
 ```         
 WITH student_scores(student_id, test_score) AS (
@@ -549,14 +618,16 @@ INNER JOIN percentiles AS p
 ```
 
 #### Binning values
-- TODO
+
+-   TODO
 
 #### Hypothetical-Set Aggregate Functions
-- look similar to window functions but are not window functions
-- calculating the result of a hypothetical value as if it were part of the set of likes
-- TODO: explore further; included in other DBs, explain difference with window functions
 
-```sql
+-   look similar to window functions but are not window functions
+-   calculating the result of a hypothetical value as if it were part of the set of likes
+-   TODO: explore further; included in other DBs, explain difference with window functions
+
+``` sql
 WITH social_media_posts(post_id, user_id, likes, post_date) AS (
   VALUES 
   (1, 101, 120, '2024-01-01'),
@@ -576,18 +647,19 @@ WITH social_media_posts(post_id, user_id, likes, post_date) AS (
   (15, 105, 125, '2024-01-08')
 )
 SELECT 
-	rank(500) WITHIN GROUP (ORDER BY likes DESC) AS test1,
-	rank(105) WITHIN GROUP (ORDER BY likes DESC) AS test2
+    rank(500) WITHIN GROUP (ORDER BY likes DESC) AS test1,
+    rank(105) WITHIN GROUP (ORDER BY likes DESC) AS test2
 FROM social_media_posts;
 ```
 
 #### Aggregate functions and data types
-- for large datasets, the data type can have a significant impact on performance
-- for example AVG on a large dataset of integers will be faster than AVG on a large dataset of floats
-- decide on the optimal input data type for desired output use case and performance trade-offs
+
+-   for large datasets, the data type can have a significant impact on performance
+-   for example AVG on a large dataset of integers will be faster than AVG on a large dataset of floats
+-   decide on the optimal input data type for desired output use case and performance trade-offs
 
 #### AVG on INT vs FLOAT
-- by default Postgres SQL will round integer average to nearest whole number
-- cast to numeric or FLOAT to ensure decimal places are returned
-- note: some query tools will not round average to nearest whole number
 
+-   by default Postgres SQL will round integer average to nearest whole number
+-   cast to numeric or FLOAT to ensure decimal places are returned
+-   note: some query tools will not round average to nearest whole number
