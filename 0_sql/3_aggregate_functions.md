@@ -275,29 +275,84 @@ ORDER BY v.view_count DESC
 ```
 
 #### GROUPING SETS
-- next step bookmark 2/5
--   used to output aggregation result for different granularities within the same group by clause (i.e. agg sales for group 1 overall, agg sales for group 1 and 2, etc)
--   could also use UNIONs to row bind results of varying granularity together with matching column names (more verbose code needed)
+-   grouping sets can be used to output multiple levels of aggregation in a single query
+-   more streamlined code pattern than using UNION ALL to output multiple levels of aggregation
+-   not available across all SQL/DB platforms
 
-```         
+```sql
+WITH zip_sales(state, city, total_sales, fake_zipcode) AS (
+    VALUES
+        ('NY', 'New York', 50000.00, 12345),
+        ('NY', 'Buffalo', 20000.00, 45678),
+        ('CA', 'Los Angeles', 75000.00, 54321),
+        ('CA', 'San Francisco', 60000.00, 56789),
+        ('TX', 'Houston', 45000.00, 11222),
+        ('TX', 'Houston', 45000.00, 11223),
+        ('TX', 'Dallas', 40000.00, 33444)
+)
 
-WITH zip_sales(state, city, total_sales, fake_zipcode) AS ( VALUES ('NY', 'New York', 50000.00, 12345), ('NY', 'Buffalo', 20000.00, 45678), ('CA', 'Los Angeles', 75000.00, 54321), ('CA', 'San Francisco', 60000.00, 56789), ('TX', 'Houston', 45000.00, 11222), ('TX', 'Houston', 45000.00, 11223), ('TX', 'Dallas', 40000.00, 33444) )
+, grouping_set_setup AS (
+SELECT
+    fake_zipcode,
+    city,
+    state,
+    SUM(total_sales) AS sales_agg
+FROM zip_sales
+GROUP BY GROUPING SETS(
+        (fake_zipcode),
+        (city, state),
+        (state)
+    )
+)
 
-SELECT fake_zipcode, city, state, SUM(total_sales) AS sales_agg FROM zip_sales GROUP BY GROUPING SETS( (fake_zipcode), (city, state), (state) )
+SELECT
+	CASE
+		WHEN city IS NULL AND state IS NULL 
+		THEN 'fake_zipcode'
+		WHEN city IS NOT NULL AND state IS NOT NULL
+		THEN 'city and state'
+		WHEN city IS NULL AND state IS NOT NULL
+		THEN 'state'
+		ELSE 'error'
+	END	AS aggregation_level,
+	*
+FROM grouping_set_setup
 ```
 
-UNION ALL when GROUPING SETS function not available
+UNION ALL approach when GROUPING SETS function not available
+- Next step bookmark 2/6
 
-``` sql
--- using CTE data from above code SELECT 'fake_zipcode' AS grain_label, fake_zipcode::VARCHAR, NULL AS city, NULL AS state, total_sales AS sales_agg -- group by aggregation not needed here given data is at the zip level FROM zip_sales
+```sql
+SELECT
+    'fake_zipcode' AS aggregation_level,
+    fake_zipcode::VARCHAR,
+    NULL AS city,
+    NULL AS state,
+    total_sales AS sales_agg
+-- group by aggregation not needed here given data is at the zip level
+FROM zip_sales
 
 UNION ALL
 
-SELECT 'city and state' AS grain_label, NULL AS fake_zipcode, city, state, SUM(total_sales) AS sales_agg FROM zip_sales GROUP BY 1,2,3,4
+SELECT
+    'city and state' AS aggregation_level,
+    NULL AS fake_zipcode,
+    city,
+    state,
+    SUM(total_sales) AS sales_agg
+FROM zip_sales
+GROUP BY city, state
 
 UNION ALL
 
-SELECT 'state' AS grain_label, NULL AS fake_zipcode, NULL AS city, state, SUM(total_sales) AS sales_agg FROM zip_sales GROUP BY 1,2,3,4
+SELECT
+    'state' AS aggregation_level,
+    NULL AS fake_zipcode,
+    NULL AS city,
+    state,
+    SUM(total_sales) AS sales_agg
+FROM zip_sales
+GROUP BY state
 ```
 
 ``` sql
