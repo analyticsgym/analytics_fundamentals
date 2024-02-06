@@ -274,7 +274,7 @@ INNER JOIN stats AS s
 ORDER BY v.view_count DESC
 ```
 
-#### GROUPING SETS
+#### Multi-level aggregation
 -   grouping sets can be used to output multiple levels of aggregation in a single query
 -   more streamlined code pattern than using UNION ALL to output multiple levels of aggregation
 -   not available across all SQL/DB platforms
@@ -320,7 +320,7 @@ FROM grouping_set_setup
 ```
 
 UNION ALL approach when GROUPING SETS function not available
-- Next step bookmark 2/6
+- labeling can be done inline via UNION approach
 
 ```sql
 SELECT
@@ -355,35 +355,10 @@ FROM zip_sales
 GROUP BY state
 ```
 
-``` sql
-DROP TABLE IF EXISTS net_worth_temp_table;
-CREATE TEMP TABLE net_worth_temp_table (
-  name_id SERIAL PRIMARY KEY,
-  net_worth_millions INTEGER
-);
-INSERT INTO net_worth_temp_table (net_worth_millions) VALUES (10), (20), (1), (6), (11);
-```
-
-#### Aggregate functions with filters
-
--   Needs update the below code is a mess
-
-``` sql
--- CREATE TEMP TABLE orders_test ( -- id SERIAL PRIMARY KEY, -- customer TEXT NOT NULL, -- total NUMERIC(10, 2) NOT NULL, -- date DATE NOT NULL -- );
-
--- INSERT INTO orders_test (customer, total, date) -- VALUES -- ('Alice', 10.00, '2022-01-01'), -- ('Bob', 20.00, '2022-01-01'), -- ('Alice', 15.00, '2022-01-02'), -- ('Charlie', 25.00, '2022-01-02'), -- ('Alice', 30.00, '2022-01-03');
-
--- SELECT customer, AVG(total) FILTER (WHERE date \>= '2022-01-02') -- FROM orders_test -- GROUP BY customer;
-
-SELECT customer, SUM(total) FILTER (WHERE date = '2022-01-01') AS jan_1_sales, SUM(total) FILTER (WHERE date = '2022-01-02') AS jan_2_sales, SUM(total) FILTER (WHERE date = '2022-01-03') AS jan_3_sales FROM orders_test GROUP BY customer;
-```
-
-#### Sales growth vs baseline year
-
+#### Performance vs baseline year
 -   one of several approaches to achieve desired end result
 
-```         
--- example output from a query to aggregate sales by year
+```sql         
 WITH sales AS (
     SELECT 
         UNNEST(ARRAY[23456, 43567, 65812, 79234, 567394]) AS annual_sales,
@@ -403,7 +378,7 @@ SELECT
     b.annual_sales AS baseline_sales,
     CASE
         WHEN b.annual_sales IS NULL THEN 0
-        ELSE 100 * (s.annual_sales - b.annual_sales)::FLOAT /(b.annual_sales)
+        ELSE ((s.annual_sales - b.annual_sales)::FLOAT /(b.annual_sales)) * 100
     END AS percent_change_vs_baseline
 FROM sales AS s
 INNER JOIN baseline_year AS b
@@ -411,11 +386,10 @@ INNER JOIN baseline_year AS b
 ```
 
 #### Derive z-score
-
 -   z-scores used to asses how far away data points are from the mean in terms of standard deviations from the mean
 -   i.e. z-score of 0: data point is equal to the mean, z-score of 1: data point 1 standard deviation above the mean, z-score of -1: data point 1 standard deviation below the mean
 
-``` sql
+```sql
 WITH batting_sample AS (
     SELECT 
         UNNEST(ARRAY[1,2,3,4,5,6,7,8,9,10,11,12]) AS player,
@@ -426,7 +400,6 @@ WITH batting_sample AS (
 , sample_stats AS (
 SELECT
     AVG(batting_average::FLOAT) AS average_batting_average,
-    VAR_SAMP(batting_average::FLOAT) AS sample_variance,
     STDDEV_SAMP(batting_average::FLOAT) AS sample_standard_deviation
 FROM batting_sample 
 )
@@ -435,6 +408,7 @@ SELECT
     bs.player,
     bs.batting_average,
     s.average_batting_average AS sample_average_batting_average,
+	s.sample_standard_deviation,
     (bs.batting_average - s.average_batting_average) / 
         s.sample_standard_deviation::FLOAT AS batting_average_zscore
 FROM batting_sample AS bs
@@ -444,7 +418,7 @@ ORDER BY bs.batting_average DESC
 ```
 
 #### Derive elements used to draw a boxplot
-
+-   next step bookmark 2/7
 -   lower whisker edge: 25th percentile - 1.5\*IQR
 -   lower box edge: 25th percentile
 -   median box line: 50th percenitle
