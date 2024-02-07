@@ -10,7 +10,7 @@
 
 -   by default, most aggregate calculation functions ignore NULL values
 -   COALESCE can be used set NULLs to a default value to be included in calcs
--   important to consider if NULLs should or should not be included in calcs when SQL functions
+-   important to consider if NULLs should or should not be included in SQL aggregate calcs
 
 ``` sql
 CREATE TEMP TABLE temp_pet_goats AS
