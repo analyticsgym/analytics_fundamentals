@@ -6,9 +6,9 @@
 -   common calculation based aggregate functions: COUNT, SUM, AVG, MAX, MIN , etc
 -   other types of aggregate functions: STRING_AGG, ARRAY_AGG, etc
 
-#### Aggregates/metrics with NULL values
+#### Aggregates with NULL values
 
--   by default, most aggregate functions ignore NULL values
+-   by default, most aggregate calculation functions ignore NULL values
 -   COALESCE can be used set NULLs to a default value to be included in calcs
 -   important to consider if NULLs should or should not be included in calcs when SQL functions
 
