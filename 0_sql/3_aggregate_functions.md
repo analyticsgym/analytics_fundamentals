@@ -418,7 +418,7 @@ ORDER BY bs.batting_average DESC
 ```
 
 #### Derive elements used to draw a boxplot
--   next step bookmark 2/7
+-   John Tukey invented the boxplot during the 1970s to further visualize and describe the distribution of data
 -   lower whisker edge: 25th percentile - 1.5\*IQR
 -   lower box edge: 25th percentile
 -   median box line: 50th percenitle
@@ -426,7 +426,7 @@ ORDER BY bs.batting_average DESC
 -   upper whisker edge: 75th percentile + 1.5\*IQR
 -   note: points outside lower and upper whisker edge tend to plotted as points and represent outliers on the boxplot
 
-```         
+```sql         
 WITH test_scores(score) AS (
   VALUES 
   (41), (70), (81), (32), (75), 
@@ -494,11 +494,10 @@ INNER JOIN boxplot_low_outliers AS l
     ON 1=1
 ```
 
-### Pre vs Post Analysis
+#### Pre vs Post Analysis
+-   aggregate functions to generate simple pre vs post overall conversion rate summary data
 
--   sql to generate simple pre vs post overall conversion rate summary data
-
-```         
+```sql         
 WITH conversion_data(date, site_visitors, conversions) AS (
     VALUES
         ('2023-05-01'::DATE, 100::INTEGER, 20::INTEGER),
@@ -531,6 +530,7 @@ WITH conversion_data(date, site_visitors, conversions) AS (
         ('2023-05-28', 225, 88)
 )
 
+-- TODO: create temp table for summary conversion data
 SELECT
     CASE
         WHEN date BETWEEN '2023-05-01'::DATE AND '2023-05-14'::DATE
@@ -550,7 +550,16 @@ GROUP BY 1
 ORDER BY window_start_date ASC
 ```
 
-## TODO / Revisit
+#### Two proportions z-test
+- TODO run stats test to compare two proportions using temp table above
+- Next step bookmark: 2/8 build temp table and run stats test with PostgreSQL functions
+
+```sql
+
+```sql
+-- 
+
+```
 
 #### Revisit!!!
 
