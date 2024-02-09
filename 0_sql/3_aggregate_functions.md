@@ -498,6 +498,8 @@ INNER JOIN boxplot_low_outliers AS l
 -   aggregate functions to generate simple pre vs post overall conversion rate summary data
 
 ```sql         
+DROP TABLE IF EXISTS temp_conversion_summary_data;
+CREATE TEMP TABLE temp_conversion_summary_data AS
 WITH conversion_data(date, site_visitors, conversions) AS (
     VALUES
         ('2023-05-01'::DATE, 100::INTEGER, 20::INTEGER),
@@ -530,7 +532,6 @@ WITH conversion_data(date, site_visitors, conversions) AS (
         ('2023-05-28', 225, 88)
 )
 
--- TODO: create temp table for summary conversion data
 SELECT
     CASE
         WHEN date BETWEEN '2023-05-01'::DATE AND '2023-05-14'::DATE
@@ -544,22 +545,49 @@ SELECT
     COUNT(DISTINCT date) AS measurement_period_days, 
     SUM(site_visitors) AS total_visitors,
     SUM(conversions) AS total_conversions,
-    (SUM(conversions)::FLOAT / SUM(site_visitors))*100 AS window_conversion_rate
+    SUM(conversions)::FLOAT / SUM(site_visitors) AS window_conversion_rate
 FROM conversion_data
 GROUP BY 1
-ORDER BY window_start_date ASC
+ORDER BY window_start_date ASC;
+
+SELECT * FROM temp_conversion_summary_data
 ```
 
 #### Two proportions z-test
-- TODO run stats test to compare two proportions using temp table above
-- Next step bookmark: 2/8 build temp table and run stats test with PostgreSQL functions
+- Two proportion z test or chi-square test often used to compare two proportions
+- For example, we'll assumption 2 prop z-test assumptions are met
+- Test steps: 1) generate z test statistic 2) calculate p-value 3) interpret results
 
 ```sql
+-- two tail test
+-- H0: p1 = p2
+-- H1: p1 ≠ p2
 
-```sql
--- 
+WITH test_stats_setup AS (
+SELECT
+  MAX(CASE WHEN measurement_window = 'pre_period' THEN window_conversion_rate END) AS p1,
+  MAX(CASE WHEN measurement_window = 'post_period' THEN window_conversion_rate END) AS p2,
+  MAX(CASE WHEN measurement_window = 'pre_period' THEN total_visitors END) AS n1,
+  MAX(CASE WHEN measurement_window = 'post_period' THEN total_visitors END) AS n2,
+  SUM(total_conversions)::FLOAT / SUM(total_visitors) AS pooled_proportion
+FROM temp_conversion_summary_data
+)
 
+, z_test_stat AS (
+SELECT
+    *,
+    (p1 - p2) / SQRT(pooled_proportion * (1 - pooled_proportion) * ((1 / n1::FLOAT) + (1 / n2::FLOAT))) AS z_test_statistic
+FROM test_stats_setup
+)
+
+-- next step 2/10 bookmark: need to get pvalue manually outside of postgresql or is there a way to do this in postgresql?
+-- calculate p-value
+SELECT
+    *
+    -- TODO AS p_value
+FROM z_test_stat
 ```
+
 
 #### Revisit!!!
 
