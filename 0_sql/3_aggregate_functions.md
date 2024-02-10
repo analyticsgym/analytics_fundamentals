@@ -550,18 +550,23 @@ FROM conversion_data
 GROUP BY 1
 ORDER BY window_start_date ASC;
 
+-- view example data setup
 SELECT * FROM temp_conversion_summary_data
 ```
 
 #### Two proportions z-test
 - Two proportion z test or chi-square test often used to compare two proportions
 - For example, we'll assumption 2 prop z-test assumptions are met
-- Test steps: 1) generate z test statistic 2) calculate p-value 3) interpret results
+- Test steps: 1) generate z test statistic 2) compare z test statistic to z critical value 3) interpret results
+- Pvalue not calculations not available in Postgres natively, so use z test statistic vs z critical value comparison for statistical significance check
 
 ```sql
--- two tail test
+-- two tail test setup
 -- H0: p1 = p2
 -- H1: p1 ≠ p2
+-- alpha = 0.05
+-- if z test statistic > 1.96 or < -1.96, reject null hypothesis
+-- =/-1.96 is the z critical value for a two tail test at alpha = 0.05
 
 WITH test_stats_setup AS (
 SELECT
@@ -580,80 +585,67 @@ SELECT
 FROM test_stats_setup
 )
 
--- next step 2/10 bookmark: need to get pvalue manually outside of postgresql or is there a way to do this in postgresql?
--- calculate p-value
 SELECT
-    *
-    -- TODO AS p_value
+    *,
+    -- two tail test z critical value approx 1.96
+    CASE
+      WHEN ABS(z_test_statistic) > 1.96 THEN 'reject null'
+      ELSE 'fail to reject null'
+    END AS test_result
 FROM z_test_stat
 ```
 
+Result interpretation: we reject the NULL in favor of the alternative hypothesis (e.g. difference in conversion rates between pre and post periods is statistically significant and unlikely to be due to chance assuming the NULL hypothesis distribution is true)
 
-#### Revisit!!!
+### Dynamic aggregation functions to create long data format
+-   code pattern below using CASE WHEN to dynamically generate aggregation functions based on input parameters
 
--   revisit; how is this practical? When would you use this?\
--   above examples for PERCENTILE_CONT & PERCENTILE_DISC highlight wide format output
-
-```         
-WITH student_scores(student_id, test_score) AS (
-            VALUES
-            (1, 85),
-            (2, 78),
-            (3, 92),
-            (4, 88),
-            (5, 74),
-            (6, 81),
-            (7, 67),
-            (8, 95),
-            (9, 89),
-            (10, 72),
-            (11, 90),
-            (12, 77),
-            (13, 83),
-            (14, 65),
-            (15, 80)
+```sql         
+WITH user_movie_consumption(user_id, movie_id, minutes_consumed) AS (
+  VALUES
+  (101, 'A', 45),
+  (101, 'B', 105),
+  (102, 'C', 60),
+  (102, 'D', 30),
+  (103, 'E', 80),
+  (103, 'F', 120),
+  (104, 'G', 25),
+  (105, 'H', 200)
 )
 
-, percentile_names(name, value) AS (
-    VALUES
-    ('p05', 0.05),
-    ('p25', 0.25),
-    ('median', 0.50),
-    ('p75', 0.75),
-    ('p95', 0.95)
+, minutes_thresholds(threshold_level) AS (
+  VALUES
+  (30),
+  (60),
+  (90),
+  (120)
 )
 
-, percentile_type(pct_type) AS (
-    VALUES
-    ('continuous'), 
-    ('discrete')
-)
-
-, percentile_type_and_name AS (
-    SELECT
-        pn.*,
-        pt.*
-    FROM percentile_names AS pn
-    CROSS JOIN percentile_type AS pt
+, consumption_and_thresholds AS (
+  SELECT
+    u.*,
+    m.threshold_level
+  FROM user_movie_consumption AS u
+  -- use caution with this approach if the cross join set is large
+  CROSS JOIN minutes_thresholds AS m
 )
 
 SELECT
-    ptn.pct_type AS percentile_type,
-    ptn.name AS percentile_name,
-    CASE
-        WHEN ptn.pct_type = 'continuous' 
-                THEN PERCENTILE_CONT(ptn.value) WITHIN GROUP (ORDER BY ss.test_score)
-        WHEN ptn.pct_type = 'discrete'
-        THEN PERCENTILE_DISC(ptn.value) WITHIN GROUP (ORDER BY ss.test_score)
-    END AS percentile_value
-FROM student_scores AS ss
-CROSS JOIN percentile_type_and_name AS ptn
-GROUP BY ptn.pct_type, ptn.name, ptn.value
-ORDER BY ptn.pct_type, ptn.value;
+  user_id,
+  threshold_level,
+  COUNT(
+    CASE 
+      WHEN minutes_consumed >= threshold_level
+      THEN movie_id
+    END
+  ) AS movies_consumed_at_or_above_threshold
+FROM consumption_and_thresholds
+GROUP BY 1, 2
+ORDER BY 1, 2
 ```
 
 #### Capping values
-
+- next step bookmark 2/11
 -   useful when dataset has long tails and there's a desire to reduce the influence of extreme outlier values on metrics
 -   example logic: if a value is below 10th percentile cap the value at the 10th percentile; if a value is above 90th percentile cap the value at the 90th percentile
 
