@@ -645,11 +645,10 @@ ORDER BY 1, 2
 ```
 
 #### Capping values
-- next step bookmark 2/11
--   useful when dataset has long tails and there's a desire to reduce the influence of extreme outlier values on metrics
--   example logic: if a value is below 10th percentile cap the value at the 10th percentile; if a value is above 90th percentile cap the value at the 90th percentile
+-   method to reduce outlier influence on outlier sensitive metrics (important for AB test analysis in some cases)
+-   example capping approach: if a value is below 10th percentile cap the value at the 10th percentile; if a value is above 90th percentile cap the value at the 90th percentile
 
-```         
+```sql         
 WITH example_data(result) AS (
    VALUES 
     (1), (2), (3), (4), (5), (6), (7), (8), (9), (10), 
@@ -658,32 +657,71 @@ WITH example_data(result) AS (
 
 , percentiles AS (
 SELECT 
-    percentile_cont(0.10) WITHIN GROUP (ORDER BY result) AS perc_10,
-    percentile_cont(0.90) WITHIN GROUP (ORDER BY result) AS perc_90
+    PERCENTILE_CONT(0.10) WITHIN GROUP (ORDER BY result) AS perc_10,
+    PERCENTILE_CONT(0.90) WITHIN GROUP (ORDER BY result) AS perc_90
 FROM example_data
 )
 
+-- both capping methods below produce the same result
 SELECT 
   result, 
+  -- capping using LEAST and GREATEST
+  LEAST(GREATEST(result, perc_10), perc_90) as capped_result_1,
+  -- more verbose/explicit approach using CASE WHEN
   CASE 
-    WHEN result < perc_10 THEN perc_10
-    WHEN result > perc_90 THEN perc_90
+    WHEN result < perc_10 
+    THEN perc_10
+    WHEN result > perc_90 
+    THEN perc_90
     ELSE result
-  END as capped_result
+  END as capped_result_2
 FROM example_data AS ed
 INNER JOIN percentiles AS p
     ON 1=1
 ```
 
 #### Binning values
+-  binning method to group continuous data into discrete bins
+-  helpful for segmentation analysis and visualization setup
+-  scalable approach below vs hard coded case when statements
+-  case when logic likely needed for more custom binning logic (variable bin sizes, etc)
 
--   TODO
+```sql
+WITH example_data(metric_value) AS (
+   VALUES 
+    (-1), (0), (1), (10), (20), (30), (40), (50), 
+    (60), (70), (80), (90), (100)
+)
+
+-- adjustable bin size parameter
+, bin_settings AS (
+  SELECT 30 AS bin_size
+)
+
+, bin_setup AS (
+  SELECT 
+    metric_value,
+    FLOOR(metric_value::FLOAT / bin_size) * bin_size AS bin_start,
+    FLOOR(metric_value::FLOAT / bin_size) * bin_size + bin_size - 1 AS bin_end
+  FROM example_data
+  INNER JOIN bin_settings
+    ON 1=1
+)
+
+SELECT
+  bin_start || ' to ' || bin_end AS bin_label,
+  COUNT(*) AS observation_count
+FROM bin_setup
+GROUP BY bin_label
+-- used to order the bins
+ORDER BY MIN(metric_value) ASC
+```
 
 #### Hypothetical-Set Aggregate Functions
-
--   look similar to window functions but are not window functions
--   calculating the result of a hypothetical value as if it were part of the set of likes
--   TODO: explore further; included in other DBs, explain difference with window functions
+- next step bookmark 2/11 
+- look similar to window functions but are not window functions
+- calculating the result of a hypothetical value as if it were part of the set of likes
+- TODO: explore further; included in other DBs, explain difference with window functions
 
 ``` sql
 WITH social_media_posts(post_id, user_id, likes, post_date) AS (
