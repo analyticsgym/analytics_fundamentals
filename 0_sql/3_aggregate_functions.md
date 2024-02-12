@@ -79,6 +79,7 @@ WITH student_scores(student_id, test_score) AS (
             (15, 80)
 )
 
+-- PERCENTILE_CONT and PERCENTILE_DISC are a type of ordered-set aggregate function
 SELECT 
     DISTINCT
     -- continuous percentile
@@ -94,6 +95,39 @@ SELECT
     PERCENTILE_DISC(0.75) WITHIN GROUP (ORDER BY test_score) AS discrete_75_score,
     PERCENTILE_DISC(0.95) WITHIN GROUP (ORDER BY test_score) AS discrete_95_score
 FROM student_scores
+```
+
+#### Mode
+- ordered-set aggregate function similar to above logic
+- not implemented in all SQL dialects
+- observation/segmentation counts tend to be used more frequently than the mode in practice
+
+```sql
+WITH show_ratings(show_id, user_id, rating) AS (
+  VALUES 
+  (1, 100, 9),
+  (1, 101, 8),
+  (1, 102, 9),
+  (1, 103, 7),
+  (2, 101, 6),
+  (2, 102, 5),
+  (2, 103, 7),
+  (3, 101, 9),
+  (3, 102, 8),
+  (3, 103, 9),
+  (4, 101, 4),
+  (4, 102, 5),
+  (4, 103, 6)
+)
+
+SELECT
+  show_id,
+  -- if ties for mode, returns largest rating value
+  MODE() WITHIN GROUP (ORDER BY rating DESC) AS mode_rating,
+  COUNT(*) AS ratings_count,
+  COUNT(DISTINCT rating) AS unique_ratings_count
+FROM show_ratings
+GROUP BY 1
 ```
 
 #### Variance and Standard Deviation
@@ -718,10 +752,7 @@ ORDER BY MIN(metric_value) ASC
 ```
 
 #### Hypothetical-Set Aggregate Functions
-- next step bookmark 2/11 
-- look similar to window functions but are not window functions
-- calculating the result of a hypothetical value as if it were part of the set of likes
-- TODO: explore further; included in other DBs, explain difference with window functions
+- calculates the result of a hypothetical value as if it were part of actual data
 
 ``` sql
 WITH social_media_posts(post_id, user_id, likes, post_date) AS (
@@ -742,20 +773,18 @@ WITH social_media_posts(post_id, user_id, likes, post_date) AS (
   (14, 104, 135, '2024-01-08'),
   (15, 105, 125, '2024-01-08')
 )
+
 SELECT 
+    -- what would the rank of a post with 500 likes be?    
     rank(500) WITHIN GROUP (ORDER BY likes DESC) AS test1,
+    -- what would the rank of a post with 105 likes be?
     rank(105) WITHIN GROUP (ORDER BY likes DESC) AS test2
 FROM social_media_posts;
 ```
 
-#### Aggregate functions and data types
-
--   for large datasets, the data type can have a significant impact on performance
--   for example AVG on a large dataset of integers will be faster than AVG on a large dataset of floats
--   decide on the optimal input data type for desired output use case and performance trade-offs
-
-#### AVG on INT vs FLOAT
-
+#### INT vs FLOAT vs NUMERIC data types
+-   next step bookmark 2/12
+-   performance vs percision tradeoff
 -   by default Postgres SQL will round integer average to nearest whole number
 -   cast to numeric or FLOAT to ensure decimal places are returned
 -   note: some query tools will not round average to nearest whole number
