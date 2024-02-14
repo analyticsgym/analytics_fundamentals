@@ -783,8 +783,30 @@ FROM social_media_posts;
 ```
 
 #### INT vs FLOAT vs NUMERIC data types
--   next step bookmark 2/12
--   performance vs percision tradeoff
--   by default Postgres SQL will round integer average to nearest whole number
--   cast to numeric or FLOAT to ensure decimal places are returned
--   note: some query tools will not round average to nearest whole number
+- INT: whole numbers
+- FLOAT: approximate numeric with fractional precision
+- NUMERIC: represent numbers exactly
+- depending on the use case and DB vendor, the data type input can change results of calculations
+- some DBs will default AVG and division operations to INT, which can lead to unexpected results
+- additionally, the data input type can have performance impact on large datasets
+- casting to FLOAT tends to be a good balance between performance and precision
+- review DB documentation and build test cases to understand how data types impact calculation results
+
+```sql
+-- code pattern to check how different data types impact results
+WITH example_data(metric) AS (
+  VALUES 
+    (1),
+    (2),
+    (3),
+    (4),
+    (5),
+    (6)
+)
+
+SELECT
+  AVG(metric::INT) AS avg_int,
+  AVG(metric::FLOAT) AS avg_float,
+  AVG(metric::NUMERIC) AS avg_numeric
+FROM example_data
+```
