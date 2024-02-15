@@ -1,14 +1,14 @@
 # Additional notes on working with NULL values.
 
-#### Understanding NULL
+#### Working with NULL values
 
--   Null in SQL means no value or unknown value.
--   Different from zero or an empty string.
--   Nulls can arise due to missing data, data errors, incorrect joins, etc.
+-   null in SQL means no value or unknown value
+-   null is different from zero or an empty string
+-   nulls can arise due to missing data, data errors, incorrect joins, etc
 
 #### Check columns for NULL values
 
-```
+```sql
 WITH employee_ids(id, department, salary) AS (
     VALUES
     (1, NULL, 50000),
@@ -28,13 +28,12 @@ FROM employee_ids
 ```
 
 #### NULLs in arithmetic operations or comparisons
+-   arithmetic operations with NULL will result in NULL
+-   comparison operation with NULL will result in NULL
+-   why? NULL is considered unknown in SQL so we can't definitively do arithmetic or comparison.
+-   NULL is not equal to anything, including itself (e.g. NULL is not equal to NULL)
 
--   Any arithmetic operation with NULL will result in NULL.
--   Any comparison operation with NULL will result in NULL.
--   This is because NULL is considered unknown in SQL so we can't definitively do arithmetic or comparison.
--   NULL is not equal to anything, including itself (e.g. NULL is not equal to NULL).
-
-```         
+```sql         
 SELECT
     1 + NULL AS test1, -- returns NULL 
     1 + NULL AS test2, -- returns NULL,
@@ -44,10 +43,9 @@ SELECT
 ```
 
 #### Filtering for NULLs in WHERE clause
+-   use `IS NULL` vs `= NULL`
 
--   Use `IS NULL` vs `= NULL`.
-
-```         
+```sql         
 WITH employees(name, department, salary) AS (
     VALUES
     ('John', 'HR', 50000),
@@ -76,13 +74,12 @@ WHERE salary IS NULL
 ```
 
 #### NULLs in aggregations
+-   when a column is specified in an aggregate function NULLs are ***typically*** ignored
+-   COALESCE can be used to set a default value for NULLs
+-   `COUNT(*)`: return a row count of NULL and non NULL values
+-   `COUNT(column_name)`: return a row count of non NULL values
 
--   When a column is specified in an aggregate function NULLs are ***typically*** ignored.
--   COALESCE can be used to set a default value for NULLs.
--   `COUNT(*)`: return a row count of NULL and non NULL values.
--   `COUNT(column_name)`: return a row count of non NULL values.
-
-```         
+```sql         
 WITH year_1_minutes_watched(user_id, minutes_watched) AS (
     VALUES
     (1, 100),
@@ -106,11 +103,10 @@ FROM year_1_minutes_watched
 ```
 
 #### NULL value in join results
+-   NULLs can show up in outer joins when values are not found in the "lookup" table
+-   NULLs cannot be used as join keys because a NULL is not equal to anything even itself
 
--   NULLs can show up in outer joins when values are not found in the "lookup" table.
--   NULLs cannot be used as join keys because a NULL is not equal to anything even itself.
-
-```         
+```sql         
 WITH table1(id, value) AS (
     VALUES
     (1, 'A'),
@@ -139,10 +135,9 @@ LEFT JOIN table2
 ```
 
 #### NULLs in Order By
+-   By default, nulls are considered the highest value so when ordering ASC nulls appear at the end of the order
 
--   By default, nulls are considered the highest value so when ordering ASC nulls appear at the end of the order.
-
-```         
+```sql         
 WITH year_1_minutes_watched(user_id, year, minutes_watched) AS (
     VALUES
     (1, 1, 100),
@@ -177,7 +172,7 @@ ORDER BY minutes_watched DESC NULLS LAST
 -   `||` operator for string concatenation : inclusion of NULL value results in NULL output.
 -   `CONCAT` function: treats NULL values as empty strings.
 
-```         
+```sql         
 SELECT 
   'abc' || NULL AS test1, -- returns NULL
   'abc' || COALESCE(NULL, 'efg') AS test2, -- returns abcefg
@@ -187,8 +182,8 @@ SELECT
 ```
 
 #### COALESCE
-
--   Return first non NULL input.
+- next step bookmark 2/16
+-   eeturn first non NULL input
 
 ```         
 SELECT COALESCE(NULL, NULL, NULL, 1) AS returns_first_non_null_input
