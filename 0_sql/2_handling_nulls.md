@@ -1,14 +1,12 @@
-# Additional notes on working with NULL values.
-
 #### Working with NULL values
 
--   null in SQL means no value or unknown value
--   null is different from zero or an empty string
--   nulls can arise due to missing data, data errors, incorrect joins, etc
+-   NULL in SQL means no value or unknown value
+-   NULL is different from zero or an empty string
+-   NULLs can arise due to missing data, data errors, incorrect joins, etc
 
 #### Check columns for NULL values
 
-```sql
+``` sql
 WITH employee_ids(id, department, salary) AS (
     VALUES
     (1, NULL, 50000),
@@ -21,19 +19,20 @@ WITH employee_ids(id, department, salary) AS (
 )
 
 SELECT
-	COUNT(*) - COUNT(id) AS id_nulls,
-	COUNT(*) - COUNT(department) AS department_nulls,
-	COUNT(*) - COUNT(salary) AS salary_nulls
+    COUNT(*) - COUNT(id) AS id_nulls,
+    COUNT(*) - COUNT(department) AS department_nulls,
+    COUNT(*) - COUNT(salary) AS salary_nulls
 FROM employee_ids
 ```
 
 #### NULLs in arithmetic operations or comparisons
+
 -   arithmetic operations with NULL will result in NULL
 -   comparison operation with NULL will result in NULL
 -   why? NULL is considered unknown in SQL so we can't definitively do arithmetic or comparison.
 -   NULL is not equal to anything, including itself (e.g. NULL is not equal to NULL)
 
-```sql         
+``` sql
 SELECT
     1 + NULL AS test1, -- returns NULL 
     1 + NULL AS test2, -- returns NULL,
@@ -43,9 +42,10 @@ SELECT
 ```
 
 #### Filtering for NULLs in WHERE clause
+
 -   use `IS NULL` vs `= NULL`
 
-```sql         
+``` sql
 WITH employees(name, department, salary) AS (
     VALUES
     ('John', 'HR', 50000),
@@ -74,12 +74,13 @@ WHERE salary IS NULL
 ```
 
 #### NULLs in aggregations
+
 -   when a column is specified in an aggregate function NULLs are ***typically*** ignored
 -   COALESCE can be used to set a default value for NULLs
 -   `COUNT(*)`: return a row count of NULL and non NULL values
 -   `COUNT(column_name)`: return a row count of non NULL values
 
-```sql         
+``` sql
 WITH year_1_minutes_watched(user_id, minutes_watched) AS (
     VALUES
     (1, 100),
@@ -103,10 +104,11 @@ FROM year_1_minutes_watched
 ```
 
 #### NULL value in join results
+
 -   NULLs can show up in outer joins when values are not found in the "lookup" table
 -   NULLs cannot be used as join keys because a NULL is not equal to anything even itself
 
-```sql         
+``` sql
 WITH table1(id, value) AS (
     VALUES
     (1, 'A'),
@@ -135,9 +137,10 @@ LEFT JOIN table2
 ```
 
 #### NULLs in Order By
+
 -   By default, nulls are considered the highest value so when ordering ASC nulls appear at the end of the order
 
-```sql         
+``` sql
 WITH year_1_minutes_watched(user_id, year, minutes_watched) AS (
     VALUES
     (1, 1, 100),
@@ -172,7 +175,7 @@ ORDER BY minutes_watched DESC NULLS LAST
 -   `||` operator for string concatenation : inclusion of NULL value results in NULL output.
 -   `CONCAT` function: treats NULL values as empty strings.
 
-```sql         
+``` sql
 SELECT 
   'abc' || NULL AS test1, -- returns NULL
   'abc' || COALESCE(NULL, 'efg') AS test2, -- returns abcefg
@@ -182,18 +185,18 @@ SELECT
 ```
 
 #### COALESCE
-- next step bookmark 2/16
--   eeturn first non NULL input
 
-```         
+-   return first non NULL input
+
+``` sql
 SELECT COALESCE(NULL, NULL, NULL, 1) AS returns_first_non_null_input
 ```
 
 #### NULLIF
 
--   Use `NULLIF` to set NULL value when condition is true.
+-   use `NULLIF` to set NULL value when condition is true
 
-```         
+``` sql
 SELECT
   ------------------------------
   -- avoid division by zero errors; return NULL instead of error
@@ -212,16 +215,16 @@ SELECT
   NULLIF(-999, -999) AS test4,
   ------------------------------
   -- covert NA string to NULL
-  CAST(NULLIF('N/A', 'N/A') AS INT) AS test5
+  NULLIF('N/A', 'N/A') AS test5
 ```
 
 #### Window functions with NULLs
 
--   Reminder to pay attention to NULL ordering in window functions (by default, NULLs appear as highest values).
--   Ignoring NULLs via window functions in Postgres SQL requires workaround (example below).
--   `IGNORE NULLS` logic can be used in Amazon Redshift; not available in Postgres SQL.
+-   NULL ordering in window functions (by default, NULLs appear as highest values)
+-   `RESPECT NULLS` and `IGNORE NULLS` include in the SQL standard; not available in Postgres SQL\
+-   ignoring NULLs with ordered PostgresSQL window functions often requires workaround solution (example below)
 
-```         
+``` sql
 WITH sales_data(salesperson, sales_amount) AS (
     VALUES
     ('Alice', 100),
@@ -251,17 +254,17 @@ FROM sales_data
 
 #### Table schemas and row inserts with NULL
 
--   Columns with NOT NULL constraint:
-    -   Prevents NULL from being added to the table column (returns error).
--   Columns with DEFAULT values:
-    -   If no value provided then DEFAULT value returned.
-    -   If explicit NULL provided then NULL returned.
-    -   If DEFAULT keyword provided then DEFAULT value returned.
--   Columns without NOT NULL constraint or DEFAULT values:
-    -   If no value provided for a column then NULL returned.
-    -   If NULL explicitly given then NULL returned.
+-   columns with NOT NULL constraint:
+    -   prevents NULL from being added to the table column (returns error)
+-   columns with DEFAULT values:
+    -   if no value provided then DEFAULT value returned
+    -   if explicit NULL provided then NULL returned
+    -   if DEFAULT keyword provided then DEFAULT value returned
+-   columns without NOT NULL constraint or DEFAULT values:
+    -   if no value provided for a column then NULL returned
+    -   if NULL explicitly given then NULL returned
 
-```         
+``` sql
 -- DROP TABLE IF EXISTS temp_example_table;
 CREATE TEMP TABLE temp_example_table (
     id INT PRIMARY KEY,
