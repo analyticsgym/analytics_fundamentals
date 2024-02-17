@@ -1,34 +1,35 @@
 # Combining Data Sources
-  
+
 #### SQL JOINs Objective
 
--   Combine one or more tables together using join conditions (i.e. primary key X in table A = foreign key Y in table B).
+-   generate an output dataset by merging data from two or more tables
+-   use join conditions to guide the merging process (e.g. defining how table rows relate)
 
 | Left Table | Right Table |
 |------------|-------------|
 | Table A    | Table B     |
 
-```         
-### basic join syntax
+```sql
+-- basic join syntax
 SELECT
     a.x,
     b.y
 FROM table_a AS a
-<join approach> table_b AS b
-  ON <join condition>
+<<<join approach>>> table_b AS b
+  ON <<<join condition>>>
 ```
 
 #### INNER JOIN
+-   return records where Table A and Table B have an exact match on the join condition
 
--   Return records where Table A and Table B have a match on join condition.
-
-```         
+```sql         
 WITH employees(employee_id, employee_name, department_id) AS (
-  VALUES (1, 'John', 100),
-         (2, 'Jane', 200),
-         (3, 'Mark', 100),
-         (4, 'Sara', 300),
-         (5, 'Tom', 200)
+  VALUES (1, 'Ann', NULL), -- Ann is the CEO
+	       (2, 'John', 100),
+         (3, 'Jane', 200),
+         (4, 'Mark', 100),
+         (5, 'Sara', 300),
+         (6, 'Tom', 200)
 )
 
 , departments(department_id, department_name) AS (
@@ -37,20 +38,20 @@ WITH employees(employee_id, employee_name, department_id) AS (
          (300, 'IT')
 )
 
+-- employee dropped from output if department_id not found in 'departments' table
 SELECT 
     e.*,
     d.department_name
 FROM employees AS e
 INNER JOIN departments AS d 
     ON e.department_id = d.department_id
-ORDER BY e.employee_id;
+ORDER BY e.employee_id
 ```
 
 #### LEFT JOIN
+-   return all records for Table A and pull in Table B column values when the join condition is met else return NULLs
 
--   Return all records for Table A and pull in Table B column values when the join condition is met else return NULLs.
-
-```         
+```sql         
 WITH users(user_id, email) AS (
   VALUES (1, 'xyz@fakegmail.com'),
          (2, 'abc@fakegmail.com'),
@@ -77,19 +78,16 @@ LEFT JOIN all_time_spending AS a
 ```
 
 #### RIGHT JOIN
-
--   Symmetric to left join.
--   Table A column values returned when join condition met and all records returned for Table B.
--   Not commonly used in practice (left join preferred for consistency).
--   All right joins can be changed to left joins by changing the ordering of the join tables.
+-   symmetric to left join
+-   table A column values returned when join condition met and all records returned for Table B
+-   all right joins can be changed to left joins by changing the ordering of the join tables
+-   not commonly used in practice (left joins preferred for consistency)
 
 #### FULL JOIN
+-   return all records from Table A and Table B with NULL fallback values when join condition not met
+-   e.g. records that don't match on the join condition return just Table A values or Table B values and NULLs are filled in where there are no matches
 
--   Return all records from Table A and Table B.
--   When records match on the join condition then column values for Table A and Table B are returned.
--   Records that don't match on the join condition return just Table A values or Table B values and NULLs are filled in where there are no matches.
-
-```         
+```sql         
 WITH products(product_id, product_name, price) AS (
   VALUES (1, 'Laptop', 1200),
          (2, 'Smartphone', 800),
@@ -122,11 +120,11 @@ ORDER BY COALESCE(p.product_id, s.product_id) ASC
 ```
 
 #### CROSS JOIN
+-   return all row combinations between Table A and Table B (i.e. Cartesian product)
+-   use with caution as CROSS JOINs can generate large datasets and impact DB performance
+-   in practice, occasionally used for analysis setup work when output isn't expected to explode in size
 
--   Return all row combinations between Table A and Table B.
--   Occasionally used for analysis setup work.
-
-```         
+```sql         
 WITH veg_tbl AS (
     SELECT UNNEST(ARRAY['salad', 'carrot', 'onion']) AS veg
 )
@@ -144,7 +142,7 @@ CROSS JOIN fruit_tbl
 ```
 
 #### SELF JOIN
-
+-   Next step bookmark 2/18.
 -   Joining table to itself.
 -   In some cases, window functions could be used in replace of a self join.
 -   Efficiency/speed trade offs between self joins vs window functions depends on use case.
@@ -219,7 +217,7 @@ SELECT
 ```
 
 # Practical Analytics Examples
-  
+
 #### UNION ALL to output multiple levels of aggregation
 
 -   Stack 3 levels of aggregation results.

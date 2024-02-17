@@ -221,7 +221,7 @@ SELECT
 #### Window functions with NULLs
 
 -   NULL ordering in window functions (by default, NULLs appear as highest values)
--   `RESPECT NULLS` and `IGNORE NULLS` include in the SQL standard; not available in Postgres SQL\
+-   `RESPECT NULLS` and `IGNORE NULLS` included in the SQL standard; not available in Postgres
 -   ignoring NULLs with ordered PostgresSQL window functions often requires workaround solution (example below)
 
 ``` sql
