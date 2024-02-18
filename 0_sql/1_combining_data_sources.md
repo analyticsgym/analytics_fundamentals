@@ -142,13 +142,12 @@ CROSS JOIN fruit_tbl
 ```
 
 #### SELF JOIN
--   Next step bookmark 2/18.
--   Joining table to itself.
--   In some cases, window functions could be used in replace of a self join.
--   Efficiency/speed trade offs between self joins vs window functions depends on use case.
--   For simple use cases, window functions tend to be more efficient/readable.
+-   joining table to itself
+-   in some cases, window functions could be used in replace of a self join
+-   efficiency/speed trade offs between self joins vs window functions depends on use case
+-   for simple use cases, window functions tend to be more efficient/readable
 
-```         
+```sql         
 WITH sales AS (
   SELECT 
       UNNEST(ARRAY[23456, 43567, 65812, 79234, 567394]) AS annual_sales,
@@ -156,24 +155,22 @@ WITH sales AS (
 )
 
 SELECT
-    a.year,
-    a.annual_sales,
-    b.annual_sales AS prior_year_sales,
-    ((a.annual_sales - b.annual_sales)::FLOAT / a.annual_sales)*100 AS yoy_sales_growth
-FROM sales AS a
--- joins is on the same table in the from clause
-LEFT JOIN sales AS b
-    ON b.year = a.year - 1
-    -- this also work
-    -- ON b.year + 1 = a.year
+    current_year.year,
+    current_year.annual_sales,
+    prior_year.annual_sales AS prior_year_sales,
+    ((current_year.annual_sales - prior_year.annual_sales)::FLOAT / prior_year.annual_sales)*100 AS yoy_sales_growth
+FROM sales AS current_year
+-- also joins to sales table; join condition logic is key here
+LEFT JOIN sales AS prior_year
+    -- this also work ==> prior_year.year + 1 = current_year.year
+	ON prior_year.year = current_year.year - 1
 ```
 
 #### UNION
+-   combine rows of two or more queries with matching column names and matching data types
+-   union drops duplicate rows
 
--   Combine rows of two or more queries with matching column names and matching data types.
--   Union drops duplicate rows.
-
-```         
+```sql         
 -- returns only 2 records given james duplicate permutation
 SELECT 
   1900 AS birth_year,
@@ -193,12 +190,12 @@ SELECT
 ```
 
 #### UNION ALL
+-   similar logic to UNION except retains all row permutations (does not drop duplicates)
+-   UNION tends to be more resource intensive on large datasets due to additional processing to remove duplicates
+-   UNION ALL is recommended when you know there are no duplicates or you want to retain duplicates
 
--   Similar logic to UNION except retains all row permutations (does not drop duplicates).
--   UNION tends to be more resource intensive on large datasets due to additional processing to remove duplicates.
-
-```         
--- returns only 3 records; includes james duplicate permutation
+```sql         
+-- returns all 3 records; includes james duplicate permutation
 SELECT 
   1900 AS birth_year,
   'rose' AS first_name
@@ -216,14 +213,14 @@ SELECT
   'james' As first_name
 ```
 
-# Practical Analytics Examples
+# Practical Examples
 
 #### UNION ALL to output multiple levels of aggregation
+-   stack 3 levels of aggregation results
+-   UNION ALL used below as we don't expect duplicates
+-   GROUPING SETS could also be used to achieve similar results with less verbose code
 
--   Stack 3 levels of aggregation results.
--   UNION ALL used below as we don't expect duplicates.
-
-```         
+```sql         
 WITH sales_example(date, category, amount) AS (
   VALUES
   ('2023-01-01'::date, 'Electronics', 150.00),
@@ -259,33 +256,33 @@ SELECT
     NULL AS date,
     'Total for all dates and categories' AS category,
     SUM(amount) AS total_amount
-FROM sales_example;
+FROM sales_example
 ```
 
 #### Self join to compare monthly sales vs trailing 12 month average
 
-```         
-WITH monthly_sales (year_month, sales_amount) AS (
+```sql         
+WITH monthly_sales(year_month, sales_amount) AS (
   VALUES
-  ('2021-10', 20),
-  ('2021-11', 30),
-  ('2021-12', 40),
-  ('2022-01', 90),
-  ('2022-02', 120),
-  ('2022-03', 200),
-  ('2022-04', 300),
-  ('2022-05', 400),
-  ('2022-06', 650),
-  ('2022-07', 400),
-  ('2022-08', 450),
-  ('2022-09', 500),
-  ('2022-10', 550),
-  ('2022-11', 600),
-  ('2022-12', 650),
-  ('2023-01', 700),
-  ('2023-02', 750),
-  ('2023-03', 800),
-  ('2023-04', 850)
+  (TO_DATE('2021-10', 'YYYY-MM'), 20),
+  (TO_DATE('2021-11', 'YYYY-MM'), 30),
+  (TO_DATE('2021-12', 'YYYY-MM'), 40),
+  (TO_DATE('2022-01', 'YYYY-MM'), 90),
+  (TO_DATE('2022-02', 'YYYY-MM'), 120),
+  (TO_DATE('2022-03', 'YYYY-MM'), 200),
+  (TO_DATE('2022-04', 'YYYY-MM'), 300),
+  (TO_DATE('2022-05', 'YYYY-MM'), 400),
+  (TO_DATE('2022-06', 'YYYY-MM'), 650),
+  (TO_DATE('2022-07', 'YYYY-MM'), 400),
+  (TO_DATE('2022-08', 'YYYY-MM'), 450),
+  (TO_DATE('2022-09', 'YYYY-MM'), 500),
+  (TO_DATE('2022-10', 'YYYY-MM'), 550),
+  (TO_DATE('2022-11', 'YYYY-MM'), 600),
+  (TO_DATE('2022-12', 'YYYY-MM'), 650),
+  (TO_DATE('2023-01', 'YYYY-MM'), 700),
+  (TO_DATE('2023-02', 'YYYY-MM'), 750),
+  (TO_DATE('2023-03', 'YYYY-MM'), 800),
+  (TO_DATE('2023-04', 'YYYY-MM'), 850)
 )
 
 , ttm_setup AS (
@@ -296,9 +293,7 @@ SELECT
   COUNT(tm.year_month) AS trailing_12_months_count
 FROM monthly_sales AS c
 INNER JOIN monthly_sales AS tm
-  ON TO_DATE(tm.year_month, 'YYYY-MM') BETWEEN 
-     TO_DATE(c.year_month, 'YYYY-MM') - interval '11 months' AND 
-     TO_DATE(c.year_month, 'YYYY-MM')
+  ON tm.year_month BETWEEN c.year_month - interval '11 months' AND c.year_month
 GROUP BY
   c.year_month,
   c.sales_amount
@@ -312,14 +307,15 @@ SELECT
         WHEN trailing_12_months_count = 12
         THEN 100 * (sales_amount - trailing_12_months_avg_sales::FLOAT) / (trailing_12_months_avg_sales)
         ELSE NULL
-    END AS pct_change_vs_TTM_baseline
+    END AS pct_change_vs_trailing_12m_baseline
 FROM ttm_setup  
 ORDER BY year_month ASC
 ```
 
 #### Self join to compare current months sales vs prior N year
+- next step bookmark 2/19
 
-```         
+```sql         
 WITH months AS (
 SELECT
     generate_series(
