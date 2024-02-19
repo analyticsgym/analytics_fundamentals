@@ -313,9 +313,11 @@ ORDER BY year_month ASC
 ```
 
 #### Self join to compare current months sales vs prior N year
-- next step bookmark 2/19
 
-```sql         
+```sql 
+-- to get reproducible results on query reruns
+SELECT SETSEED(0.11);
+
 WITH months AS (
 SELECT
     generate_series(
@@ -334,13 +336,16 @@ FROM months
 
 SELECT
     cy.*,
+    -- 1 year prior if available
     py.sales_amount AS prior_year_month_sales,
     ((cy.sales_amount - py.sales_amount) / (py.sales_amount)::FLOAT)*100 AS yoy_pct_change,
+    -- 2 years prior if available
     py2.sales_amount AS prior_2_years_month_sales,
     ((cy.sales_amount - py2.sales_amount) / (py2.sales_amount)::FLOAT)*100 AS prior_2_yrs_yoy_pct_change,
+    -- 3 years prior if available
     py3.sales_amount AS prior_3_years_month_sales,
     ((cy.sales_amount - py3.sales_amount) / (py3.sales_amount)::FLOAT)*100 AS prior_3_yrs_yoy_pct_change,
-        -- could also compare percent change vs this aggregate baseline
+    -- average of the last 3 years
     (py.sales_amount + py2.sales_amount + py3.sales_amount)::FLOAT / 3 AS trailing_3_years_average_sales
 FROM example_sales_data AS cy
 LEFT JOIN example_sales_data AS py
@@ -349,7 +354,7 @@ LEFT JOIN example_sales_data AS py2
     ON py2.month_var::DATE = (cy.month_var::DATE - interval '24 months')
 LEFT JOIN example_sales_data AS py3
     ON py3.month_var::DATE = (cy.month_var::DATE - interval '36 months')
-ORDER BY month_var DESC;
+ORDER BY month_var DESC
 ```
 
 ### Cohort analysis with joins
