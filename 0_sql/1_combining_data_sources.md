@@ -312,7 +312,7 @@ FROM ttm_setup
 ORDER BY year_month ASC
 ```
 
-#### Self join to compare current months sales vs prior N year
+#### Self join to compare monthly sales vs prior year same month
 
 ```sql 
 -- to get reproducible results on query reruns
@@ -359,7 +359,7 @@ ORDER BY month_var DESC
 
 ### Cohort analysis with joins
 
-```         
+```sql         
 WITH fake_users(user_id, name, signup_date, country) AS (
     VALUES (1, 'John Doe', '2021-01-01'::DATE, 'US'),
            (2, 'Jane Smith', '2021-01-15'::DATE, 'US'),
@@ -398,7 +398,6 @@ VALUES (1, '2021-01-02'::DATE, 'post'),
 
 -- note: this logic isn't robust enough to handle use case where an 
 -- entire cohort is not active for a given activity period
--- future todo: make this code more readable
 SELECT
     cs.cohort_user_count,
     DATE_TRUNC('month', f2.signup_date)::DATE AS cohort_month, 
@@ -411,15 +410,15 @@ INNER JOIN fake_users AS f2
     ON f2.user_id = f1.user_id
 INNER JOIN cohort_sizes AS cs
     ON cs.cohort_month = DATE_TRUNC('month', f2.signup_date)::DATE
-GROUP BY 1,2,3;
+GROUP BY 1,2,3
 ```
 
 ### Sequential stages funnel analysis with joins
 
--   Derive step/stage conversion rate from n-1 to n.
--   Sequential conversion logic: number of users to complete stage n / number of users who completed stage n-1.
+-   derive step/stage conversion rate from n-1 to n
+-   sequential conversion logic: number of users to complete stage n / number of users who completed stage n-1
 
-```         
+```sql         
 CREATE TEMP TABLE funnel_base(
     user_id INT,
     date DATE,
@@ -468,10 +467,10 @@ WHERE wv.action = 'website_visit'
 
 ### Funnel analysis v2 without joins
 
--   Different flavor of funnel analysis (likely more efficient than logic with joins above).
--   Example below deriving funnel step conversion based on total visitors and step to step conversion rate.
+-   different flavor of funnel analysis (likely more efficient than logic with joins above)
+-   example below deriving funnel step conversion based on total visitors and step to step conversion rate
 
-```         
+```sql         
 -- temp table created in above code logic
 WITH action_counts AS (
   SELECT 
@@ -517,15 +516,15 @@ SELECT
   users_with_order_complete / website_vistors::FLOAT AS pct_visitors_with_order_complete,
   users_with_add_to_cart / users_with_purchase_click::FLOAT AS pct_purchase_clicks_to_add_to_cart,
   users_with_order_complete / users_with_add_to_cart::FLOAT AS pct_add_to_cart_to_order_complete
-FROM action_counts;
+FROM action_counts
 ```
 
 ### Self Join for Affinity Analysis
+- next step bookmark (more efficient way to write this, assess usefulness of this example)
+-   e.g. users who watch X movie tend to also watch Y movie
+-   ni practice, we might add logic to handle low volume sets, etc
 
--   e.g. users who watch X movie tend to also watch Y movie.
--   In practice, we might add logic to handle low volume sets, etc
-
-```         
+```sql         
 WITH movies_watched(user_id, movie_title) AS (
   VALUES
     (1, 'The Shawshank Redemption'),
