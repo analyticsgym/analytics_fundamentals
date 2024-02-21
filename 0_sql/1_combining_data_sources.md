@@ -519,15 +519,15 @@ SELECT
 FROM action_counts
 ```
 
-### Self Join for Affinity Analysis
-- next step bookmark (more efficient way to write this, assess usefulness of this example)
--   e.g. users who watch X movie tend to also watch Y movie
--   ni practice, we might add logic to handle low volume sets, etc
+### Self join for basic affinity analysis
+- find the most common pairs of movies watched together
+- for large datasets consider R or Python for more efficient processing/algorithms
 
 ```sql         
 WITH movies_watched(user_id, movie_title) AS (
   VALUES
-    (1, 'The Shawshank Redemption'),
+    (0, 'The Shawshank Redemption'),
+	(1, 'The Shawshank Redemption'),
     (2, 'The Shawshank Redemption'),
     (2, 'The Dark Knight'),
     (3, 'The Godfather'),
@@ -559,31 +559,20 @@ WITH movies_watched(user_id, movie_title) AS (
     (20, 'The Shawshank Redemption'),
     (20, 'The Godfather'),
     (20, 'The Godfather: Part II'),
-    (20, 'The Dark Knight')
-),
-
-movie_pairs AS (
-  SELECT 
-    m1.user_id, 
-    m1.movie_title AS movie_pair_slot_1, 
-    m2.movie_title AS movie_pair_slot_2 
-  FROM movies_watched AS m1 
-  INNER JOIN movies_watched AS m2 
-    ON m2.user_id = m1.user_id
-    -- Lower alphabetical movie takes slot 1
-    -- Drops same movie title showing in slot 1 and 2
-    AND m1.movie_title < m2.movie_title
+    (20, 'The Dark Knight'),
+	(21, 'The Dark Knight'),
+	(21, 'The Shawshank Redemption')
 )
 
--- Output not expected to be insightful due to low volume fake example data
--- However, approach could scale to practical dataset
--- Only two movie pairs have user counts of 2 or more
 SELECT 
-  movie_pair_slot_1, 
-  movie_pair_slot_2, 
-  COUNT(DISTINCT user_id) AS user_count 
-FROM movie_pairs 
-GROUP BY 1, 2 
-ORDER BY user_count DESC 
-LIMIT 5;
+  m1.movie_title AS movie_pair_slot_1, 
+  m2.movie_title AS movie_pair_slot_2,
+  COUNT(m1.user_id) AS user_count
+FROM movies_watched AS m1 
+INNER JOIN movies_watched AS m2 
+  ON m2.user_id = m1.user_id
+  -- avoid duplicate pairs with 
+  AND m1.movie_title < m2.movie_title
+GROUP BY 1,2
+ORDER BY user_count DESC
 ```
