@@ -1,32 +1,41 @@
 #### What is SQL
+-   SQL (Structured Query Language) is a programming language used for managing, manipulating, and analyzing data in relational databases
 
--   SQL (Structured Query Language) is a programming language used for managing, manipulating, and analyzing data in relational databases.
+#### Relational database
+-   relational databases use a relational model of tables to organize data
+-   tables consist of rows (records) and columns (attributes)
+-   tables tend to adhere to a schema which defines the table structure
+-   tables connect together with keys (i.e. user_id persists across tables)
 
-#### Relational Database
+#### Types of relationships found in relational databases
+1-to-1
+- record in one table relates to exactly one record in another table
 
--   Relational databases use a relational model of tables to organize data.
--   Tables consist of rows (records) and columns (attributes).
--   Tables tend to adhere to a schema which defines the table structure.
--   Tables are connected together with keys (i.e. user_id persists across tables).
+1-to-many
+- record in one table relates to one or more records in another table
+- inverse also exists (many-to-1)
 
-#### Primary Key
+many-to-many
+- multiple records in one table are associated with multiple records in another table
 
--   A table column or set of columns that uniquely identifies a table row/record.
--   Database vendors have different rules for primary keys (i.e. single column constraints, NULL value handling, etc).
+self-referencing
+- record in one table refers to another record in the same table
 
-#### Foreign Key
+#### Primary key
+-   a table column or set of columns that uniquely identifies a table row/record
+-   database vendors have different rules for primary keys (i.e. single column constraints, NULL value handling, etc)
 
--   A table column or set of columns that refer to a primary key in another table.
--   A table can have multiple foreign keys.
+#### Foreign key
+-   a table column or set of columns that refer to a primary key in another table
+-   a table can have multiple foreign keys
 
 #### Different SQL dialects
-
--   SQL dialects vary slightly between database systems (e.g. PostgreSQL, Amazon Redshift, Google BigQuery). Like flavors of ice cream.
-
--   Each system might have unique functions, syntax, or performance optimizations.
+-   SQL dialects vary slightly between database systems (e.g. PostgreSQL, Amazon Redshift, Google BigQuery, etc)
+-   each system might has unique functions, syntax, and performance optimization considerations
+-   foundational knowledge tends be transferable between systems
 
 #### ETLs
-
+- Next step book mark 2/24
 -   Database management jobs used to Extract, Transform, and Load data from various sources into a database.
 -   i.e. Extract data from a 3rd party API, Transform the data (clean, arrange, format), Load the data into database.
 -   ETLs can store results of an analyst query in a table to help with speed to access data output and code visibility.
