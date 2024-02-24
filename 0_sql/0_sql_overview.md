@@ -106,7 +106,6 @@ LIMIT
 
 ``` sql
 -- assuming users table exists (CREATE TABLE logic above)
-
 WITH user_staging AS (
 SELECT
     123 AS user_id,

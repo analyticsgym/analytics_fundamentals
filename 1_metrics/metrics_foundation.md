@@ -1,4 +1,19 @@
-# Metrics Best Practices
+# WORK IN-PROGRESS
+
+### Metrics overview
+- Creating metrics
+
+- Asessing metric usefulness
+
+- Using metrics
+
+- QAing metrics
+
+- Common metric flaws and challenges
+
+### Common metric frameworks
+- AARRR (Pirtate metrics)
+- Google HEART
 
 ### Defining Success Metrics for X new feature/experience
 
