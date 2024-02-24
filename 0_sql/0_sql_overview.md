@@ -1,58 +1,57 @@
 #### What is SQL
+
 -   SQL (Structured Query Language) is a programming language used for managing, manipulating, and analyzing data in relational databases
 
 #### Relational database
+
 -   relational databases use a relational model of tables to organize data
 -   tables consist of rows (records) and columns (attributes)
 -   tables tend to adhere to a schema which defines the table structure
--   tables connect together with keys (i.e. user_id persists across tables)
+-   tables connect together with keys
 
-#### Types of relationships found in relational databases
-1-to-1
-- record in one table relates to exactly one record in another table
+#### Types of relational database relationships
 
-1-to-many
-- record in one table relates to one or more records in another table
-- inverse also exists (many-to-1)
-
-many-to-many
-- multiple records in one table are associated with multiple records in another table
-
-self-referencing
-- record in one table refers to another record in the same table
+-   1-to-1: record in one table relates to exactly one record in another table
+-   1-to-many: record in one table relates to one or more records in another table - inverse also exists (many-to-1)
+-   many-to-many: multiple records in one table are associated with multiple records in another table
+-   self-referencing: record in one table refers to another record in the same table
 
 #### Primary key
+
 -   a table column or set of columns that uniquely identifies a table row/record
 -   database vendors have different rules for primary keys (i.e. single column constraints, NULL value handling, etc)
 
 #### Foreign key
+
 -   a table column or set of columns that refer to a primary key in another table
 -   a table can have multiple foreign keys
 
 #### Different SQL dialects
+
 -   SQL dialects vary slightly between database systems (e.g. PostgreSQL, Amazon Redshift, Google BigQuery, etc)
--   each system might has unique functions, syntax, and performance optimization considerations
--   foundational knowledge tends be transferable between systems
+-   each system has unique functions, syntax, and performance optimization considerations
+-   foundational SQL knowledge tends be transferable between systems (i.e. how joins work, aggregate functions, window functions, etc)
 
 #### ETLs
-- Next step book mark 2/24
--   Database management jobs used to Extract, Transform, and Load data from various sources into a database.
--   i.e. Extract data from a 3rd party API, Transform the data (clean, arrange, format), Load the data into database.
--   ETLs can store results of an analyst query in a table to help with speed to access data output and code visibility.
--   ETLs are typically scheduled to run and write data to X table on a set frequency.
--   Often recommended for analysts to wait till code is stable (passed rapid iteration) before moving to ETL.
+
+-   database management jobs used to Extract, Transform, and Load data from various sources into a database
+-   i.e. rxtract data from a 3rd party API, transform the data (clean, arrange, format), load the data into database
+-   ETLs can store results of an analyst query in a table to help with speed to access data output and code visibility
+-   ETLs are typically scheduled to run and write data to X table on a set frequency
+-   often recommended for analysts to wait till code is stable (passed rapid iteration) before moving to ETL
+-   data engineers tend to own the most complex ETLs
 
 #### CRUD (Create, Read, Update, Delete)
 
--   Common operation themes in database management.
--   Typically owned by data engineers.
--   However, useful for analysts to be aware of these operations when writing ETL code/logic.
+-   common operation themes in database management
+-   typically owned by data engineers
+-   useful for analysts to be aware of these operations when writing ETL code/logic
 
-#### Creating Tables
+#### Creating tables
 
--   Creste table syntax.
+-   create table syntax
 
-```         
+``` sql
 CREATE TABLE users ( 
     user_id INT PRIMARY KEY,
     first_name text,
@@ -61,12 +60,13 @@ CREATE TABLE users (
 );
 ```
 
-#### Typical Query Outline to Read Data from Table
+#### Typical query outline to read data from table
 
--   Read table syntax.
--   When querying/exploring a table, it is best practice to include LIMIT logic to reduce database load.
+-   read table syntax
+-   when querying/exploring a table, it is best practice to include LIMIT logic to reduce database load
+-   most common SQL operation for analysts
 
-```         
+``` sql
 SELECT 
     <specify columns/metrics>
 FROM 
@@ -76,7 +76,7 @@ WHERE
 GROUP BY 
     <groups to group/aggregate by>
 HAVING 
-    <post process filter>
+    <post process filter applied to aggregate function>
 ORDER BY 
     <column(s) to order by>
     <column to order small to larger> ASC,  
@@ -85,25 +85,28 @@ LIMIT
     <view limited number of rows vs full query output; use for iterative exploration>
 ```
 
-#### Typical Query Evaluation Order
+#### Logical query evaluation order
 
--   Queries may have 1 or more of these eval elements
--   FROM (calling table and join logic)
--   WHERE (picking up any filters)
--   GROUP BY (aggregation grain)
--   HAVING (filter applied to agg functions)
--   WINDOW FUNCTIONS (logic for functions applied across a window in the data)
--   SELECT (specified columns return/functions to call)
--   DISTINCT (remove dups)
--   UNION (combine result sets)
--   ORDER BY (arrange output data)
--   LIMIT (constrain the number of records returned)
+-   used to guide how to construct a query to get the desired output
+-   queries may have 1 or more of these eval elements
+-   `FROM` (calling table and join logic)
+-   `WHERE` (picking up any filters)
+-   `GROUP BY` (aggregation grain)
+-   `HAVING` (filter applied to agg functions)
+-   `WINDOW FUNCTIONS` (logic for functions applied across a window in the data)
+-   `SELECT` (specified columns return/functions to call)
+-   `DISTINCT` (remove dups)
+-   `ORDER BY` (arrange output data)
+-   `LIMIT` (constrain the number of records returned)
+-   note: database query optimizer may run the operations in a different order for performance reasons
 
-#### Add Records to Existing Table
+#### Add records to existing table
 
--   Insert table syntax.
+-   example insert syntax
 
-```         
+``` sql
+-- assuming users table exists (CREATE TABLE logic above)
+
 WITH user_staging AS (
 SELECT
     123 AS user_id,
@@ -125,64 +128,67 @@ SELECT user_id, first_name, birth_year, favorite_color
 FROM user_staging;
 ```
 
-#### Add Columns to Existing Table
+#### Add columns to existing table
 
--   Adding columns syntax.
+-   adding columns syntax
 
-```         
+``` sql
 ALTER TABLE users
 ADD COLUMN annual_income_usd INT,
 ADD COLUMN column_drop BOOLEAN;
 ```
 
--   Removing columns syntax.
+-   removing columns syntax
 
-```         
+``` sql
 ALTER TABLE users
 DROP COLUMN column_drop;
 ```
 
-#### Conditionally Update Records
+#### Conditionally update records
 
--   Update syntax.
+-   update syntax
 
-```         
+``` sql
 UPDATE users
 SET annual_income_usd = 50000;
 ```
 
-#### CTEs (Common Table Expression)
+#### CTEs (common table expression)
 
--   Temporary named result that can be referenced within the same query.
--   Often used for simplicity/readability/efficiency.
--   CTEs can help break complex logic into manageable chunks for QA/iteration and potential query performance improvement.
--   WITH keyword used to define first CTE in a query.
+-   temporary named result that can be referenced within the same query
+-   often used for simplicity/readability/efficiency/setup work
+-   CTEs can help break complex logic into manageable chunks for QA/iteration and potential query performance improvement
+-   WITH keyword used to define first CTE in a query
 
-```         
--- TODO: update with improved formatting 
+``` sql
 WITH us_states_codes AS (
-    SELECT 
-        UNNEST(
-            ARRAY[
-                'WY','WI','WV','WA','VA','VT','UT','TX','TN','SD','SC',
-                'RI','PA','OR','OK','OH','ND','NC','NY','NM','NJ','NH',
-                'NV','NE','MT','MO','MS','MN','MI','MA','MD','ME','LA',
-                'KY','KS','IA','IN','IL','ID','HI','GA','FL','DE','CT',
-                'CO','CA','AR','AZ','AK','AL'
-            ]   
-        ) AS state_codes
-    
+SELECT 
+    UNNEST(
+        ARRAY[
+            'WY','WI','WV','WA','VA',
+            'VT','UT','TX','TN','SD',
+            'SC','RI','PA','OR','OK',
+            'OH','ND','NC','NY','NM',
+            'NJ','NH','NV','NE','MT',
+            'MO','MS','MN','MI','MA',
+            'MD','ME','LA','KY','KS',
+            'IA','IN','IL','ID','HI',
+            'GA','FL','DE','CT','CO',
+            'CA','AR','AZ','AK','AL'
+        ]   
+    ) AS state_codes
 )
 SELECT * FROM us_states_codes
 ```
 
 #### TEMP tables
 
--   Another approach to store temporary results.
--   Temp tables are dropped at the end of a session but can be referenced within a session.
--   Temp tables are created using similar logic to non-temp tables.
+-   another approach to store temporary results
+-   temp tables are dropped at the end of a session but can be referenced within a session
+-   temp tables are created using similar logic to non-temp tables
 
-```         
+``` sql
 -- DROP TABLE IF EXISTS top_20_quarterbacks;
 CREATE TEMP TABLE top_20_quarterbacks (
     id SERIAL PRIMARY KEY,
@@ -221,14 +227,14 @@ SELECT
 FROM top_20_quarterbacks
 ```
 
-#### Subquiries (aka nested queries)
+#### Subqueries (aka nested queries)
 
--   Often useful for simple filtering conditions in WHERE clause, adding a column to query, or temp result in a query.
--   Note: complex subquiries can make readability difficult.
--   CTEs or TEMP tables tend to be more readable for complex logic.
+-   query within a query
+-   often useful for simple filtering conditions in WHERE clause, adding a column to query, or temp result in a query
+-   note: complex subqueries can make readability difficult
+-   CTEs or TEMP tables tend to be more readable for complex logic
 
-```         
--- generate sample data CTE
+``` sql
 WITH employees(name, department, salary) AS (
     VALUES
     ('John', 'HR', 50000),
@@ -241,26 +247,28 @@ WITH employees(name, department, salary) AS (
     ('Paul', 'Marketing', 85000)
 )
 
--- return employee info for folks with above average salary
 SELECT 
   name, 
   department, 
-  salary
+  salary,
+  (SELECT AVG(salary::FLOAT) FROM employees) AS all_employees_avg_salary
 FROM employees
 -- subquery in the where clause to assist with filtering
-WHERE salary > (SELECT AVG(salary) FROM employees)
+-- returns employee info for folks with above average salary
+WHERE salary > (SELECT AVG(salary::FLOAT) FROM employees)
+ORDER BY salary DESC
 ```
 
 #### Handling NULL values
 
--   NULL in SQL represents the absence of a value.
--   By default, most aggregate functions ignore NULL values.
--   WHERE clause comparison operators (=, \<, \>, etc) on NULL values do not get evaluated resulting in records getting dropped.
--   Said differently, comparison operators do not work with NULL values as NULL values represent the absence of a value so a comparison is not feasible.
--   Use **`IS NULL`** or **`IS NOT NULL`** to include or exclude NULL values in queries.
--   In some cases, we may want to replace NULLs with another value (numerous techniques exist for NULL replacement).
+-   NULL in SQL represents the absence of a value
+-   by default, most aggregate functions ignore NULL values
+-   WHERE clause comparison operators (=, \<, \>, etc) on NULL values do not get evaluated resulting in NULL records getting dropped
+-   said differently, comparison operators do not work with NULL values as NULL values represent the absence of a value so a comparison is not feasible
+-   use `IS NULL` or `IS NOT NULL` to include or exclude NULL values in queries
+-   in some cases, we may want to replace NULLs with another value (numerous techniques exist for NULL replacement)
 
-```         
+``` sql
 WITH pet_goats AS (
     SELECT 'becky' AS name, 4 AS pet_goats
         UNION
@@ -295,11 +303,11 @@ SELECT name FROM pet_goats WHERE pet_goats IS NOT NULL
 
 #### Casting
 
--   Conversion of a value of one data type to another data type.
--   CAST function, double colon, or to_datatype functions to convert/cast one data type to another.
--   Sidebar: Amazon Redshift defaults to integer division which drops decimal places in output. Cast to float to include decimal places.
+-   conversion of a value of one data type to another data type
+-   CAST function, double colon, or to_datatype functions to convert/cast one data type to another
+-   some database vendors defaults to integer division which drops decimal places in output (cast to float to include decimal places)
 
-```         
+``` sql
 -- Converts the string '123' to an integer 123
 SELECT '123'::integer; 
 
@@ -331,11 +339,12 @@ SELECT
 
 #### CASE WHEN
 
--   If then boolean conditional logic.
--   Can be used to replace values in a column, create a new column, bucket data based on rules, etc.
--   CASE WHEN logic output data type determined by the THEN expression data types.
+-   if then boolean conditional logic
+-   can be used to replace values in a column, create a new column, bucket data based on rules, etc
+-   CASE WHEN logic output data type determined by the THEN expression data types
+-   output data types must be compatible with each other; cast to a common data type if necessary
 
-```         
+``` sql
 -- see above to generate us_states_codes CTE
 SELECT
     state_codes,
@@ -345,14 +354,21 @@ SELECT
         ELSE FALSE
     END AS joined_usa_after_1900
 FROM us_states_codes
-ORDER BY joined_usa_after_1900 DESC 
+ORDER BY joined_usa_after_1900 DESC
 ```
 
 #### COALESCE
 
--   Replace NULL values with first non-NULL value.
+-   replace NULL values with first non-NULL value
+-   useful for handling NULL values in aggregate functions, conditional logic, etc
 
-```         
+``` sql
+-- returns 1 (the first non-null value)
+SELECT COALESCE(NULL, 1, 2, 3) AS first_non_null_value
+```
+
+``` sql
+-- more complex example
 WITH example_record AS (
   SELECT
       NULL AS street_address,
@@ -384,51 +400,49 @@ FROM example_record
 ```
 
 #### NULLIF
+-   assign NULL values based on conditional logic check
+-   if conditional check is true then NULL
+-   if conditional check is false then original value
 
--   Dedicated function to assign NULL values based on conditional logic.
-
-```         
+```sql         
 WITH survey_responses AS (
 SELECT 
-    UNNEST(
-            ARRAY[
-                'I love this product',
-                '',
-                'Home page load is slow',
-                'Not able to find profile settings'
-            ]   
-        ) AS survey_open_text_feedback_response
+  UNNEST(
+          ARRAY[
+              'I love this product',
+              '',
+              'Home page load is slow',
+              'Not able to find profile settings'
+          ]   
+      ) AS survey_open_text_feedback_response
 )
 
--- when survey response = '' then set value to NULL
+-- when survey response = '' (empty string) then set value to NULL
 SELECT 
     NULLIF(
         survey_open_text_feedback_response, 
         ''
     ) AS survey_open_text_feedback_response_clean
-FROM survey_responses;
+FROM survey_responses
 ```
 
 #### LEAST, GREATEST
+-   return min (least) or max (greatest) value given multiple inputs
 
--   Given multiple inputs and return min (least) or max (greatest) value.
-
-GREATEST examples
-
-```         
+```sql         
+-- GREATEST examples
 SELECT GREATEST(123, 500, 999, 10000, 1) AS largest_int;
 SELECT GREATEST('2021-01-01', '2021-02-15', '2022-04-30') AS latest_date;
 -- ASCII code used for each letter
 SELECT GREATEST('a', 'b', 'c') AS largest_letter;
 ```
 
-LEAST example
-
-```         
+```sql         
+-- LEAST example
 WITH customer_spending AS (
-SELECT 56987 AS customer_spending
-UNION 
-SELECT 46987 AS customer_spending
+  SELECT 56987 AS customer_spending
+  UNION 
+  SELECT 46987 AS customer_spending
 )
 
 SELECT 
@@ -437,10 +451,9 @@ FROM customer_spending
 ```
 
 #### DISTINCT
+-   return unique column values or row permutations
 
--   Return unique column values or row permutations.
-
-```         
+```sql         
 WITH us_customers AS (
     SELECT 123 AS user_id, 'FL' AS state, 'Orlando' as city
     UNION 
@@ -452,13 +465,14 @@ WITH us_customers AS (
 )
 
 -- return all unique city and state pairs
+-- most explicit way to write the query
 SELECT 
     DISTINCT
     state,
     city
 FROM us_customers
 
----- sidebar: GROUP BY logic below can also be used to get unique combos and drop dup rows
+---- GROUP BY logic below can also be used to get unique combos and drop dup rows
 -- SELECT
 --  state,
 --  city
@@ -467,11 +481,10 @@ FROM us_customers
 ```
 
 #### DISTINCT ON
+-   similar to DISTINCT except one or more columns are specified to grab unique values vs full row uniqueness
+-   for large tables, row_number window function with down stream filter tends to be more efficient; DISTINCT ON requires heavy table sort
 
--   Similar to DISTINCT except one or more columns are specified to grab unique values vs full row uniqueness.
--   For large tables, row_number window function with down stream filter tends to be more efficient; DISTINCT ON requires heavy table sort.
-
-```         
+```sql         
 WITH purchases AS (
     SELECT 123 AS user_id, 1 AS order_id, 100 AS purchase_amount
     UNION 
@@ -480,9 +493,12 @@ WITH purchases AS (
     SELECT 456 AS user_id, 3 AS order_id, 444 AS purchase_amount
     UNION 
     SELECT 789 AS user_id, 4 AS order_id, 10 AS purchase_amount
+    UNION 
+    SELECT 789 AS user_id, 6 AS order_id, 250 AS purchase_amount
 )
 
--- grab first purchase by user
+-- grabs first purchase by user
+-- `DISTINCT ON` grabs the first row in each group based on ordering
 SELECT 
     DISTINCT ON (user_id) 
     user_id, 
@@ -492,18 +508,19 @@ FROM purchases
 ORDER BY user_id, order_id
 ```
 
-#### Log Transformations
+#### Log transformations
+-   common way to explore and visualize data that spans several orders of magnitude
+-   log base 2 and log base 10 tend to be most intuitive
+-   change of 1 unit on log2 scale = data value doubling on the original scale
+-   change of 1 unit on log10 scale = data value 10xing on the original scale
 
--   Common way to understand and visualize data that spans several orders of magnitude.
--   Log base 2 and log base 10 tend to be most intuitive.
--   Change of 1 unit on log2 scale = data value doubling on the original scale.
--   Change of 1 unit on log10 scale = data value 10xing on the original scale.
-
-```         
+```sql         
 WITH example_data(income) AS (
   VALUES 
-    (100::numeric), (200), (300), (1000), (2000), (3000), (10000), (20000), (30000), (100000),
-    (200000), (300000), (1000000), (2000000), (3000000), (10000000), (20000000), (30000000)
+    (100::numeric), (200), (300), (1000), (2000), 
+    (3000), (10000), (20000), (30000), (100000),
+    (200000), (300000), (1000000), (2000000), 
+    (3000000), (10000000), (20000000), (30000000)
 )
 
 SELECT 
@@ -515,14 +532,12 @@ ORDER BY income
 ```
 
 #### MOD
-
--   Calculates the whole number remainder when one number is divided by another number.
+-   calculates the whole number remainder when one number is divided by another number
 -   i.e. mod(10,2) = 0 vs mod(11,2) = 1
--   Useful for bucketing/sampling with reproducibility on id fields generated randomly.
+-   useful for bucketing/sampling with reproducibility on id fields generated randomly
 
-Control vs variant bucketing example
-
-```         
+```sql         
+-- control vs variant bucketing example
 WITH users(user_id) AS (
   VALUES 
     (1), (2), (3), (4), (5), 
@@ -543,9 +558,8 @@ SELECT
 FROM users
 ```
 
-Sample 10% of users
-
-```         
+```sql         
+-- sample 10% of users
 -- generate 100 random user_ids
 WITH users AS (SELECT 
     UNNEST(
@@ -567,10 +581,9 @@ WHERE user_id % 10 = 1
 ```
 
 #### Bucketing/bins: using NTILE
+-   NTILE: divides an ordered partition into N roughly equal buckets
 
--   NTILE: divides an ordered partition into N roughly equal buckets.
-
-```         
+```sql         
 DROP TABLE IF EXISTS temp_sales;
 CREATE TEMP TABLE temp_sales (
   id SERIAL PRIMARY KEY,
@@ -591,8 +604,9 @@ VALUES ('Item A', 10.0),
        ('Item J', 100.0);
 
 WITH sales_with_bins AS (
-  SELECT *,
-         ntile(4) OVER (ORDER BY price) AS ntile_bin
+  SELECT 
+    *,
+    ntile(4) OVER (ORDER BY price) AS ntile_bin
   FROM temp_sales
 )
 
@@ -607,38 +621,56 @@ SELECT
        WHEN ntile_bin = 3 THEN 'Medium High'
        WHEN ntile_bin = 4 THEN 'High'
     END AS price_category
-FROM sales_with_bins;
+FROM sales_with_bins
 ```
 
 #### BETWEEN
+-   used to filter on a range of values ( x BETWEEN low_value and high_value)
+-   range is inclusive meaning x \>= to low_value and x \<= high_value
+-   to create an exclusive range use \> and \<
+-   remember that NULLs are dropped by default; to include NULLs use (x is NULL or x BETWEEN ...)
+-   between dates can be tricky and folks may unexpectedly drop data
 
--   Used to filter on a range of values ( x BETWEEN low_value and high_value).
--   The range is inclusive meaning x \>= to low_value and x \<= high_value.
--   To create an exclusive range use \> and \<.
--   Remember that NULLs are dropped by default; to include NULLs use (x is NULL or x BETWEEN ...).
--   Between dates can be tricky and folks may unexpectedly drop data.
+```sql
+-- temp table created above
+SELECT * FROM top_20_quarterbacks
+WHERE total_td BETWEEN 30 AND 50
+```
 
-```         
--- imagine ts_var is a date timestamp
--- this filter would not include a full days worth of data for last day of Jan
-ts_var BETWEEN '2023-01-01' AND '2023-01-31' 
+```sql         
+-- watch out for nuances with BETWEEN date ranges
+WITH timestamp_data(ts_var) AS (
+  VALUES 
+    ('2023-01-01 00:00:00'::timestamp),
+    ('2023-01-15 12:34:56'),
+    ('2023-01-31 23:59:59'),
+    ('2023-02-01 00:00:00')
+)
 
--- could be a better option
-ts_var BETWEEN '2023-01-01' AND '2023-02-01' 
+-- drops Jan 31 record (watch out for this)
+SELECT *
+FROM timestamp_data
+WHERE ts_var BETWEEN '2023-01-01' AND '2023-01-31';
 
--- personally perferrred is the following
-ts_var >= '2023-01-01' AND < '2023-02-01' 
+-- example logic to include all of Jan 2023
+SELECT *
+FROM timestamp_data
+WHERE ts_var >= '2023-01-01' AND ts_var < '2023-02-01';
+
+-- additional example logic to include all of Jan 2023
+SELECT *
+FROM timestamp_data
+WHERE DATE_TRUNC('month', ts_var) = '2023-01-01';
 ```
 
 #### Pivoting data
+-   pivoting complex data from narrow to wide or wide to narrow can be tricky with most SQL database vendors
+-   tools outside of SQL are often preferred if heavy pivoting of data is needed
+-   manual/hard coded solutions exist within PostgreSQL
+-   PostgreSQL crosstab function extension case be used to pivot data as well 
+-   some DB vendors offer more robust pivoting functions (i.e. BigQuery PIVOT function, etc)
 
--   Pivoting complex data from narrow to wide or wide to narrow can be tricky with most SQL database vendors.
--   Tools outside of SQL are often preferred if heavy pivoting of data is needed.
--   Manual/hard coded solutions exist within PostgreSQL.
--   BigQuery has a PIVOT function.
-
-```         
--- create temp example data
+```sql         
 DROP TABLE IF EXISTS temp_sales_data;
 CREATE TEMP TABLE temp_sales_data (
     product_name VARCHAR,
@@ -661,66 +693,24 @@ FROM temp_sales_data
 GROUP BY 1
 ```
 
-Crosstab to pivot data
+#### Generate series
+-   useful for generating test/practice PostgreSQL datasets
+-   generate a series of values from a start value to an end value with a step interval
+-   `start`: the beginning value of the series
+-   `stop`: the ending value of the series
+-   `step`: the interval between each value in the series. If this is omitted, the default step is 1
 
-```         
--- crosstab to pivot data
--- manually specify values for row values to turn into columns (daily dates below)
-CREATE EXTENSION IF NOT EXISTS tablefunc;
-
-SELECT *
-FROM crosstab(
-    'SELECT product_name, sale_date, purchase_count
-     FROM temp_sales_data
-     ORDER BY 1, 2',
-    'SELECT DISTINCT sale_date FROM temp_sales_data ORDER BY 1'
-) AS result(product_name VARCHAR, "2023-01-01" INT, "2023-01-02" INT);
-
--- create temp wide example data
-DROP TABLE IF EXISTS temp_wide_sales_data;
-CREATE TEMP TABLE temp_wide_sales_data (
-    product_name VARCHAR,
-    "2023-01-01" INT,
-    "2023-01-02" INT
-);
-
-INSERT INTO temp_wide_sales_data (product_name, "2023-01-01", "2023-01-02")
-VALUES ('Apple', 10, 12),
-       ('Orange', 8, 15);
-
-SELECT 
-    product_name, 
-    '2023-01-01'::date AS sale_date, 
-    "2023-01-01" AS purchase_count
-FROM temp_wide_sales_data
-
-UNION ALL
-
-SELECT 
-    product_name, 
-    '2023-01-02'::date AS sale_date, 
-    "2023-01-02" AS purchase_count
-FROM temp_wide_sales_data;
-```
-
-#### Generate Series
-
--   used to generate a series of values, from a start value to an end value with a step interval
--   useful for generating test/practice Postgres SQL datasets
--   **`start`**: the beginning value of the series
--   **`stop`**: the ending value of the series
--   **`step`**: the interval between each value in the series. If this is omitted, the default step is 1
-
-```         
+```sql         
 -- generate a series of dates for each day in January 2023
 SELECT 
-    date_ts::DATE as day_in_jan_2023 
-FROM generate_series(
-  '2023-01-01'::DATE, 
-  '2023-01-31'::DATE, 
-  interval '1 day'
-) AS date_ts;
+  generate_series(
+    '2023-01-01'::DATE, 
+    '2023-01-31'::DATE, 
+    interval '1 day'
+  ) AS day_in_jan_2023 
+```
 
--- 100 ids from 1 to 100
-SELECT id FROM generate_series(1, 100, 1) AS id;
+```sql
+-- generate 100 ids from 1 to 100
+SELECT generate_series(1, 100, 1) AS id
 ```
