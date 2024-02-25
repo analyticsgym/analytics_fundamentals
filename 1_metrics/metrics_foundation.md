@@ -1,23 +1,66 @@
 # WORK IN-PROGRESS
 
-### Metrics overview
-- Creating metrics
+------------------------------------------------------------------------
 
-- Asessing metric usefulness
+# Metrics Overview
 
-- Using metrics
+#### Why use quantifiable metrics?
 
-- QAing metrics
+-   Businesses use metrics to systematically track, assess, and improve performance
 
-- Common metric flaws and challenges
+-   Similar to how a doctor leverages various health metrics to guide patient care
 
-### Common metric frameworks
-- AARRR (Pirtate metrics)
-- Google HEART
+#### Metric Benefits and Pitfalls
 
-### Defining Success Metrics for X new feature/experience
+-   Next step bookmark 2/26
 
-##### 1. What is being tested and why?
++------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------+
+| Benefits +                                                                                           | Pitfalls -                                                                                 |
++======================================================================================================+============================================================================================+
+| -   Quantifiable way to track business health and spot opportunities for improvement/experimentation | -   Expecting a single metric tell the full story                                          |
+| -   Assists organization alignment torward measurable targets (often part of OKR framework)          | -   Over complicated metrics not understood by target users                                |
+| -   Used for comparison across time periods and/or segments                                          | -   Reliant on vanity metrics that look good on paper but not tied to core business action |
+| -   Input to data-informed decision making                                                           | -   Easy to game                                                                           |
+| -   Can inspire innovation opportunities                                                             | -   Missing big picture and obsessing over small metric movements                          |
+|                                                                                                      | -   Cherry picking metrics as a way to increase conviction for a previously help opinion   |
+|                                                                                                      | -   Abandoning qual signals and over indexing on quant metrics due to ease of measurement  |
+|                                                                                                      | -   Overly sensitive or overly stable metrics can limit actionability                      |
+|                                                                                                      | -   Data quality erosion can distort metrics                                               |
++------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------+
+
+#### Flavors of business metrics
+
+-   Financial
+-   Marketing
+-   Product Usage & Growth
+-   Customer Satisfaction
+-   Operational
+-   Employee
+
+#### Creating metrics
+
+-   pros and cons to different types of metrics
+
+#### Assessing metric usefulness
+
+#### Using metrics
+
+#### QAing metrics
+
+#### Common metric flaws and challenges
+
+------------------------------------------------------------------------
+
+# Common Metric Frameworks
+
+-   AARRR (Pirtate metrics)
+-   Google HEART
+
+------------------------------------------------------------------------
+
+# Defining Success Metrics for X new feature/experience
+
+#### 1. What is being tested and why?
 
 -   What is the objective of the feature/experience? who is it for?
 -   What would the high-level experience look like?
@@ -63,7 +106,9 @@
 -   one or both primary metrics improve and guardrail metrics/segments not stable then = try to understand why/iterate further or move on
 -   one or both primary metrics negative and guardrail metrics/segments not stable then = don't move forward
 
-### Investigating Metric Change
+------------------------------------------------------------------------
+
+# Investigating Metric Change
 
 1.  Understand the metric definition, filters applied, and time window
 2.  Seasonal business context or known experience change that might explain the change
@@ -71,7 +116,11 @@
 4.  Data pipeline or experience bug that is skewing the metric
 5.  Drivers analysis slicing and dicing data to uncover deviation root cause (new vs existing, device types, geo, power users vs non power users, paid vs free)
 
-### Is active user metric growth healthy or not?
+------------------------------------------------------------------------
+
+# Example Business Scenarios
+
+#### Is active user metric growth healthy or not?
 
 1.  how is active defined and how is healthy growth being determined
 
@@ -104,7 +153,7 @@
 -   surveys
 -   interviews
 
-### Assessing the quality of organic traffic/active user growth
+#### Assessing the quality of organic traffic/active user growth
 
 1.  analyze traffic source
 
@@ -147,7 +196,7 @@ Misc considerations
 -   channel diversification is key to reduce risk
 -   true test of sustainability is time
 
-### Explain usefulness of trended ratios between DAU, WAU, MAU, QAU
+#### Explain usefulness of trended ratios between DAU, WAU, MAU, QAU
 
 -   help explain the type of usage patterns folks have and gauge stickiness
 -   when the ratios are close to 1 it suggests high stickiness during the metric frame
@@ -172,7 +221,7 @@ Misc considerations
 -   helpful if a product is used on less frequent basis
 -   scenarios where MAU could decline but QAU increases
 
-### Why look at active user ratios vs absolute counts
+#### Why look at active user ratios vs absolute counts
 
 -   both are helpful to give a read on the engagement health of the business
 -   various counts can indicate if the active user base is growing or not
@@ -186,9 +235,8 @@ Misc considerations
 -   if so, investigate to understand why? there could be skeletons in the closest
 -   for strategic high visibility work it's extra important that metrics being used to drive decisions/financials tie out as expected. From the start investigate and build high quality solution to minimize risk (\$ renewal forecast case study)
 
-### Backlog
+------------------------------------------------------------------------
 
--   why and how to define metrics
--   pros and cons to different types of metrics
--   macro trend is pulling metrics up (i.e. COVID for online streamers and businesses)
--   
+# Backlog
+
+-   how to handle scenarios when macro trend is pulling metrics up (i.e. COVID for online streamers and businesses)
