@@ -6,36 +6,49 @@
 
 #### Why use quantifiable metrics?
 
--   Businesses use metrics to systematically track, assess, and improve performance
+-   Metrics help organizations systematically measure, assess, and improve performance
 
--   Similar to how a doctor leverages various health metrics to guide patient care
+#### Metric benefits and pitfalls
 
-#### Metric Benefits and Pitfalls
++------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------+
+| Benefits +                                                                                           | Pitfalls -                                                                                           |
++======================================================================================================+======================================================================================================+
+| -   Quantifiable way to track business health and spot opportunities for improvement/experimentation | -   Expecting a single metric to tell the full story                                                 |
+| -   Drives organization alignment torward measurable target (often part of an OKR framework)         | -   Over complicated metrics not understood by target users                                          |
+| -   Used for comparison across time periods and/or segments                                          | -   Reliant on vanity metrics that look good on paper but not tied to core business action           |
+| -   Input to data-informed decision making process                                                   | -   Easy to game goal metrics                                                                        |
+| -   Used to surface innovation opportunities                                                         | -   Missing big picture and obsessing over small metric movements                                    |
+|                                                                                                      | -   Cherry picking metrics as a way to increase conviction for a previously help opinion             |
+|                                                                                                      | -   Abandoning qual signals and over indexing on quant metrics due to ease of measurement            |
+|                                                                                                      | -   Overly sensitive or overly stable metrics can limit actionability                                |
+|                                                                                                      | -   Metric quality erodes over time due to limited or no data quality monitoring powering the metric |
++------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------+
 
--   Next step bookmark 2/26
+#### Business metric examples
 
-+------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------+
-| Benefits +                                                                                           | Pitfalls -                                                                                 |
-+======================================================================================================+============================================================================================+
-| -   Quantifiable way to track business health and spot opportunities for improvement/experimentation | -   Expecting a single metric tell the full story                                          |
-| -   Assists organization alignment torward measurable targets (often part of OKR framework)          | -   Over complicated metrics not understood by target users                                |
-| -   Used for comparison across time periods and/or segments                                          | -   Reliant on vanity metrics that look good on paper but not tied to core business action |
-| -   Input to data-informed decision making                                                           | -   Easy to game                                                                           |
-| -   Can inspire innovation opportunities                                                             | -   Missing big picture and obsessing over small metric movements                          |
-|                                                                                                      | -   Cherry picking metrics as a way to increase conviction for a previously help opinion   |
-|                                                                                                      | -   Abandoning qual signals and over indexing on quant metrics due to ease of measurement  |
-|                                                                                                      | -   Overly sensitive or overly stable metrics can limit actionability                      |
-|                                                                                                      | -   Data quality erosion can distort metrics                                               |
-+------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------+
-
-#### Flavors of business metrics
+Next step bookmark 2/27
 
 -   Financial
+    -   Sales:
+    -   Expenses:
+    -   Margin:
 -   Marketing
+    -   Customer Acquisition Cost (CAC):
+    -   Lifetime Value (LTV):
+    -   Conversion Rate (CVR):
 -   Product Usage & Growth
+    -   Active Users:
+    -   Retention Rate:
+    -   ...
 -   Customer Satisfaction
+    -   Net Promoted Score
+    -   Customer Satisfaction Score
+    -   ...
 -   Operational
+    -   ...
 -   Employee
+    -   Turnover
+    -   DEI
 
 #### Creating metrics
 
