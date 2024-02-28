@@ -26,7 +26,7 @@
 
 #### Business metric examples
 
-Next step bookmark 2/27
+\<\<\<Next step bookmark\>\>\>
 
 -   Financial
     -   Sales:

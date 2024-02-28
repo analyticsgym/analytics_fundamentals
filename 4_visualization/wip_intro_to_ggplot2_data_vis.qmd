@@ -1,0 +1,44 @@
+---
+title: "Intro to ggplot2 for R data visualizations"
+format: gfm
+editor: source
+---
+
+### Pros and Cons to ggplot2
+
++--------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------+
+| Pros                                                                                                                                       | Cons                               |
++--------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------+
+| -   open-source and free R package                                                                                                         | -   \<\<\<Next step bookmark\>\>\> |
+| -   101 level knowledge can help analysts produce business value                                                                           |                                    |
+| -   can produce publication worthy visualizations for tech and non-tech audiences                                                          |                                    |
+| -   highly flexible and customizable                                                                                                       |                                    |
+| -   robust documentation, blog content, and community support (which means lots of training data for GenAI tools)                          |                                    |
+| -   high ROI on learning time given analysts can use the package across companies (vs tool paid which company A may use but not company B) |                                    |
++--------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------+
+
+```{r settings echo=FALSE, include = FALSE}
+knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE)
+```
+
+```{r packages}
+required_packages <- c('tidyverse')
+
+### check for required packages and install them if they are not already installed
+### not a best practice in general, but useful for folks getting started with R
+for(p in required_packages) {
+  if(!require(p,character.only = TRUE)) 
+        install.packages(p, repos = "http://cran.us.r-project.org")
+  library(p,character.only = TRUE)
+}
+```
+
+## Outline
+
+-   ggplot pros and cons
+-   ggplot overview
+-   getting started examples
+-   faceting
+-   styling and customization
+-   programmatic visualization
+-   scaleable visualization
