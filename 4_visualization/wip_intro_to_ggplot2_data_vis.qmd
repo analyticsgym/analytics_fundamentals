@@ -4,19 +4,6 @@ format: gfm
 editor: source
 ---
 
-### Pros and Cons to ggplot2
-
-+--------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------+
-| Pros                                                                                                                                       | Cons                               |
-+--------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------+
-| -   open-source and free R package                                                                                                         | -   \<\<\<Next step bookmark\>\>\> |
-| -   101 level knowledge can help analysts produce business value                                                                           |                                    |
-| -   can produce publication worthy visualizations for tech and non-tech audiences                                                          |                                    |
-| -   highly flexible and customizable                                                                                                       |                                    |
-| -   robust documentation, blog content, and community support (which means lots of training data for GenAI tools)                          |                                    |
-| -   high ROI on learning time given analysts can use the package across companies (vs tool paid which company A may use but not company B) |                                    |
-+--------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------+
-
 ```{r settings echo=FALSE, include = FALSE}
 knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE)
 ```
@@ -24,7 +11,7 @@ knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE)
 ```{r packages}
 required_packages <- c('tidyverse')
 
-### check for required packages and install them if they are not already installed
+### checks for required packages and install them if they are not already installed
 ### not a best practice in general, but useful for folks getting started with R
 for(p in required_packages) {
   if(!require(p,character.only = TRUE)) 
@@ -42,3 +29,32 @@ for(p in required_packages) {
 -   styling and customization
 -   programmatic visualization
 -   scaleable visualization
+-   additional resources
+
+## Pros and Cons to ggplot2
+
++--------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------+
+| Pros                                                                                                                                       | Cons                                                                   |
++--------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------+
+| -   open-source and free R package                                                                                                         | -   requires some basic R coding skills                                |
+| -   101 level knowledge can help analysts produce business value                                                                           | -   highly customize plots require deep knowledge of package nuances   |
+| -   can produce publication worthy visualizations for tech and non-tech audiences                                                          | -   data shaping/wrangling work needed at times                        |
+| -   highly flexible and customizable                                                                                                       | -   plot outputs to Google Docs or Slides often require manual process |
+| -   robust documentation, blog content, and community support (which means lots of training data for GenAI tools)                          |                                                                        |
+| -   high ROI on learning time given analysts can use the package across companies (vs tool paid which company A may use but not company B) |                                                                        |
++--------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------+
+
+## Ggplot2 Overview
+
+-   created by Hadley Wickham and part of the broader tidyverse R ecosystem
+-   works best with tidy data format (observations as rows and variables as columns)
+-   key concepts:
+    -   **layers:** ggplot builds plots layer by layer in a logical order
+    -   **aesthetics mapping**: instructions for how the data will map to a graphic (axis, colors, shapes, lines, etc)
+    -   **geometries (geoms)**: determines the graphic used to visually display the data
+    -   **facets**:
+    -   **themes**: used to reduce visual noise, add polish, and tweak formatting.
+
+## Getting Started Examples
+
+-   Next step bookmark
