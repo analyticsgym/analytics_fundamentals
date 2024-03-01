@@ -9,7 +9,7 @@ knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE)
 ```
 
 ```{r packages}
-required_packages <- c('tidyverse')
+required_packages <- c('tidyverse', 'rattle')
 
 ### checks for required packages and install them if they are not already installed
 ### not a best practice in general, but useful for folks getting started with R
@@ -57,4 +57,13 @@ for(p in required_packages) {
 
 ## Getting Started Examples
 
--   Next step bookmark
+-   UCI ML dataset: `mlbench::WineQualityRed`
+-   wine ratings and chemical properties of Vinho Verde rednwine samples from the north of Portugal
+-   more details [here](https://archive.ics.uci.edu/ml/datasets/Wine+Quality)
+
+```{r}
+# where the ratings? what is type? Mighty need another dataset
+wine
+```
+
+

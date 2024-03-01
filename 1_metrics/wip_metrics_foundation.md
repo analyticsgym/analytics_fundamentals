@@ -14,7 +14,7 @@
 | Benefits +                                                                                           | Pitfalls -                                                                                           |
 +======================================================================================================+======================================================================================================+
 | -   Quantifiable way to track business health and spot opportunities for improvement/experimentation | -   Expecting a single metric to tell the full story                                                 |
-| -   Drives organization alignment torward measurable target (often part of an OKR framework)         | -   Over complicated metrics not understood by target users                                          |
+| -   Drives organization alignment toward measurable target (often part of an OKR framework)          | -   Over complicated metrics not understood by target users                                          |
 | -   Used for comparison across time periods and/or segments                                          | -   Reliant on vanity metrics that look good on paper but not tied to core business action           |
 | -   Input to data-informed decision making process                                                   | -   Easy to game goal metrics                                                                        |
 | -   Used to surface innovation opportunities                                                         | -   Missing big picture and obsessing over small metric movements                                    |
@@ -22,6 +22,7 @@
 |                                                                                                      | -   Abandoning qual signals and over indexing on quant metrics due to ease of measurement            |
 |                                                                                                      | -   Overly sensitive or overly stable metrics can limit actionability                                |
 |                                                                                                      | -   Metric quality erodes over time due to limited or no data quality monitoring powering the metric |
+|                                                                                                      | -   Some things are tricky to measure with metrics (i.e. love, happiness, delight, etc)              |
 +------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------+
 
 #### Business metric examples
