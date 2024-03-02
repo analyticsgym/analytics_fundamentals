@@ -4,14 +4,47 @@ format: gfm
 editor: source
 ---
 
-```{r settings echo=FALSE, include = FALSE}
+```{r settings, echo=FALSE, include = FALSE}
 knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE)
 ```
 
-```{r packages}
-required_packages <- c('tidyverse', 'rattle')
+## Tukey Data Vis Quote
 
-### checks for required packages and install them if they are not already installed
+-   To be added
+
+## Overview
+
+-   [ggplot2 created by Hadley Wickham](https://ggplot2.tidyverse.org/) and part of the broader tidyverse R ecosystem
+-   works best with tidy data input format (observations as rows and variables as columns)
+-   pros
+    -   open-source and free R package
+    -   101 level knowledge can help analysts produce business value
+    -   can produce publication worthy visualizations for tech and non-tech audiences
+    -   highly flexible and customizable
+    -   robust documentation, blog content, and community support (which means lots of training data for GenAI tools)
+    -   high ROI on learning time given analysts can use the package across companies (vs tool paid which company A may use but not company B)
+-   cons
+    -   requires some basic R coding skills (which can have a slow / steep learning curve)
+    -   advanced custom plots require deep knowledge of package nuances (tools like Github Copilot reducing the cognitive load here)
+    -   data shaping/wrangling work needed at times
+    -   plot outputs to Google Docs or Slides require partially manual workflow
+
+## Key Components
+
+-   **layers:** ggplot builds plots layer by layer in a logical order
+-   **aesthetics mapping (aes):** instructions for how the data will map to a graphic (axis, colors, shapes, lines, etc)
+-   **geometries (geoms)**: determines the graphic used to visually display the data
+-   **facets**: used to split data into subplots based on 1 or more variables
+-   **labs:** title, axis names, captions, legend titles, etc.
+-   **themes**: used to reduce visual noise, add polish, and tweak formatting
+
+## Packages
+
+```{r packages}
+# ggplot2 included in the tidyverse package
+required_packages <- c('tidyverse', 'janitor', 'skimr')
+
+### check for required packages and install them if they are not already installed
 ### not a best practice in general, but useful for folks getting started with R
 for(p in required_packages) {
   if(!require(p,character.only = TRUE)) 
@@ -20,7 +53,151 @@ for(p in required_packages) {
 }
 ```
 
-## Outline
+## Practice Dataset
+
+-   wine ratings and chemical properties of Vinho Verde red wine samples from the north of Portugal
+-   UCI ML dataset: more details [here](https://archive.ics.uci.edu/ml/datasets/Wine+Quality)
+
+```{r}
+### read in the red wine dataset using csv location URL 
+url <- "https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv"
+rw_df <- read_delim(url, delim=";")
+
+### clean up column names automatically
+rw_df <- rw_df %>% janitor::clean_names()
+
+### Uncomment lines below output dataset info directly in the notebook
+# url_2 <- "https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality.names"
+# read_lines(url_2)
+
+### tails of the rating distribution are sparse
+### re-categorize to make the data more balanced and easier to visualize
+rw_df <- rw_df %>%
+    ### SQL like case_when to create a new column
+    mutate(quality_group = case_when(
+            quality<=4 ~ "3 to 4",
+            quality==5~ "5",
+            quality==6 ~ "6",
+            quality>6 ~ "7 to 8"),
+           ### converts character column to a factor with level orderings
+           ### level ordering used downstream for logical plot ordering
+           quality_group = factor(quality_group, levels=c("3 to 4", "5", "6", "7 to 8")))
+
+### view the dataset, observation count, column counts, data types, etc
+glimpse(rw_df)
+```
+
+## Summary Stats
+
+-   context building step to understand the dataset and its variables
+
+```{r}
+rw_df %>%
+  # approach to quickly produce summary stats
+  skimr::skim_without_charts() %>%
+  # return the numeric subtable produced by skim above
+  yank("numeric") %>%
+  # no missing data and all variables have a complete rate of 1
+  select(-n_missing, -complete_rate) %>%
+  # rounds numeric columns to 2 decimal places
+  mutate_if(is.numeric, ~round(., 2)) %>%
+  # used to product output table
+  # TODO: could change function reference here
+  knitr::kable()
+```
+
+## Building the Layers Step by Step
+
+1.  pipe (`%>%`) a dataset into ggplot
+
+```{r}
+### outputs blank plot object with no data mapping
+rw_df %>%
+  ggplot()
+```
+
+2.  set mapping for how the data will be visually represented
+
+```{r}
+# add x and y axis mapping to blank plot object (called aesthetics mapping)
+rw_df %>%
+  ggplot(aes(x = volatile_acidity, y = alcohol))
+```
+
+3.  specify a geom (e.g. graphic type) to visually represent the data
+
+```{r}
+# adds points to the plot object with x and y axis mapped
+rw_df %>%
+  ggplot(aes(x = volatile_acidity, y = alcohol)) +
+  geom_point()
+```
+
+4.  adjust point size and alpha parameter to handle overplotting
+
+```{r}
+# darked region highlights the primary cluster of data
+rw_df %>%
+  ggplot(aes(x = volatile_acidity, y = alcohol)) +
+  geom_point(size = 0.9, alpha = 0.4)
+```
+
+5. use color to distinguish between different quality groups
+
+```{r}
+# set color to quality_group within the aesthetics mapping logic
+rw_df %>%
+  ggplot(aes(x = volatile_acidity, y = alcohol, color = quality_group)) +
+  geom_point(size = 0.9, alpha = 0.4)
+```
+
+6. use facets to split the data into subplots based on quality group
+-  overplotting on above iteration making it hard to see differences between quality groups
+
+```{r}
+rw_df %>%
+  ggplot(aes(x = volatile_acidity, y = alcohol, color = quality_group)) +
+  # drop legend to reduce visual noise; facet headers provide the same info
+  geom_point(size = 0.9, alpha = 0.4, show.legend = F) +
+  theme(legend.position = "top") +
+  # split the data into subplots based on quality group
+  facet_wrap(. ~ quality_group, ncol = 2)
+```
+
+7. add median vertical and horizontal lines to enhance group vs group comparison
+
+```{r}
+rw_df %>%
+  ggplot(aes(x = volatile_acidity, y = alcohol, color = quality_group)) +
+  geom_point(size = 0.9, alpha = 0.4, show.legend = F) +
+  geom_vline(aes(xintercept = median(volatile_acidity)), 
+             linetype = "dashed", color = "grey40") +
+  geom_hline(aes(yintercept = median(alcohol)), 
+                 linetype = "dashed", color = "grey40") +
+  facet_wrap(. ~ quality_group, ncol = 2)
+```
+8. add titling and finalize styling 
+
+```{r}
+rw_df %>%
+  ggplot(aes(x = volatile_acidity, y = alcohol, color = quality_group)) +
+  ### linetype aes mappingL advance hack to surface the median legend title
+  geom_vline(aes(xintercept = median(volatile_acidity), 
+                 linetype = "Median"), color = "grey40",
+                 show.legend = F) +
+  geom_hline(aes(yintercept = median(alcohol), 
+                 linetype = "Median"), color = "grey40") +
+  geom_point(size = 0.9, alpha = 0.4, show.legend = F) +
+  facet_wrap(. ~ quality_group, ncol = 2) +
+  labs(title = "Red Wine  Alcohol and Volatile Acidity by Quality Group",
+       linetype = "",
+       x = "Volatile Acidity",
+       y = "Alcohol %")
+```
+
+
+
+## Outline notes
 
 -   ggplot pros and cons
 -   ggplot overview
@@ -30,40 +207,3 @@ for(p in required_packages) {
 -   programmatic visualization
 -   scaleable visualization
 -   additional resources
-
-## Pros and Cons to ggplot2
-
-+--------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------+
-| Pros                                                                                                                                       | Cons                                                                   |
-+--------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------+
-| -   open-source and free R package                                                                                                         | -   requires some basic R coding skills                                |
-| -   101 level knowledge can help analysts produce business value                                                                           | -   highly customize plots require deep knowledge of package nuances   |
-| -   can produce publication worthy visualizations for tech and non-tech audiences                                                          | -   data shaping/wrangling work needed at times                        |
-| -   highly flexible and customizable                                                                                                       | -   plot outputs to Google Docs or Slides often require manual process |
-| -   robust documentation, blog content, and community support (which means lots of training data for GenAI tools)                          |                                                                        |
-| -   high ROI on learning time given analysts can use the package across companies (vs tool paid which company A may use but not company B) |                                                                        |
-+--------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------+
-
-## Ggplot2 Overview
-
--   created by Hadley Wickham and part of the broader tidyverse R ecosystem
--   works best with tidy data format (observations as rows and variables as columns)
--   key concepts:
-    -   **layers:** ggplot builds plots layer by layer in a logical order
-    -   **aesthetics mapping**: instructions for how the data will map to a graphic (axis, colors, shapes, lines, etc)
-    -   **geometries (geoms)**: determines the graphic used to visually display the data
-    -   **facets**:
-    -   **themes**: used to reduce visual noise, add polish, and tweak formatting.
-
-## Getting Started Examples
-
--   UCI ML dataset: `mlbench::WineQualityRed`
--   wine ratings and chemical properties of Vinho Verde rednwine samples from the north of Portugal
--   more details [here](https://archive.ics.uci.edu/ml/datasets/Wine+Quality)
-
-```{r}
-# where the ratings? what is type? Mighty need another dataset
-wine
-```
-
-
