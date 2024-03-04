@@ -168,6 +168,7 @@ rw_df %>%
   geom_point(size = 0.9, alpha = 0.4, show.legend = F) +
   theme(legend.position = "top") +
   # split the data into subplots based on quality group
+  # facet_wrap or facet_grid are the most common facet functions
   facet_wrap(. ~ quality_group, ncol = 2)
 ```
 
@@ -204,6 +205,8 @@ p1 <- rw_df %>%
        linetype = "",
        x = "Volatile Acidity",
        y = "Alcohol %")
+
+### return plot object
 p1
 ```
 
@@ -215,18 +218,27 @@ ggsave("red_wine_quality_group_alcohol_and_va.png", p1, width = 10, height = 6)
 ```
 
 
-Next step bookmark
-- create 3 additional data vis examples with simple code and strong visuals
-- TBD on programming and scaleable visualization sections
+## Common Visualization Types
+
+#### Bar Charts
+```{r}
+rw_df %>%
+  ggplot(aes(x = quality_group, fill = quality_group)) +
+  geom_bar()
+```
+
+#### Histogram
+
+#### Time Series Trend
+
+#### Boxplots
+
+#### Scatterplot with Lables
 
 
-## Outline notes
+## Glimpse of Programmatic Visualization
 
--   ggplot pros and cons
--   ggplot overview
--   getting started examples
--   faceting
--   styling and customization
--   programmatic visualization
--   scaleable visualization
--   additional resources
+#### Custom ggplot2 functions
+
+#### Create a series of plots for each quality group per variable
+
