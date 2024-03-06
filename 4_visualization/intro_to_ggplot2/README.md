@@ -15,33 +15,32 @@
   ecosystem
 - [package documentation and further learning
   resources](https://ggplot2.tidyverse.org/)
-- works best with tidy data input format (e.g. observations as rows and
-  variables as columns)
+- by default, tidy data input format expected (e.g. observations as rows
+  and variables as columns)
 - pros
-  - open-source and free R package
+  - open-source and free
   - 101 level knowledge can help analysts produce business value quickly
-  - used to produce publication worthy visualizations for tech and
+  - used to output publication worthy visualizations for tech and
     non-tech audiences
   - highly flexible and customizable
   - robust documentation, blog content, and community support (which
     means lots of training data for GenAI tools)
   - high ROI on learning time invested; analysts can use the package
-    across companies (vs paid tools which company A may use but not
-    company B)
+    across companies (vs paid data vis tools which company A may use but
+    not company B)
   - [rich collection of extension
     packages](https://exts.ggplot2.tidyverse.org/gallery/)
-    (e.g. patchwork, gganimate, ggforce, ggtext, etc.)
-  - can be used to produce static and interactive visualizations for
-    wide range of data types (e.g. time series, geospatial, etc.)
+    (e.g. patchwork, gganimate, ggforce, ggtext, etc)
+  - can be used to produce static and interactive visualizations for a
+    wide range of data types (e.g. time series, geospatial, etc)
   - proficient users can produce complex visualizations with a few lines
     of code (often faster than other data vis tools)
 - cons
-  - requires some basic R coding skills (R is known to have a slow /
-    steep learning curve)
+  - often requires some R coding skills for data input prep (R is known
+    to have a slow / steep learning curve)
   - advanced custom plots require deep knowledge of package nuances
     (which can be hard to remember); tools like Github Copilot reducing
     the cognitive load here
-  - setup data shaping/wrangling work needed at times
   - plot outputs to Google Docs or Slides require partially manual
     workflow
   - analyst-to-analyst shareability can be a challenge if the recipient
@@ -79,11 +78,11 @@ for(p in required_packages) {
 
 ## Practice Dataset 1
 
-- wine ratings and chemical properties of Vinho Verde red wine samples
-  from the north of Portugal
+- sample of Vinho Verde red wine ratings and chemical properties
 - UCI ML dataset (more details
   [here](https://archive.ics.uci.edu/ml/datasets/Wine+Quality))
 - code to access and clean the data hidden to keep the focus on ggplot2
+  (visible in notebook source code)
 
 <!-- -->
 
@@ -109,6 +108,7 @@ for(p in required_packages) {
 - quick context building step to get a feel for the dataset
 
 ``` r
+### visually appeal summary
 rw_df %>%
   # approach to quickly produce summary stats
   skimr::skim_without_charts() %>%
@@ -137,7 +137,15 @@ rw_df %>%
 | alcohol              | 10.42 |  1.07 | 8.40 |  9.50 | 10.20 | 11.10 |  14.90 |
 | quality              |  5.64 |  0.81 | 3.00 |  5.00 |  6.00 |  6.00 |   8.00 |
 
+``` r
+### faster way to produce summary stats with 1 line code
+### but less visually appealing output
+# summary(rw_df)
+```
+
 ## Building the Layers Step by Step
+
+- 9 steps to build and save a ggplot2 plot image
 
 1.  pipe (`%>%`) a dataset into ggplot
 
@@ -253,14 +261,14 @@ p1
 
 ![](intro_to_ggplot2_data_vis_files/figure-commonmark/step8-1.png)
 
-9.  save the plot to an image file
+9.  save the plot as an image file
 
 ``` r
 ### saved to working directory
 ggsave("red_wine_quality_group_alcohol_and_va.png", p1, width = 10, height = 6)
 ```
 
-## Starting Point Visualization Use Cases
+## Common Visualization Use Cases
 
 ### Bar Charts
 
@@ -309,7 +317,6 @@ rw_df %>%
   ) +
   ### increase font size of x axis and remove y axis labels and ticks
   theme(axis.text.x = element_text(size = 12),
-        ### drop y axis labels and ticks
         axis.ticks.y = element_blank(),
         axis.text.y = element_blank()) +
   ### add padding/space to y axis 
@@ -329,7 +336,7 @@ rw_df %>%
 ``` r
 rw_df %>%
   ggplot(aes(x = alcohol)) +
-  geom_histogram(binwidth = 0.4, alpha = 0.5, fill = "dodgerblue") +
+  geom_histogram(binwidth = 0.4) +
   labs(title = "Red Wine Alcohol Distribution",
        x = "Alcohol %",
        y = "Count")
@@ -356,7 +363,7 @@ rw_df %>%
              aes(xintercept = mean_alcohol, group = quality_group, 
                  color = "Average Alochol % by Quality Group"),
              linetype = "dashed") +
-  ### scale free_y allows each quality group to have its own y axis scale
+  ### scale free_y allows each quality group to have different y axis scale
   ### useful when group counts vary
   facet_grid(quality_group ~ ., scale = "free_y") +
   ### add padding/space to y axis 
@@ -379,7 +386,7 @@ rw_df %>%
 ``` r
 rw_df %>%
   ggplot(aes(x = quality_group, y = sulphates)) +
-  geom_boxplot(fill = "dodgerblue", alpha = 0.5) +
+  geom_boxplot() +
   labs(title = "Red Wine Sulphates Distribution by Quality Group",
        x = "Quality Group",
        y = "Sulphates")
@@ -422,8 +429,8 @@ custom_boxplot_setup %>%
 - sticking to the wine theme, we’ll use yearly California and US wine
   production [data from the Wine
   Institute](https://wineinstitute.org/our-industry/statistics/california-us-wine-production/)
-- the data is in a table on the website, so we’ll use rvest to scrape
-  the data (thanks to GH Copilot and ChatGPT this is low lift)
+- the data is in a table on the website, so we’ll use the rvest package
+  to scrape the data (thanks to GH Copilot and ChatGPT this is low lift)
 - code to scrape and format the data hidden to keep the focus on ggplot2
   visualization
 
