@@ -31,18 +31,27 @@
 
 ##### Financial Metrics
 
--   **Sales:** compensation generated from sale of goods or services (note: accounting methods differ in how a sale gets recognized as revenue for financial accounting purposes)
--   **Expenses:** cost to operate business and generate revenue.
--   **Profit:**
--   **Margin:** percentage of sales revenue remaining after deducting the cost of goods sold, indicating profitability.
--   **Burn Rate:**
+-   **Sales**: Total units or services sold (volume trends)
+
+-   **Revenue**: income from all sources before deducting any costs (scales with business activity; some nuances on how revenue recognition works for financial accounting)
+
+-   **Cost of Goods Sold (COGS)**: direct variable costs of production (can scale up with more production)
+
+-   **Gross Profit**: revenue minus COGS (assess efficiency of using resources)
+
+-   **Gross Margin**: percentage of revenue that is gross profit (efficiency at converting revenue to profit)
+
+-   **Burn Rate**: cash spent per time period (highlights cash flow sustainability)
+
+-   **Runway**: the number of time periods (often months) a company can continue to operate at its current burn rate before running out of cash
 
 ##### Marketing Metrics
 
 -   **Marketing Spend:** total spend on marketing across channels
--   **Customer Acquisition Cost (CAC):** typical cost associated with acquiring a new customer
+-   **Customer Per Acquisition (CPA):** typical cost associated with acquiring a new customer
 -   **Lifetime Value (LTV):** total profit one expects from customer relationship over time
 -   **Conversion Rate (CVR):** number of folks who purchased / number of folks who were exposed to offer
+-   **LTV to CPA: \<\<\<**next step bookmark\>\>\>
 
 ##### Product Usage & Growth
 
