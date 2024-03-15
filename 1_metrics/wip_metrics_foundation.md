@@ -31,9 +31,9 @@
 
 ##### Financial Metrics
 
--   **Sales**: Total units or services sold (volume trends)
+-   **Sales**: total units or services sold (volume trends)
 
--   **Revenue**: income from all sources before deducting any costs (scales with business activity; some nuances on how revenue recognition works for financial accounting)
+-   **Revenue**: income from all sources before deducting any costs (scales with business activity; nuances on how revenue recognition works for financial accounting)
 
 -   **Cost of Goods Sold (COGS)**: direct variable costs of production (can scale up with more production)
 
@@ -51,21 +51,26 @@
 -   **Customer Per Acquisition (CPA):** typical cost associated with acquiring a new customer
 -   **Lifetime Value (LTV):** total profit one expects from customer relationship over time
 -   **Conversion Rate (CVR):** number of folks who purchased / number of folks who were exposed to offer
--   **LTV to CPA: \<\<\<**next step bookmark\>\>\>
+-   **LTV to CAC:** ratio of LTV to customer acquisition costs (used to assess marketing spend efficiency)
 
 ##### Product Usage & Growth
 
--   **Active Users:**
--   **Retention Rate:**
--   **Feature Adoption:**
+-   **Active Users:** number of unique users to interact with core value prop of product (often segmented as daily active users, weekly active users, monthly active users)
+-   **Retention Rate:** percent of unique users who user the product period vs period (often segmented by user cohorts based on when the users joined the product)
+-   **Feature Adoption:** percent of unique users who use a feature out of the total user base eligible to use the feature
 
 ##### Customer Satisfaction
 
--   **Net Promoter Score (NPS):**
--   **Customer Satisfaction Score (CSAT):**
+-   **Net Promoter Score (NPS):** survey question on scale of 0 to 10 asking about willingness to recommend (NPS Score = % of 9 or 10 respondents - % of 6 or less respondents)
+-   **Customer Satisfaction Score (CSAT):** measures how satisfied respondents are with a product and/or service (typically a survey question with a [Likert scale](https://en.wikipedia.org/wiki/Likert_scale) and response rate of top 1 or 2 answer)
 
 ##### Operational Metrics
 
+-   \<\<\<Next step bookmark\>\>\>
+
+```{=html}
+<!-- -->
+```
 -   **Time to hire:**
 -   **Employee turnover:**
 -   **Employee DEI:**
