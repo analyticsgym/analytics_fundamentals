@@ -1,105 +1,105 @@
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+
 # WORK IN-PROGRESS
 
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+------------------------------------------------------------------------
 ------------------------------------------------------------------------
 
 # Metrics Overview
 
-#### Why use quantifiable metrics?
+### Why use quantifiable metrics?
 
 -   Metrics help organizations systematically measure, assess, and improve performance
 
-#### Metric benefits and pitfalls
+### Metric benefits and pitfalls
 
-+------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------+
-| Benefits +                                                                                           | Pitfalls -                                                                                                                  |
-+======================================================================================================+=============================================================================================================================+
-| -   Quantifiable way to track business health and spot opportunities for improvement/experimentation | -   Expecting a single metric to tell the full story                                                                        |
-| -   Drives organization alignment toward measurable target (often part of an OKR framework)          | -   Over complicated metrics not understood by end users                                                                    |
-| -   Used for comparison across time periods and/or segments                                          | -   Reliant on vanity metrics (e.g. always increasing metrics) that look good on paper but not tied to core business action |
-| -   Input to data-informed decision making process                                                   | -   Easy to game goal metrics                                                                                               |
-| -   Standardize way to track performance                                                             | -   Missing big picture and obsessing over small metric movements                                                           |
-|                                                                                                      | -   Cherry picking metrics/time windows/segments as a way to prove a previously held opinion                                |
-|                                                                                                      | -   Abandoning qual signals and over indexing on quant metrics due to ease of measurement                                   |
-|                                                                                                      | -   Overly sensitive or overly stable metrics that limit actionability                                                      |
-|                                                                                                      | -   Not monitoing metric input data quality resulting in metric quality erosion over time                                   |
-|                                                                                                      | -   Trying to precisely measure hard to quantify experiences (i.e. love, happiness, delight, etc)                           |
-+------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------+
+##### Benefits +
 
-#### Business metric examples
+-   Quantifiable way to track business health and spot opportunities for improvement/experimentation
+-   Drives organization alignment toward measurable target (often part of an OKR framework)
+-   Used for comparison across time periods and/or segments
+-   Input to data-informed decision making process
+-   Standardize way to track performance
+-   Online metric improvement hypotheses typically can be tested via AB testing
 
--   Next step bookmark
+##### Pitfalls -
+
+-   Expecting a single metric to tell the full story
+-   Over complicated metrics not understood by end users
+-   Reliant on vanity metrics (e.g. always increasing metrics) that look good on paper but not tied to core business action
+-   Easy to game goal metrics
+-   Missing big picture and obsessing over small metric movements
+-   Cherry picking metrics/time windows/segments as a way to prove a previously held opinion
+-   Abandoning qual signals and over indexing on quant metrics due to ease of measurement
+-   Overly sensitive or overly stable metrics that limit actionability
+-   Not monitoring metric input data quality resulting in metric quality erosion over time
+-   Trying to precisely measure hard to quantify experiences (i.e. love, happiness, delight, etc)
+
+------------------------------------------------------------------------
+
+# Business Metric Examples
 
 ##### Financial Metrics
 
 -   **Sales**: total units or services sold (volume trends)
-
 -   **Revenue**: income from all sources before deducting any costs (scales with business activity; nuances on how revenue recognition works for financial accounting)
-
 -   **Cost of Goods Sold (COGS)**: direct variable costs of production (can scale up with more production)
-
 -   **Gross Profit**: revenue minus COGS (assess efficiency of using resources)
-
 -   **Gross Margin**: percentage of revenue that is gross profit (efficiency at converting revenue to profit)
-
 -   **Burn Rate**: cash spent per time period (highlights cash flow sustainability)
-
 -   **Runway**: the number of time periods (often months) a company can continue to operate at its current burn rate before running out of cash
 
 ##### Marketing Metrics
 
 -   **Marketing Spend:** total spend on marketing across channels
 -   **Customer Per Acquisition (CPA):** typical cost associated with acquiring a new customer
--   **Lifetime Value (LTV):** total profit one expects from customer relationship over time
+-   **Lifetime Value (LTV):** total profit one expects from customer relationship over time period
 -   **Conversion Rate (CVR):** number of folks who purchased / number of folks who were exposed to offer
 -   **LTV to CAC:** ratio of LTV to customer acquisition costs (used to assess marketing spend efficiency)
 
 ##### Product Usage & Growth
 
 -   **Active Users:** number of unique users to interact with core value prop of product (often segmented as daily active users, weekly active users, monthly active users)
--   **Retention Rate:** percent of unique users who user the product period vs period (often segmented by user cohorts based on when the users joined the product)
+-   **Retention Rate:** percent of unique users who use the product period vs period (often segmented by user cohorts based on when the users joined the product)
 -   **Feature Adoption:** percent of unique users who use a feature out of the total user base eligible to use the feature
 
 ##### Customer Satisfaction
 
 -   **Net Promoter Score (NPS):** survey question on scale of 0 to 10 asking about willingness to recommend (NPS Score = % of 9 or 10 respondents - % of 6 or less respondents)
--   **Customer Satisfaction Score (CSAT):** measures how satisfied respondents are with a product and/or service (typically a survey question with a [Likert scale](https://en.wikipedia.org/wiki/Likert_scale) and response rate of top 1 or 2 answer)
+-   **Customer Satisfaction Score (CSAT):** measures how satisfied respondents are with a product and/or service (typically a survey question with a [Likert scale](https://en.wikipedia.org/wiki/Likert_scale) and response rate of top 1 or 2 answers used)
 
 ##### Operational Metrics
 
--   \<\<\<Next step bookmark\>\>\>
-
-```{=html}
-<!-- -->
-```
--   **Time to hire:**
--   **Employee turnover:**
--   **Employee DEI:**
--   **Time to close new customer:**
-
-#### Creating metrics
-
--   pros and cons to different types of metrics
-
-#### Assessing metric usefulness
-
-#### Using metrics
-
-#### QAing metrics
-
-#### Common metric flaws and challenges
+-   **Time to close new customer:** time duration between first contact with prospect till they become a paying customer
+-   **Time to hire:** time duration between job posting and offer acceptance
+-   **Employee turnover:** rate of folks leaving the company (number of employees leaving / average number of employees during time period)
+-   **Employee DEI:** company representation across factors like race, gender, age, and more
 
 ------------------------------------------------------------------------
 
-# Common Metric Frameworks
+# Metric Frameworks
 
+-   Next step bookmark
+-   Collaboration with GPT: https://chat.openai.com/c/80cc8bb2-f1fd-44fd-9a56-e65da80dc361
 -   AARRR (Pirtate metrics)
 -   Google HEART
+-   North Star Metric
+-   Additional Funnel Metrics
 
 ------------------------------------------------------------------------
 
 # Defining Success Metrics for X new feature/experience
 
-#### 1. What is being tested and why?
+##### 1. What is being tested and why?
 
 -   What is the objective of the feature/experience? who is it for?
 -   What would the high-level experience look like?
@@ -241,21 +241,21 @@ Misc considerations
 -   when the ratios are close to 1 it suggests high stickiness during the metric frame
 -   when the ratios are low it suggests less frequent usage during the metric frame
 
-##### DAU / WAU
+#### DAU / WAU
 
 -   helps to shed light on if WAU is driven by folks coming back each day of week (ratio close to 1) or many users coming back once per week
 
-##### DAU / MAU
+#### DAU / MAU
 
 -   higher ratio means folks are coming back frequently and there's more of a daily value prop
 -   lower ratio suggests folks are coming less frequency during a month
 
-##### WAU / MAU
+#### WAU / MAU
 
 -   if metric is close to 1 it suggest folks are coming back each week
 -   if metric is low suggests that folks are not coming back multiple weeks in a month
 
-##### MAU / QAU
+#### MAU / QAU
 
 -   helpful if a product is used on less frequent basis
 -   scenarios where MAU could decline but QAU increases
@@ -268,7 +268,7 @@ Misc considerations
 -   helpful to look at ratio of active to inactivates as well (absolute counts could be increasing but share of active population could be declining)
 -   counts could be driven up by large sign up volume and ratios can spotlight if folks are sticking around
 
-### When metrics don't tie
+#### When metrics don't tie
 
 -   is the difference large and material?
 -   if so, investigate to understand why? there could be skeletons in the closest
@@ -276,6 +276,14 @@ Misc considerations
 
 ------------------------------------------------------------------------
 
-# Backlog
+# Misc notes
 
 -   how to handle scenarios when macro trend is pulling metrics up (i.e. COVID for online streamers and businesses)
+-   how to handle scenario when comparing segment performance where one segment benefits from seasonality/marketing push more than another
+-   leading vs lagging metrics in practice
+-   vanity metrics can be context dependent (upper funnel metric like app installs can be a vanity metric for a mature business but a critical metric for a new business)
+-   social media likes might be an OKR vanity metric; however, if likes correlate with downstream core actions then it could be a useful metric
+-   hard to have a one size fits all solution to metrics and metric frameworks as it's highly dependent on the business objectives and the stage of the business
+-   metric goals and incentives alignment (look out for path of least resistance to hit metric goals if career incentives are tied to metric goals) 
+-   further learning resources???
+
