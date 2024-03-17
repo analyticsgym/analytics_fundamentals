@@ -1,18 +1,16 @@
-------------------------------------------------------------------------
-------------------------------------------------------------------------
-------------------------------------------------------------------------
-------------------------------------------------------------------------
-------------------------------------------------------------------------
-------------------------------------------------------------------------
+## ------------------------------------------------------------------------
+
+## ------------------------------------------------------------------------
+
+## ------------------------------------------------------------------------
 
 # WORK IN-PROGRESS
 
-------------------------------------------------------------------------
-------------------------------------------------------------------------
-------------------------------------------------------------------------
-------------------------------------------------------------------------
-------------------------------------------------------------------------
-------------------------------------------------------------------------
+## ------------------------------------------------------------------------
+
+## ------------------------------------------------------------------------
+
+## ------------------------------------------------------------------------
 
 # Metrics Overview
 
@@ -88,12 +86,31 @@
 
 # Metric Frameworks
 
--   Next step bookmark
--   Collaboration with GPT: https://chat.openai.com/c/80cc8bb2-f1fd-44fd-9a56-e65da80dc361
--   AARRR (Pirtate metrics)
--   Google HEART
--   North Star Metric
--   Additional Funnel Metrics
+### AARRR (Pirate metrics)
+
+-   [popularized by Dave McClure (2007)](https://www.slideshare.net/dmc500hats/startup-metrics-for-pirates-long-version)
+-   a systematic way to optimize the customer funnel
+-   Dave suggested startups foucs on 5 to 10 conversion steps to measure and iterate on via AB tests (based on cost, conversion, and business revenue model)
+
+1.  **Acquisition:** how users find out about the product
+2.  **Activation:** first happy experience and account creation
+3.  **Retention:** repeat usage of the product
+4.  **Referral:** users like the product and tell others
+5.  **Revenue:** users complete monetization actions
+
+### Chamath Palihapitiya Core Metrics
+- Next step bookmark
+- Get folks in the front door
+- Get them to aha moment
+- Deliver core product value consistently
+
+### Google HEART
+
+### North Star Metric
+
+### Growth Equation
+
+### Additional Funnel Metrics
 
 ------------------------------------------------------------------------
 
@@ -284,6 +301,5 @@ Misc considerations
 -   vanity metrics can be context dependent (upper funnel metric like app installs can be a vanity metric for a mature business but a critical metric for a new business)
 -   social media likes might be an OKR vanity metric; however, if likes correlate with downstream core actions then it could be a useful metric
 -   hard to have a one size fits all solution to metrics and metric frameworks as it's highly dependent on the business objectives and the stage of the business
--   metric goals and incentives alignment (look out for path of least resistance to hit metric goals if career incentives are tied to metric goals) 
+-   metric goals and incentives alignment (look out for path of least resistance to hit metric goals if career incentives are tied to metric goals)
 -   further learning resources???
-
