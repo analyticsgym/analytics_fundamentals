@@ -98,13 +98,24 @@
 4.  **Referral:** users like the product and tell others
 5.  **Revenue:** users complete monetization actions
 
+### Google HEART
+- proposed by Googlers Kerry Rodden, Hilary Hutchinson, and Xin Fu in [2010 paper](https://research.google/pubs/measuring-the-user-experience-on-a-large-scale-user-centered-metrics-for-web-applications/)
+- next step: continue paper reading and synthesize TL;DR
+
+1. **Happiness**:
+2. **Engagement**:
+3. **Adoption**:
+4. **Retention**:
+5. **Task success**.
+
 ### Chamath Palihapitiya Core Metrics
 - Next step bookmark
+
 - Get folks in the front door
 - Get them to aha moment
 - Deliver core product value consistently
 
-### Google HEART
+
 
 ### North Star Metric
 
@@ -303,3 +314,4 @@ Misc considerations
 -   hard to have a one size fits all solution to metrics and metric frameworks as it's highly dependent on the business objectives and the stage of the business
 -   metric goals and incentives alignment (look out for path of least resistance to hit metric goals if career incentives are tied to metric goals)
 -   further learning resources???
+-   product X has 100% user turnover week to week but 7 day actives is still growing? How might this be?
