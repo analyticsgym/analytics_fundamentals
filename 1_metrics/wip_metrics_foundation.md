@@ -100,13 +100,14 @@
 
 ### Google HEART
 - proposed by Googlers Kerry Rodden, Hilary Hutchinson, and Xin Fu in [2010 paper](https://research.google/pubs/measuring-the-user-experience-on-a-large-scale-user-centered-metrics-for-web-applications/)
-- next step: continue paper reading and synthesize TL;DR
+- set of user-centered metrics to measure progress toward user experience goals
+- metrics tracked over time and/or cut by user segments (new vs existing users, user type, etc)
 
-1. **Happiness**:
-2. **Engagement**:
-3. **Adoption**:
-4. **Retention**:
-5. **Task success**.
+1. **Happiness**: attitudinal metrics like CSAT, NPS, and ease of use
+2. **Engagement**: behavioral metrics on frequency, depth, and breadth of interaction
+3. **Adoption**: count of actives and feature first usage rates
+4. **Retention**: <<< next step here >>>
+5. **Task success**:
 
 ### Chamath Palihapitiya Core Metrics
 - Next step bookmark
@@ -315,3 +316,4 @@ Misc considerations
 -   metric goals and incentives alignment (look out for path of least resistance to hit metric goals if career incentives are tied to metric goals)
 -   further learning resources???
 -   product X has 100% user turnover week to week but 7 day actives is still growing? How might this be?
+-   change aversion
