@@ -102,6 +102,7 @@
 - proposed by Googlers Kerry Rodden, Hilary Hutchinson, and Xin Fu in [2010 paper](https://research.google/pubs/measuring-the-user-experience-on-a-large-scale-user-centered-metrics-for-web-applications/)
 - set of user-centered metrics to measure progress toward user experience goals
 - metrics tracked over time and/or cut by user segments (new vs existing users, user type, etc)
+- some metric categories may not be applicable for certain products/business use cases
 
 1. **Happiness**: attitudinal metrics like CSAT, NPS, and ease of use
 2. **Engagement**: behavioral metrics on frequency, depth, and breadth of interaction
