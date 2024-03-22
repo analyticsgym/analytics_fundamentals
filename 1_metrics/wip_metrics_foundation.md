@@ -1,14 +1,6 @@
 ## ------------------------------------------------------------------------
 
-## ------------------------------------------------------------------------
-
-## ------------------------------------------------------------------------
-
 # WORK IN-PROGRESS
-
-## ------------------------------------------------------------------------
-
-## ------------------------------------------------------------------------
 
 ## ------------------------------------------------------------------------
 
@@ -99,31 +91,64 @@
 5.  **Revenue:** users complete monetization actions
 
 ### Google HEART
-- proposed by Googlers Kerry Rodden, Hilary Hutchinson, and Xin Fu in [2010 paper](https://research.google/pubs/measuring-the-user-experience-on-a-large-scale-user-centered-metrics-for-web-applications/)
-- set of user-centered metrics to measure progress toward user experience goals
-- metrics tracked over time and/or cut by user segments (new vs existing users, user type, etc)
-- some metric categories may not be applicable for certain products/business use cases
 
-1. **Happiness**: attitudinal metrics like CSAT, NPS, and ease of use
-2. **Engagement**: behavioral metrics on frequency, depth, and breadth of interaction
-3. **Adoption**: count of actives and feature first usage rates
-4. **Retention**: <<< next step here >>>
-5. **Task success**:
+-   proposed by Googlers Kerry Rodden, Hilary Hutchinson, and Xin Fu in [2010 paper](https://research.google/pubs/measuring-the-user-experience-on-a-large-scale-user-centered-metrics-for-web-applications/)
+-   set of user-centered metrics to measure progress toward user experience goals
+-   metrics tracked for a given time period and/or cut by user segments/cohorts
+-   some metric categories may not be applicable for certain products/business use cases
 
-### Chamath Palihapitiya Core Metrics
-- Next step bookmark
+1.  **Happiness**
 
-- Get folks in the front door
-- Get them to aha moment
-- Deliver core product value consistently
+-   attitudinal metrics
+-   i.e. CSAT, NPS, and ease of use
 
+2.  **Engagement**
 
+-   behavioral metrics on level of involvement with the product
+-   i.e. frequency, depth, breadth of interaction
+-   averages per user and rate of actives to do action are often good starting points
+-   engagement metrics that predict future product retention or revenue tend to be prioritized
+
+3.  **Adoption**
+
+-   new users to start using a product
+-   expressed as absolute count, proportion of total users, proportion of active users, proportion of new/existing users, etc
+-   defining "using" is product/feature/business case specific
+-   i.e. accounts created last 7 days, number of users to turn on a feature, etc
+
+4.  **Retention**
+
+-   percent of users who use the product during period X and then use it again during period Y
+-   new products tend to have evolving retention metrics vs mature products tend to have more stable retention metrics outside of seasonal/macro events
+-   cohort comparison is common here (i.e. cohorts based on when users first joined the product or adopted the product/feature)
+-   i.e. percent of 7 day actives this week who were also active last week, percent of cohort users who use the product month 2, month 3, etc
+
+5.  **Task success**
+
+-   is the product UX/design intuitive and efficient at getting users to desired objective
+-   task metrics help pinpoint areas of opportunity to reduce friction and improve the user experience
+-   behavioral metrics assessing efficiency, effectiveness, error rates
+-   efficiency examples: time to complete task, clicks to complete task, steps complete per time window x
+-   effectiveness examples: step completion rate, rate of users who stick to optimal path, rate of users complete task without assistance
+-   error rates examples: page error rate, abandonment rate by sub task location, issues reported rate
 
 ### North Star Metric
 
+-   \<next step bookmark\>
+
+### Meta PMF
+
 ### Growth Equation
 
-### Additional Funnel Metrics
+### Chamath Palihapitiya Core Metrics
+
+-   Next step bookmark
+
+-   Get folks in the front door
+
+-   Get them to aha moment
+
+-   Deliver core product value consistently
 
 ------------------------------------------------------------------------
 
@@ -318,3 +343,5 @@ Misc considerations
 -   further learning resources???
 -   product X has 100% user turnover week to week but 7 day actives is still growing? How might this be?
 -   change aversion
+-   Twyman's law
+-   Outliers
