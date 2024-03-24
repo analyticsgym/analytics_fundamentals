@@ -132,9 +132,16 @@
 -   effectiveness examples: step completion rate, rate of users who stick to optimal path, rate of users complete task without assistance
 -   error rates examples: page error rate, abandonment rate by sub task location, issues reported rate
 
-### North Star Metric
+### North Star Metric Framework
 
--   \<next step bookmark\>
+-   inspired by Sean Ellis and the growth hacking movement
+-   [Amplitude's North Star Playbook](https://amplitude.com/books/north-star/about-the-north-star-framework)
+-   framework key elements
+    -   work: activities that hope to move input metrics
+    -   input metrics: sub-metrics that drive the north star metric
+    -   north star metric (NSM): captures the core value prop of the product and is a leading indicator of business value
+    -   lagging business results: often revenue, continued paying customers, etc
+-   the framework established an internal focus to guide strategy and decision making
 
 ### Meta PMF
 
