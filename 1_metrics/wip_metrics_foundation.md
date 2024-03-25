@@ -135,13 +135,14 @@
 ### North Star Metric Framework
 
 -   inspired by Sean Ellis and the growth hacking movement
+-   a single metric to guide strategy, inform decision making, and set internal focus
 -   [Amplitude's North Star Playbook](https://amplitude.com/books/north-star/about-the-north-star-framework)
 -   framework key elements
     -   work: activities that hope to move input metrics
-    -   input metrics: sub-metrics that drive the north star metric
-    -   north star metric (NSM): captures the core value prop of the product and is a leading indicator of business value
-    -   lagging business results: often revenue, continued paying customers, etc
--   the framework established an internal focus to guide strategy and decision making
+    -   input metrics: sub-metrics that influence the north star metric
+    -   north star metric (NSM): captures the core value prop of the product and is a leading indicator of business value (i.e. critical rate, count, ratio, etc)
+    -   lagging business results/value: often revenue, continued paying customers, etc
+-   next step bookmark
 
 ### Meta PMF
 
