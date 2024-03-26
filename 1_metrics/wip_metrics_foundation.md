@@ -138,10 +138,16 @@
 -   a single metric to guide strategy, inform decision making, and set internal focus
 -   [Amplitude's North Star Playbook](https://amplitude.com/books/north-star/about-the-north-star-framework)
 -   framework key elements
-    -   work: activities that hope to move input metrics
-    -   input metrics: sub-metrics that influence the north star metric
-    -   north star metric (NSM): captures the core value prop of the product and is a leading indicator of business value (i.e. critical rate, count, ratio, etc)
     -   lagging business results/value: often revenue, continued paying customers, etc
+    -   north star metric (NSM): captures the core value prop of the product and is a leading indicator of business value (i.e. critical rate, count, ratio, etc)
+    -   input metrics: 3 to 5 sub-metrics that influence the north star metric
+    -   work: activities that hope to move input metrics
+-   ideally as the NSM improves business results improvement follows
+-   example for subscription business
+    -   business result: renewing subscription revenue
+    -   NSM: core value prop action that correlates with future sub revenue
+    -   inputs: supporting tasks/actions that improve customer volume and frequency of core value prop action
+    -   work: hypotheses to move and improve the input metrics
 -   next step bookmark
 
 ### Meta PMF
