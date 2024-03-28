@@ -136,30 +136,69 @@
 
 -   inspired by Sean Ellis and the growth hacking movement
 -   a single metric to guide strategy, inform decision making, and set internal focus
+-   ideally as the north star metric improves business results improvement follows
 -   [Amplitude's North Star Playbook](https://amplitude.com/books/north-star/about-the-north-star-framework)
 -   framework key elements
     -   lagging business results/value: often revenue, continued paying customers, etc
     -   north star metric (NSM): captures the core value prop of the product and is a leading indicator of business value (i.e. critical rate, count, ratio, etc)
     -   input metrics: 3 to 5 sub-metrics that influence the north star metric
     -   work: activities that hope to move input metrics
--   ideally as the NSM improves business results improvement follows
 -   example for subscription business
     -   business result: renewing subscription revenue
     -   NSM: core value prop action that correlates with future sub revenue
     -   inputs: supporting tasks/actions that improve customer volume and frequency of core value prop action
     -   work: hypotheses to move and improve the input metrics
--   NSM inputs starting point: breadth, depth, frequency, efficiency
--   ideal inputs are not too sensitive or too broad; teams can generate large volume of actinoable ideas to move the inputs
+-   NSM checklist
+    -   aligns to customer value exchange with the product
+    -   represents the company's vision and product strategy
+    -   leading indicator of critical business results
+    -   measurable via product analytics tracking
+    -   produces actionable set of sub-metrics teams can run experiments on
+    -   simple to explain and understand for technical and non-technical team members
+-   inputs
+    -   starting point ideas: breadth, depth, frequency, efficiency
+    -   not too sensitive or too broad
+    -   teams can generate large volume of actionable ideas to move the inputs
 
-### Meta PMF
+### Meta Product Market Fit
+
+-   [Meta Playbook](https://medium.com/@AnalyticsAtMeta/analytics-and-product-market-fit-11efaea403cd)
+
+-   product market fit (PMF)
+
+    -   the value a product delivers for a specific market segment
+    -   are we building something people want? are folks using the product? do folks come back to use it?
+
+-   PMF measurement criteria
+
+    -   stable retention: do folks keep coming back after using the product?
+    -   sustainable growth: is there a healthy approach to acquire, retain, and resurrect folks over time?
+    -   deep engagement: do folks have long usage duration on core value prop actions?
+
+-   stable retention
+
+    -   active: defined based on core value prop of product
+    -   volume of active cohort users in period N+1 / Volume of active cohort users in period N
+
+-   sustainable growth
+
+    -   Meta often waits to ramp up upper funnel acquisition till after products can sustainability add and retain folks
+    -   growth accounting states model used to dissect active user growth ([Duolingo example](https://blog.duolingo.com/growth-model-duolingo/))
+    -   i.e. is active user growth being fueled by new users or existing user frequency?
+
+-   deep engagement
+
+    -   time spent, days engaged out of the last 28 days, purchases/revenue per user
+
+-   valuable products with high product marketing fit: keep people coming back, sustainability acquire new users, and have long stretches of usage on core features
 
 ### Growth Equation
 
 ### Chamath Palihapitiya Core Metrics
 
--  get people in the door (acquisition)
--  aha moment of value (it’s worth it)
--  deliver frequent core product value (people come back)
+-   get people in the door (acquisition)
+-   aha moment of value (it’s worth it)
+-   deliver frequent core product value (people come back)
 
 ------------------------------------------------------------------------
 
@@ -356,3 +395,8 @@ Misc considerations
 -   change aversion
 -   Twyman's law
 -   Outliers
+-   Scaling upper funnel acquisition and/or rising macro tide can hide churn problem
+-   Study Andrew Chen's blog and deck on [growth accounting](https://andrewchen.com/wp-content/uploads/2018/11/a16z_growth_deck.pdf) and other topics related to metrics/analytics
+-   What to do if a product isn't retaining users?
+-   What to do if a product isn't getting folks to a activate?
+-   
