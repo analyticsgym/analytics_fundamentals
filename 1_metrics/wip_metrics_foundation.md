@@ -148,7 +148,8 @@
     -   NSM: core value prop action that correlates with future sub revenue
     -   inputs: supporting tasks/actions that improve customer volume and frequency of core value prop action
     -   work: hypotheses to move and improve the input metrics
--   next step bookmark
+-   NSM inputs starting point: breadth, depth, frequency, efficiency
+-   ideal inputs are not too sensitive or too broad; teams can generate large volume of actinoable ideas to move the inputs
 
 ### Meta PMF
 
@@ -156,13 +157,9 @@
 
 ### Chamath Palihapitiya Core Metrics
 
--   Next step bookmark
-
--   Get folks in the front door
-
--   Get them to aha moment
-
--   Deliver core product value consistently
+-  get people in the door (acquisition)
+-  aha moment of value (it’s worth it)
+-  deliver frequent core product value (people come back)
 
 ------------------------------------------------------------------------
 
