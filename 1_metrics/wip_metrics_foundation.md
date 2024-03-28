@@ -163,36 +163,27 @@
 ### Meta Product Market Fit
 
 -   [Meta Playbook](https://medium.com/@AnalyticsAtMeta/analytics-and-product-market-fit-11efaea403cd)
-
 -   product market fit (PMF)
-
     -   the value a product delivers for a specific market segment
     -   are we building something people want? are folks using the product? do folks come back to use it?
-
 -   PMF measurement criteria
-
     -   stable retention: do folks keep coming back after using the product?
     -   sustainable growth: is there a healthy approach to acquire, retain, and resurrect folks over time?
     -   deep engagement: do folks have long usage duration on core value prop actions?
-
 -   stable retention
-
     -   active: defined based on core value prop of product
     -   volume of active cohort users in period N+1 / Volume of active cohort users in period N
-
 -   sustainable growth
-
     -   Meta often waits to ramp up upper funnel acquisition till after products can sustainability add and retain folks
     -   growth accounting states model used to dissect active user growth ([Duolingo example](https://blog.duolingo.com/growth-model-duolingo/))
     -   i.e. is active user growth being fueled by new users or existing user frequency?
-
 -   deep engagement
-
     -   time spent, days engaged out of the last 28 days, purchases/revenue per user
-
--   valuable products with high product marketing fit: keep people coming back, sustainability acquire new users, and have long stretches of usage on core features
+-   valuable products with high product marketing fit: keep people coming back, sustainability acquire new users, and have long stretches of usage
 
 ### Growth Equation
+
+-   Next step: study Andy Johns post on growth equation
 
 ### Chamath Palihapitiya Core Metrics
 
