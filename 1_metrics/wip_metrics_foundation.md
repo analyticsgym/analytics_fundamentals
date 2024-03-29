@@ -183,13 +183,19 @@
 
 ### Growth Equation
 
--   Next step: study Andy Johns post on growth equation
+-   Inspired by Chamath Palihapitiya and Andy Johns (add sources)
+-   Chamath's description
+    -   get people in the door (acquisition)
+    -   aha moment of value (it’s worth it)
+    -   deliver frequent core product value (people come back)
+-   Andy Johns basic growth equation
+    -   top of funnel (traffic, conversion rate) x magic moment (create emotional response) x core product value (solves real problems) = sustainable growth
+-   Next step
+    -   get to more practical level
+    -   can these metrics be multiplied
+    -   growth equation foundation flexes to various company setting
 
-### Chamath Palihapitiya Core Metrics
-
--   get people in the door (acquisition)
--   aha moment of value (it’s worth it)
--   deliver frequent core product value (people come back)
+### 
 
 ------------------------------------------------------------------------
 
