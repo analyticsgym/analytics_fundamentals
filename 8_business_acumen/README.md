@@ -1,7 +1,7 @@
 # Recommended Study Resources
 
 ### Startups
-- [How to Start a Startup Free Lecture Series] (https://startupclass.samaltman.com/) (hosted by Sam Altman at Stanford; see recommended reading list for additional resources)
+- [How to Start a Startup Free Lecture Series](https://startupclass.samaltman.com/) (hosted by Sam Altman at Stanford; see recommended reading list for additional resources)
 
 ### Business Strategy and Operations
 - [Book: 7 Powers](https://www.amazon.com/7-Powers-Foundations-Business-Strategy/dp/0998116319) (business strategy and building a MOAT)
