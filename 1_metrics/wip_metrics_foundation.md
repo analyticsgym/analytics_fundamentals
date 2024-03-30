@@ -181,17 +181,22 @@
     -   time spent, days engaged out of the last 28 days, purchases/revenue per user
 -   valuable products with high product marketing fit: keep people coming back, sustainability acquire new users, and have long stretches of usage
 
-### Growth Equation
+### Consumer Products: Growth Equation Elements
 
 -   Inspired by Chamath Palihapitiya and Andy Johns (add sources)
+-   Famous FB keystone: 7 friends in 10 days
 -   Chamath's description
-    -   get people in the door (acquisition)
-    -   aha moment of value (it’s worth it)
-    -   deliver frequent core product value (people come back)
+    -   get people to the front door
+    -   get them to an "Aha" moment as quickly as possible
+    -   deliver cover value as often as possible
 -   Andy Johns basic growth equation
     -   top of funnel (traffic, conversion rate) x magic moment (create emotional response) x core product value (solves real problems) = sustainable growth
+-   Operationalizing
+    -   build a culture of measuring, testing, try new things
+    -   don't overly rely on gut as more folks can't predict correctly
+    -   requires teams to be unemotionally detached from what is getting built
 -   Next step
-    -   get to more practical level
+    -   add sources and additional notes (see Reader comments/notes on talks/posts)
     -   can these metrics be multiplied
     -   growth equation foundation flexes to various company setting
 
