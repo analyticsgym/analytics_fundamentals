@@ -1,5 +1,8 @@
 # Recommended Study Resources
 
+### Startups
+- [How to Start a Startup Free Lecture Series] (https://startupclass.samaltman.com/) (hosted by Sam Altman at Stanford; see recommended reading list for additional resources)
+
 ### Business Strategy and Operations
 - [Book: 7 Powers](https://www.amazon.com/7-Powers-Foundations-Business-Strategy/dp/0998116319) (business strategy and building a MOAT)
 - [Book: Measure What Matters](https://www.amazon.com/Measure-What-Matters-Google-Foundation/dp/0525536221) (OKRs)
@@ -15,10 +18,13 @@
 - [Blog: GoPractice](https://gopractice.io/) (product management/analysis; see recommended content series)
 
 ### Marketing
+- [To Be Added: David Ogilvy / Advertising]
 - [Book: Converted](https://www.amazon.com/Converted-Data-Driven-Way-Customers-Hearts/dp/0593420659) (digital marketing)
 - [Blog: Avinash Kaushik](https://www.kaushik.net/avinash/sitemap/) (marketing analytics)
 
 ### Finance
-- TBD
+- to be added
 
+### Misc
+- [To Be Added: Business Podcast Recommendations]
 
