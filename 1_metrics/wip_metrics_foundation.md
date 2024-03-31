@@ -181,28 +181,49 @@
     -   time spent, days engaged out of the last 28 days, purchases/revenue per user
 -   valuable products with high product marketing fit: keep people coming back, sustainability acquire new users, and have long stretches of usage
 
-### Consumer Products: Growth Equation Elements
+### Growth Equation
 
--   Inspired by Chamath Palihapitiya and Andy Johns (add sources)
--   Famous FB keystone: 7 friends in 10 days
+-   part growth framework + part metrics framework
+-   framework for how consumer products grow active users / customer base
+-   inspired by [Chamath Palihapitiya](https://youtu.be/raIUQP71SBU) (Facebook VP of Growth: 2007 - 2011) and [Andy Johns](https://review.firstround.com/indispensable-growth-frameworks-from-my-years-at-facebook-twitter-and-wealthfront/) (early growth employee at Facebook, Twitter, Quora, Wealthfront exec, former VC)
 -   Chamath's description
-    -   get people to the front door
-    -   get them to an "Aha" moment as quickly as possible
-    -   deliver cover value as often as possible
--   Andy Johns basic growth equation
-    -   top of funnel (traffic, conversion rate) x magic moment (create emotional response) x core product value (solves real problems) = sustainable growth
+    -   acquisition: get people to the front door
+    -   activation: get them to an "Aha" moment as quickly as possible
+    -   engagement: deliver cover value as often as possible
+    -   virality not a core focus initially (how existing users recruit other users)
+-   Andy Johns's description (from Andy's work with Chamath at early days Facebook)
+    -   top of funnel (traffic, conversion rate) x
+    -   magic moment (create emotional response) x
+    -   core product value (solves real problems) =
+    -   sustainable growth
+-   Facebook early days example
+    -   grow active users (active user growth provides case for additional funding/IPO and/or monetization opportunities)
+    -   active users = active new users + active existing users
+    -   actions and metrics aligning to the first 3 pillars to fuel active user growth
+    -   acquisition
+        -   universitys adopted
+        -   expansion to high schools and non-students
+        -   international expansion / localization
+    -   activation
+        -   user onboarding focused on profile completion and connecting with friends
+        -   7 friends in 10 days: "Aha" moment metric for onboarding experiments and alignment to core product value
+    -   engagement
+        -   news feed innovation and time spent
+        -   platform integrations and further engagement sources (i.e. game developers building games for FB; FarmVille)
+        -   Facebook mobile app and Instagram acquisition to capitalize on shift to mobile
 -   Operationalizing
-    -   build a culture of measuring, testing, try new things
-    -   don't overly rely on gut as more folks can't predict correctly
+    -   build a culture of measuring, testing, and try new things
     -   requires teams to be unemotionally detached from what is getting built
--   Next step
-    -   add sources and additional notes (see Reader comments/notes on talks/posts)
-    -   can these metrics be multiplied
-    -   growth equation foundation flexes to various company setting
-
-### 
+    -   don't overly rely on gut as most folks can't predict correctly
+    -   FB early days "Aha" moment metric Famous FB keystone: 7 friends in 10 days
+    -   growth equation specifics differ by company type (however, the core elements of the growth equation persist: acquisition, activation, engagement)
+    
+### Next Step
+- Other metric framworks to note?
 
 ------------------------------------------------------------------------
+
+### 
 
 # Defining Success Metrics for X new feature/experience
 
