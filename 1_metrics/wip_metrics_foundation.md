@@ -186,40 +186,45 @@
 -   part growth framework + part metrics framework
 -   framework for how consumer products grow active users / customer base
 -   inspired by [Chamath Palihapitiya](https://youtu.be/raIUQP71SBU) (Facebook VP of Growth: 2007 - 2011) and [Andy Johns](https://review.firstround.com/indispensable-growth-frameworks-from-my-years-at-facebook-twitter-and-wealthfront/) (early growth employee at Facebook, Twitter, Quora, Wealthfront exec, former VC)
--   Chamath's description
+-   Chamath's description [^wip_metrics_foundation-1]
     -   acquisition: get people to the front door
     -   activation: get them to an "Aha" moment as quickly as possible
-    -   engagement: deliver cover value as often as possible
-    -   virality not a core focus initially (how existing users recruit other users)
+    -   engagement: deliver core value as often as possible
 -   Andy Johns's description (from Andy's work with Chamath at early days Facebook)
     -   top of funnel (traffic, conversion rate) x
     -   magic moment (create emotional response) x
     -   core product value (solves real problems) =
     -   sustainable growth
 -   Facebook early days example
-    -   grow active users (active user growth provides case for additional funding/IPO and/or monetization opportunities)
+    -   grow active users (active user growth makes the social network more valuable, provides evidence for additional funding/IPO, monetization opportunities, etc)
     -   active users = active new users + active existing users
-    -   actions and metrics aligning to the first 3 pillars to fuel active user growth
-    -   acquisition
+    -   hypothesized set of key metrics and bets aligned to each growth equation pillar
+    -   acquisition (top of funnel sign ups)
         -   universitys adopted
         -   expansion to high schools and non-students
         -   international expansion / localization
-    -   activation
-        -   user onboarding focused on profile completion and connecting with friends
-        -   7 friends in 10 days: "Aha" moment metric for onboarding experiments and alignment to core product value
-    -   engagement
+    -   activation (7 friends in 10 days)
+        -   user onboarding optimized for profile completion and connecting with friends
+    -   engagement (time spent & frequency)
         -   news feed innovation and time spent
-        -   platform integrations and further engagement sources (i.e. game developers building games for FB; FarmVille)
+        -   platform integrations and expanding engagement sources (i.e. game developers building games for FB; FarmVille)
+        -   "Like" button as a mechanic for how users interact with connect
+        -   positioning profile content as a "Timeline" to more easily see a users history and life events
         -   Facebook mobile app and Instagram acquisition to capitalize on shift to mobile
--   Operationalizing
+-   Notes on operationalizing the growth equation framework
     -   build a culture of measuring, testing, and try new things
     -   requires teams to be unemotionally detached from what is getting built
     -   don't overly rely on gut as most folks can't predict correctly
-    -   FB early days "Aha" moment metric Famous FB keystone: 7 friends in 10 days
     -   growth equation specifics differ by company type (however, the core elements of the growth equation persist: acquisition, activation, engagement)
-    
+
+[^wip_metrics_foundation-1]: Virality wasn't a core focus initially (how existing users recruit other users); Chamath put the emphasis on acquisition, activation, and engagement vs K factor (virality)
+
 ### Next Step
-- Other metric framworks to note?
+
+-   Other metric framework to assess:
+    -   One Metric That Matters (OMTM)
+    -   GAME Framework (Goals, Activities, Metrics, Experiments)
+-   Add more to pirate metrics?
 
 ------------------------------------------------------------------------
 
