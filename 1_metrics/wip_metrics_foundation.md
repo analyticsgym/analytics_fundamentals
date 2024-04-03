@@ -85,10 +85,24 @@
 -   Dave suggested startups foucs on 5 to 10 conversion steps to measure and iterate on via AB tests (based on cost, conversion, and business revenue model)
 
 1.  **Acquisition:** how users find out about the product
+    -   channel optimization/prio based on volume, cost, performance ratios (ROAS, LTV to CAC, etc)
+    -   example funnel metrics
+        -   site visits
+        -   engaged prospect rate (pages viewed \>= x, time spent \>= y, clicks \>= z)
 2.  **Activation:** first happy experience and account creation
+    -   ???
 3.  **Retention:** repeat usage of the product
+    -   features, processes, offers to pull folks back to engage with the product
+    -   example funnel metrics
+        -   reactivation campaign CTR
+        -   percent days engaged \>= x during first 30 days
 4.  **Referral:** users like the product and tell others
+    -   encourage users to refer after they have a happy experience
+    -   example funnel metrics
+        -   percent users who send invites \>= x
+        -   percent users who have referral activate \>= x
 5.  **Revenue:** users complete monetization actions
+    -   ???
 
 ### Google HEART
 
@@ -98,39 +112,46 @@
 -   some metric categories may not be applicable for certain products/business use cases
 
 1.  **Happiness**
+    -   attitudinal metrics
+    -   i.e. CSAT, NPS, and ease of use
 
--   attitudinal metrics
--   i.e. CSAT, NPS, and ease of use
-
+```{=html}
+<!-- -->
+```
 2.  **Engagement**
+    -   behavioral metrics on level of involvement with the product
+    -   i.e. frequency, depth, breadth of interaction
+    -   averages per user and rate of actives to do action are often good starting points
+    -   engagement metrics that predict future product retention or revenue tend to be prioritized
 
--   behavioral metrics on level of involvement with the product
--   i.e. frequency, depth, breadth of interaction
--   averages per user and rate of actives to do action are often good starting points
--   engagement metrics that predict future product retention or revenue tend to be prioritized
-
+```{=html}
+<!-- -->
+```
 3.  **Adoption**
+    -   new users to start using a product
+    -   expressed as absolute count, proportion of total users, proportion of active users, proportion of new/existing users, etc
+    -   defining "using" is product/feature/business case specific
+    -   i.e. accounts created last 7 days, number of users to turn on a feature, etc
 
--   new users to start using a product
--   expressed as absolute count, proportion of total users, proportion of active users, proportion of new/existing users, etc
--   defining "using" is product/feature/business case specific
--   i.e. accounts created last 7 days, number of users to turn on a feature, etc
-
+```{=html}
+<!-- -->
+```
 4.  **Retention**
+    -   percent of users who use the product during period X and then use it again during period Y
+    -   new products tend to have evolving retention metrics vs mature products tend to have more stable retention metrics outside of seasonal/macro events
+    -   cohort comparison is common here (i.e. cohorts based on when users first joined the product or adopted the product/feature)
+    -   i.e. percent of 7 day actives this week who were also active last week, percent of cohort users who use the product month 2, month 3, etc
 
--   percent of users who use the product during period X and then use it again during period Y
--   new products tend to have evolving retention metrics vs mature products tend to have more stable retention metrics outside of seasonal/macro events
--   cohort comparison is common here (i.e. cohorts based on when users first joined the product or adopted the product/feature)
--   i.e. percent of 7 day actives this week who were also active last week, percent of cohort users who use the product month 2, month 3, etc
-
+```{=html}
+<!-- -->
+```
 5.  **Task success**
-
--   is the product UX/design intuitive and efficient at getting users to desired objective
--   task metrics help pinpoint areas of opportunity to reduce friction and improve the user experience
--   behavioral metrics assessing efficiency, effectiveness, error rates
--   efficiency examples: time to complete task, clicks to complete task, steps complete per time window x
--   effectiveness examples: step completion rate, rate of users who stick to optimal path, rate of users complete task without assistance
--   error rates examples: page error rate, abandonment rate by sub task location, issues reported rate
+    -   is the product UX/design intuitive and efficient at getting users to desired objective
+    -   task metrics help pinpoint areas of opportunity to reduce friction and improve the user experience
+    -   behavioral metrics assessing efficiency, effectiveness, error rates
+    -   efficiency examples: time to complete task, clicks to complete task, steps complete per time window x
+    -   effectiveness examples: step completion rate, rate of users who stick to optimal path, rate of users complete task without assistance
+    -   error rates examples: page error rate, abandonment rate by sub task location, issues reported rate
 
 ### North Star Metric Framework
 
