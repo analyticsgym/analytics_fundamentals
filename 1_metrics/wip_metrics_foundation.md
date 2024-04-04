@@ -83,16 +83,21 @@
 -   [popularized by Dave McClure (2007)](https://www.slideshare.net/dmc500hats/startup-metrics-for-pirates-long-version)
 -   a systematic way to optimize the customer funnel
 -   Dave suggested startups foucs on 5 to 10 conversion steps to measure and iterate on via AB tests (based on cost, conversion, and business revenue model)
+-   Dave recommends 80% effort deployed on existing feature optimization and 20% on new feature dev
+-   funnel metrics segmented by audience, channel, campaign theme, landing page & CTA, copy & graphics
 
 1.  **Acquisition:** how users find out about the product
-    -   channel optimization/prio based on volume, cost, performance ratios (ROAS, LTV to CAC, etc)
+    -   channel optimization/prioritization based on volume, cost, efficiency
     -   example funnel metrics
         -   site visits
         -   engaged prospect rate (pages viewed \>= x, time spent \>= y, clicks \>= z)
 2.  **Activation:** first happy experience and account creation
-    -   ???
+    -   getting folks to key feature usage and actions that signal feature usage
+    -   example funnel metrics
+        -   account completion rate
+        -   key feature usage rate
 3.  **Retention:** repeat usage of the product
-    -   features, processes, offers to pull folks back to engage with the product
+    -   marketing, content, features, processes, and offers to pull folks back to engage with the product
     -   example funnel metrics
         -   reactivation campaign CTR
         -   percent days engaged \>= x during first 30 days
@@ -102,7 +107,10 @@
         -   percent users who send invites \>= x
         -   percent users who have referral activate \>= x
 5.  **Revenue:** users complete monetization actions
-    -   ???
+    -   aligns to how the business model captures value from customers
+    -   example funnel metrics
+        -   percent users who to pay
+        -   percent users who break-even
 
 ### Google HEART
 
@@ -240,16 +248,9 @@
 
 [^wip_metrics_foundation-1]: Virality wasn't a core focus initially (how existing users recruit other users); Chamath put the emphasis on acquisition, activation, and engagement vs K factor (virality)
 
-### Next Step
-
--   Other metric framework to assess:
-    -   One Metric That Matters (OMTM)
-    -   GAME Framework (Goals, Activities, Metrics, Experiments)
--   Add more to pirate metrics?
-
 ------------------------------------------------------------------------
 
-### 
+Next step bookmark ==\> "Defining Success Metrics for X new feature/experience"
 
 # Defining Success Metrics for X new feature/experience
 
