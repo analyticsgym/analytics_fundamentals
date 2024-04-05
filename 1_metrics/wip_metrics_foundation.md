@@ -76,6 +76,23 @@
 
 ------------------------------------------------------------------------
 
+# Best Practices for Defining Metrics
+
+NEXT STEP BOOKMARK
+
+1.  Keep it simple
+    -   ABC
+2.  Self-documenting metric names (metric name describes the metric for tech and non-tech stakeholders)
+    -   e.g. last 28 days total sales vs sales
+3.  Sensitive enough to move but not volatile
+    -   ABC
+4.  Analyze historical metric data for abnormalities
+    -   ABC
+5.  ABC
+    -   ABC
+
+------------------------------------------------------------------------
+
 # Metric Frameworks
 
 ### AARRR (Pirate metrics)
@@ -122,37 +139,21 @@
 1.  **Happiness**
     -   attitudinal metrics
     -   i.e. CSAT, NPS, and ease of use
-
-```{=html}
-<!-- -->
-```
 2.  **Engagement**
     -   behavioral metrics on level of involvement with the product
     -   i.e. frequency, depth, breadth of interaction
     -   averages per user and rate of actives to do action are often good starting points
     -   engagement metrics that predict future product retention or revenue tend to be prioritized
-
-```{=html}
-<!-- -->
-```
 3.  **Adoption**
     -   new users to start using a product
     -   expressed as absolute count, proportion of total users, proportion of active users, proportion of new/existing users, etc
     -   defining "using" is product/feature/business case specific
     -   i.e. accounts created last 7 days, number of users to turn on a feature, etc
-
-```{=html}
-<!-- -->
-```
 4.  **Retention**
     -   percent of users who use the product during period X and then use it again during period Y
     -   new products tend to have evolving retention metrics vs mature products tend to have more stable retention metrics outside of seasonal/macro events
     -   cohort comparison is common here (i.e. cohorts based on when users first joined the product or adopted the product/feature)
     -   i.e. percent of 7 day actives this week who were also active last week, percent of cohort users who use the product month 2, month 3, etc
-
-```{=html}
-<!-- -->
-```
 5.  **Task success**
     -   is the product UX/design intuitive and efficient at getting users to desired objective
     -   task metrics help pinpoint areas of opportunity to reduce friction and improve the user experience
@@ -250,35 +251,20 @@
 
 ------------------------------------------------------------------------
 
-Next step bookmark ==\> "Defining Success Metrics for X new feature/experience"
+# Defining Success Metrics for a New Product Experience
 
-# Defining Success Metrics for X new feature/experience
+#### 1. Context Collection
 
-##### 1. What is being tested and why?
+-   what problem/need/pain is the new product experience solving?
+-   what would the high-level experience look like?
 
--   What is the objective of the feature/experience? who is it for?
--   What would the high-level experience look like?
+#### 2. Connecting the New Product Experience to Company Objectives
 
-##### 2. Product and business goals
+-   is the new product experience expected to deliver on a key company objective (i.e. establish product market fit, increase acquisition, improve engagement depth or retention, drive average revenue per user or LTV higher, etc)?
 
--   think through how does that objective tie to the overall company goals/mission
--   is the business looking for product market fit first or revenue or both out of the gate?
--   if it's a new product line, consider end to end funnel metrics vs if feature might be more targeted metrics
+#### 3. Primary metric(s)
 
-##### 3. Primary metric(s)
-
--   primary metrics should align to the core value prop of the new feature/experience/business and tie to overall company goals/mission
--   if the scale of the experience is large or it's a net new app: primary metrics might span (acquisition, activation, retention/engagement, referral, revenue)
--   simplicity scales (best metrics are straightforward based on name vs have complex logic that is hard for stakeholders to grasp/remember)
--   ideally, one to two primary metrics so there's decision simplicity and clear actions one could take to improve them
--   not easily game-able
--   sensitive enough to move (i.e. vs already being at a ceiling or floor or out of the control of X team)
--   measurable in the short-term and have proven link to company goals or there's a strong strategic assumption/hypothesis they do
--   ideally the primary metrics would work in an AB test construct
--   assuming metric A and B could both work, if A has been consistently used at the company and pressure tested then A is likely better
--   not to say new metrics shouldn't be used, but new net metrics for strategic tests/launches should have a clear value prop over established reliable metrics
--   based on context from #1, then we can list out several options then stack rank to get one to two options
--   depending on the stakeholder/scenario, stack ranking might be done with stakeholders or analyst delivers recommendation to stakeholder
+-   align primary metric(s) to the core value prop the new experience is delivering and to the company objective being targeted
 
 ##### 4. Guardrail/monitoring metrics
 
@@ -295,10 +281,10 @@ Next step bookmark ==\> "Defining Success Metrics for X new feature/experience"
 ##### 6. Using the primary and guardrail metrics
 
 -   ideally run an experiment
--   one or both primary metrics improve and guardrail metrics/segments stable then = good/launch
+-   one or both primary metrics improve and guardrail metrics/segments stable then = likely good outcome
+-   one or both primary metrics improve and guardrail metrics/segments negative = try to understand why/iterate further
 -   one or both primary metrics negative and guardrail metrics/segments stable then = try to understand why/iterate further or move on
--   one or both primary metrics improve and guardrail metrics/segments not stable then = try to understand why/iterate further or move on
--   one or both primary metrics negative and guardrail metrics/segments not stable then = don't move forward
+-   one or both primary metrics negative and guardrail metrics/segments negative = likely bad outcome; iterate or move on
 
 ------------------------------------------------------------------------
 
@@ -449,4 +435,4 @@ Misc considerations
 -   Study Andrew Chen's blog and deck on [growth accounting](https://andrewchen.com/wp-content/uploads/2018/11/a16z_growth_deck.pdf) and other topics related to metrics/analytics
 -   What to do if a product isn't retaining users?
 -   What to do if a product isn't getting folks to a activate?
--   
+-   The path of least resistance to hit metric goals and unintended consequences
