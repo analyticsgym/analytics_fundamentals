@@ -78,18 +78,21 @@
 
 # Best Practices for Defining Metrics
 
-NEXT STEP BOOKMARK
-
 1.  Keep it simple
-    -   ABC
+    -   use the simplest metric logic to achieve the desired measurement objective
+    -   ideally new metrics should be easy to understand and explain
 2.  Self-documenting metric names (metric name describes the metric for tech and non-tech stakeholders)
-    -   e.g. last 28 days total sales vs sales
-3.  Sensitive enough to move but not volatile
-    -   ABC
-4.  Analyze historical metric data for abnormalities
-    -   ABC
-5.  ABC
-    -   ABC
+    -   "last_28_days_trailing_total_sales" vs "total_sales" to represent the last 28 days of a trailing total
+3.  Actionable
+    -   source of inspiration for ways to improve the product experience or business
+    -   hypothesized cause and effect relationship (i.e. doing X will lead to Y metric improvement)
+4.  Sensitive enough to move but not volatile
+    -   tends to require a balance between broad/high-level metrics and granular/detailed metrics
+    -   actionable lagging metric or overaly broad metric might not be sensitive enough to move in the near term
+    -   volatile metrics can lead to hard to explain fluctuations
+5.  Analyze historical metric trend, fluctuations, and underlying data quality
+    -   how does seasonality and user mix impact the metric?
+    -   has the underlying data passed QAed for x new metric?
 
 ------------------------------------------------------------------------
 
