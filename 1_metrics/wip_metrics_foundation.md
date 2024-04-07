@@ -79,12 +79,12 @@
 # Metric Frameworks
 
 ### AARRR (Pirate metrics)
-
--   [popularized by Dave McClure (2007)](https://www.slideshare.net/dmc500hats/startup-metrics-for-pirates-long-version)
--   a systematic way to optimize the customer funnel
--   Dave suggested startups foucs on 5 to 10 conversion steps to measure and iterate on via AB tests (based on cost, conversion, and business revenue model)
--   Dave recommends 80% effort deployed on existing feature optimization and 20% on new feature dev
--   funnel metrics segmented by audience, channel, campaign theme, landing page & CTA, copy & graphics
+-   **Overview**
+    -   [popularized by Dave McClure (2007)](https://www.slideshare.net/dmc500hats/startup-metrics-for-pirates-long-version)
+    -   a systematic way to optimize the customer funnel
+    -   Dave suggested startups foucs on 5 to 10 conversion steps to measure and iterate on via AB tests (based on cost, conversion, and business revenue model)
+    -   Dave recommends 80% effort deployed on existing feature optimization and 20% on new feature dev
+    -   funnel metrics segmented by audience, channel, campaign theme, landing page & CTA, copy & graphics
 
 1.  **Acquisition:** how users find out about the product
     -   channel optimization/prioritization based on volume, cost, efficiency
@@ -113,11 +113,11 @@
         -   percent users who break-even
 
 ### Google HEART
-
--   proposed by Googlers Kerry Rodden, Hilary Hutchinson, and Xin Fu in [2010 paper](https://research.google/pubs/measuring-the-user-experience-on-a-large-scale-user-centered-metrics-for-web-applications/)
--   set of user-centered metrics to measure progress toward user experience goals
--   metrics tracked for a given time period and/or cut by user segments/cohorts
--   some metric categories may not be applicable for certain products/business use cases
+-   **Overview**
+    -   proposed by Googlers Kerry Rodden, Hilary Hutchinson, and Xin Fu in [2010 paper](https://research.google/pubs/measuring-the-user-experience-on-a-large-scale-user-centered-metrics-for-web-applications/)
+    -   set of user-centered metrics to measure progress toward user experience goals
+    -   metrics tracked for a given time period and/or cut by user segments/cohorts
+    -   some metric categories may not be applicable for certain products/business use cases
 
 1.  **Happiness**
     -   attitudinal metrics
@@ -146,69 +146,68 @@
     -   error rates examples: page error rate, abandonment rate by sub task location, issues reported rate
 
 ### North Star Metric Framework
-
--   inspired by Sean Ellis and the growth hacking movement
--   a single metric to guide strategy, inform decision making, and set internal focus
--   ideally as the north star metric improves business results improvement follows
--   [Amplitude's North Star Playbook](https://amplitude.com/books/north-star/about-the-north-star-framework)
--   framework key elements
+-   **Overview**
+    -   inspired by Sean Ellis and the growth hacking movement
+    -   a single metric to guide strategy, inform decision making, and set internal focus
+    -   ideally as the north star metric improves business results improvement follows
+    -   [Amplitude's North Star Playbook](https://amplitude.com/books/north-star/about-the-north-star-framework)
+-   **Framework key elements**
     -   lagging business results/value: often revenue, continued paying customers, etc
     -   north star metric (NSM): captures the core value prop of the product and is a leading indicator of business value (i.e. critical rate, count, ratio, etc)
     -   input metrics: 3 to 5 sub-metrics that influence the north star metric
     -   work: activities that hope to move input metrics
--   example for subscription business
+-   **Example for subscription business**
     -   business result: renewing subscription revenue
     -   NSM: core value prop action that correlates with future sub revenue
     -   inputs: supporting tasks/actions that improve customer volume and frequency of core value prop action
     -   work: hypotheses to move and improve the input metrics
--   NSM checklist
+-  **NSM checklist**
     -   aligns to customer value exchange with the product
     -   represents the company's vision and product strategy
     -   leading indicator of critical business results
     -   measurable via product analytics tracking
     -   produces actionable set of sub-metrics teams can run experiments on
     -   simple to explain and understand for technical and non-technical team members
--   inputs
+-   **Inputs**
     -   starting point ideas: breadth, depth, frequency, efficiency
     -   not too sensitive or too broad
     -   teams can generate large volume of actionable ideas to move the inputs
 
 ### Meta Product Market Fit
-
--   [Meta Analytics PMF Playbook](https://medium.com/@AnalyticsAtMeta/analytics-and-product-market-fit-11efaea403cd)
--   product market fit (PMF)
-    -   the value a product delivers for a specific market segment
-    -   are we building something people want? are folks using the product? do folks come back to use it?
--   PMF measurement criteria
+-   **Overview**
+    -   [Meta Analytics PMF Playbook](https://medium.com/@AnalyticsAtMeta/analytics-and-product-market-fit-11efaea403cd)
+    -   product market fit (PMF): the value a product delivers for a specific market segment
+    -   in other words, are we building something people want? are folks using the product? do folks come back to use it?
+    -   valuable products with high product marketing fit: keep people coming back, sustainability acquire new users, and have long stretches of usage
+-   **PMF measurement criteria**
     -   stable retention: do folks keep coming back after using the product?
     -   sustainable growth: is there a healthy approach to acquire, retain, and resurrect folks over time?
     -   deep engagement: do folks have long usage duration on core value prop actions?
--   stable retention
+-   **Stable retention**
     -   active: defined based on core value prop of product
     -   volume of active cohort users in period N+1 / Volume of active cohort users in period N
--   sustainable growth
+-   **Sustainable growth**
     -   Meta often waits to ramp up upper funnel acquisition till after products can sustainability add and retain folks
     -   growth accounting states model used to dissect active user growth ([Duolingo example](https://blog.duolingo.com/growth-model-duolingo/))
     -   i.e. is active user growth being fueled by new users or existing user frequency?
--   deep engagement
+-   **Deep engagement**
     -   time spent, days engaged out of the last 28 days, purchases/revenue per user
--   valuable products with high product marketing fit: keep people coming back, sustainability acquire new users, and have long stretches of usage
 
 ### Growth Equation
-
--   part growth framework + part metrics framework
--   framework for how consumer products grow active users / customer base
--   inspired by [Chamath Palihapitiya](https://youtu.be/raIUQP71SBU) (Facebook VP of Growth: 2007 - 2011) and [Andy Johns](https://review.firstround.com/indispensable-growth-frameworks-from-my-years-at-facebook-twitter-and-wealthfront/) (early growth employee at Facebook, Twitter, Quora, Wealthfront exec, former VC)
--   Chamath's description [^wip_metrics_foundation-1]
+-   **Overview**
+    -   part growth framework + part metrics framework
+    -   framework for how consumer products grow active users / customer base
+    -   inspired by [Chamath Palihapitiya](https://youtu.be/raIUQP71SBU) (Facebook VP of Growth: 2007 - 2011) and [Andy Johns](https://review.firstround.com/indispensable-growth-frameworks-from-my-years-at-facebook-twitter-and-wealthfront/) (early growth employee at Facebook, Twitter, Quora, Wealthfront exec, former VC)
+-   **Chamath's description [^wip_metrics_foundation-1]**
     -   acquisition: get people to the front door
     -   activation: get them to an "Aha" moment as quickly as possible
     -   engagement: deliver core value as often as possible
--   Andy Johns's description (from Andy's work with Chamath at early days Facebook)
+-   **Andy Johns's description (from Andy's work with Chamath at early days Facebook)**
     -   top of funnel (traffic, conversion rate) x
     -   magic moment (create emotional response) x
     -   core product value (solves real problems) =
     -   sustainable growth
--   Facebook early days example
+-   **Facebook early days example**
     -   grow active users (active user growth makes the social network more valuable, provides evidence for additional funding/IPO, monetization opportunities, etc)
     -   active users = active new users + active existing users
     -   hypothesized set of key metrics and bets aligned to each growth equation pillar
@@ -224,7 +223,7 @@
         -   "Like" button as a mechanic for how users interact with content
         -   positioning profile content as a "Timeline" to more easily see a users history and life events
         -   Facebook mobile app and Instagram acquisition to capitalize on shift to mobile
--   Notes on operationalizing the growth equation framework
+-   **Notes on operationalizing the growth equation framework**
     -   build a culture of measuring, testing, and try new things
     -   requires teams to be unemotionally detached from what is getting built
     -   don't overly rely on gut as most folks can't predict correctly
@@ -236,19 +235,20 @@
 
 # Best Practices for Defining Metrics
 
-1.  Keep it simple
+1.  **Keep it simple**
     -   use the simplest metric logic to achieve the desired measurement objective
     -   ideally new metrics should be easy to understand and explain
-2.  Self-documenting metric names (metric name describes the metric for tech and non-tech stakeholders)
+2.  **Self-documenting metric names**
+    -   aim for metric names that describe the metric for tech and non-tech stakeholders
     -   "last_28_days_trailing_total_sales" vs "total_sales" to represent the last 28 days of a trailing total
-3.  Actionable
+3.  **Actionable**
     -   source of inspiration for ways to improve the product experience or business
     -   hypothesized cause and effect relationship (i.e. doing X will lead to Y metric improvement)
-4.  Sensitive enough to move but not volatile
+4.  **Sensitive enough to move but not volatile**
     -   tends to require a balance between broad/high-level metrics and granular/detailed metrics
     -   actionable lagging metric or overaly broad metric might not be sensitive enough to move in the near term
     -   volatile metrics can lead to hard to explain fluctuations
-5.  Analyze historical metric trend, fluctuations, and underlying data quality
+5.  **Analyze historical metric trend, fluctuations, and underlying data quality**
     -   how does seasonality and user mix impact the metric?
     -   has the underlying data passed QAed for x new metric?
 
@@ -256,51 +256,65 @@
 
 # Investigating Metric Change
 
-1.  Understand the metric definition, filters applied, and time window
-    - ABC
-2.  Seasonal/business/product experience changes that could be influencing the metric
-    - ABC
-3.  Is the change meaningful enough to matter to the business or is it within typical fluctuation
-    - ABC
-4.  Data pipeline or experience bug that is skewing the metric
-    - ABC
-5.  Drivers analysis slicing and dicing data to uncover deviation root cause (new vs existing, device types, geo, power users vs non power users, paid vs free)
-    - ABC
+1.  **Determine if the metric change is meaningful to the business**
+    - if the change is within the expected fluctuation range, it may not require further investigation
+    - however, if the change is small but unexpected, it might be worth investigating as a signal for a larger issue (business/product/data issue)
+
+2.  **Understand the metric definition, filters being used, and the time window**
+    - check if the metric logic, filters, date ranges, and time zone conversions are consistent
+
+3.  **Consider any seasonal, business, or product changes that could influence the metric**
+    - metric changes during specific events may be expected (i.e. holiday shopping for an ecommerce product)
+
+4.  **Check for any data pipeline or experience bugs that might be distorting the metric**
+    - recommended to start with the business context and then move to data/experience QA
+
+5.  **Conduct a drivers analysis to identify the root cause of the deviation**
+    - use segmentation analysis to understand if a specific segment is driving the change
+    - e.g. compare new users to existing ones, device types, geographic locations, power users versus non-power users, and paid versus free users
+    - i.e. new users during a particular period are taking certain actions at a lower rate than in previous periods
 
 ------------------------------------------------------------------------
 
+NEXT STEP BOOKMARK
+
 # When Metrics Don't Tie Between Sources
+-   IS THIS NEEDED?
 -   is the difference large and material?
 -   if so, investigate to understand why? there could be skeletons in the closest
 -   for strategic high visibility work it's extra important that metrics being used to drive decisions/financials tie out as expected. From the start investigate and build high quality solution to minimize risk (\$ renewal forecast case study)
 
 ------------------------------------------------------------------------
 
-NEXT STEP BOOKMARK
-
 # Defining Success Metrics for a New Product Experience
 
-1. Context Collection
+1.  Context Collection
+
 -   what problem/need/pain is the new product experience solving?
 -   what would the high-level experience look like?
 
-2. Connecting the New Product Experience to Company Objectives
+2.  Connecting the New Product Experience to Company Objectives
+
 -   is the new product experience expected to deliver on a key company objective (i.e. establish product market fit, increase acquisition, improve engagement depth or retention, drive average revenue per user or LTV higher, etc)?
 
-3. Primary metric(s)
+3.  Primary metric(s)
+
 -   align primary metric(s) to the core value prop the new experience is delivering and to the company objective being targeted
 
-4. Guardrail/monitoring metrics
+4.  Guardrail/monitoring metrics
+
 -   make sure other parts of the experience isn't eroding unexpectedly so it's clear the overall business is benefiting vs a small surface area getting a win but hurting the system overall
 -   metrics that should be stable are stable
 -   key segments might also be part of the guardrail
 -   other upper and lower funnel pieces of the funnel that make sense and can be used for context/monitoring
 
-5. Time frame and users filters
+5.  Time frame and users filters
+
 -   does the metric need a time filter?
 -   all users? or only paying users? or new vs existing users?
 
-6. Using the primary and guardrail metrics
+6.  Using the primary and guardrail metrics
+
 -   ideally run an experiment
 -   one or both primary metrics improve and guardrail metrics/segments stable then = likely good outcome
 -   one or both primary metrics improve and guardrail metrics/segments negative = try to understand why/iterate further
@@ -345,55 +359,65 @@ NEXT STEP BOOKMARK
 # Assessing the quality of organic traffic/active user growth
 
 1.  analyze traffic source
+
 -   which organic channels are driving the increase
 -   determine if increase is due to viral event, mention by popular source, other short term
 
 2.  retention metrics
+
 -   are folks joining and then sticking around to glean value from the product
 -   DAU, WAU, MAU
 -   and ratio between them
 
 3.  engagement depth
+
 -   active users are good but highly engaged active users are even better
 -   session duration, pages per sessions, actions taken per session
 
 4.  cohort analysis
+
 -   are new cohorts behaving different than past cohorts
 
 5.  organic search
+
 -   if organic is driving volume look for critical keyword vis to be stable or improving
 -   make sure attributed search volume is not due to seasonal spike
 
 6.  content longevity
+
 -   if organic content marketing (SEO, social) is driving growth
 -   look into how evergreen the content and cost to produce
 -   does content require high turnover
 
 7.  word of mouth and brand advocacy
+
 -   are a passionate set of folks telling others and driving growth
 -   investigate forums, social mentions, etc
 
-Misc considerations
--   channel diversification is key to reduce risk
--   true test of sustainability is time
+Misc considerations - channel diversification is key to reduce risk - true test of sustainability is time
 
 # Explain usefulness of trended ratios between DAU, WAU, MAU, QAU
+
 -   help explain the type of usage patterns folks have and gauge stickiness
 -   when the ratios are close to 1 it suggests high stickiness during the metric frame
 -   when the ratios are low it suggests less frequent usage during the metric frame
 
 ### DAU / WAU
+
 -   helps to shed light on if WAU is driven by folks coming back each day of week (ratio close to 1) or many users coming back once per week
 
 ### DAU / MAU
+
 -   higher ratio means folks are coming back frequently and there's more of a daily value prop
 -   lower ratio suggests folks are coming less frequency during a month
 
 ### WAU / MAU
+
 -   if metric is close to 1 it suggest folks are coming back each week
 -   if metric is low suggests that folks are not coming back multiple weeks in a month
 
 ### MAU / QAU
+
 -   helpful if a product is used on less frequent basis
 -   scenarios where MAU could decline but QAU increases
 
