@@ -79,6 +79,7 @@
 # Metric Frameworks
 
 ### AARRR (Pirate metrics)
+
 -   **Overview**
     -   [popularized by Dave McClure (2007)](https://www.slideshare.net/dmc500hats/startup-metrics-for-pirates-long-version)
     -   a systematic way to optimize the customer funnel
@@ -113,6 +114,7 @@
         -   percent users who break-even
 
 ### Google HEART
+
 -   **Overview**
     -   proposed by Googlers Kerry Rodden, Hilary Hutchinson, and Xin Fu in [2010 paper](https://research.google/pubs/measuring-the-user-experience-on-a-large-scale-user-centered-metrics-for-web-applications/)
     -   set of user-centered metrics to measure progress toward user experience goals
@@ -146,6 +148,7 @@
     -   error rates examples: page error rate, abandonment rate by sub task location, issues reported rate
 
 ### North Star Metric Framework
+
 -   **Overview**
     -   inspired by Sean Ellis and the growth hacking movement
     -   a single metric to guide strategy, inform decision making, and set internal focus
@@ -161,7 +164,7 @@
     -   NSM: core value prop action that correlates with future sub revenue
     -   inputs: supporting tasks/actions that improve customer volume and frequency of core value prop action
     -   work: hypotheses to move and improve the input metrics
--  **NSM checklist**
+-   **NSM checklist**
     -   aligns to customer value exchange with the product
     -   represents the company's vision and product strategy
     -   leading indicator of critical business results
@@ -174,6 +177,7 @@
     -   teams can generate large volume of actionable ideas to move the inputs
 
 ### Meta Product Market Fit
+
 -   **Overview**
     -   [Meta Analytics PMF Playbook](https://medium.com/@AnalyticsAtMeta/analytics-and-product-market-fit-11efaea403cd)
     -   product market fit (PMF): the value a product delivers for a specific market segment
@@ -194,11 +198,12 @@
     -   time spent, days engaged out of the last 28 days, purchases/revenue per user
 
 ### Growth Equation
+
 -   **Overview**
     -   part growth framework + part metrics framework
     -   framework for how consumer products grow active users / customer base
     -   inspired by [Chamath Palihapitiya](https://youtu.be/raIUQP71SBU) (Facebook VP of Growth: 2007 - 2011) and [Andy Johns](https://review.firstround.com/indispensable-growth-frameworks-from-my-years-at-facebook-twitter-and-wealthfront/) (early growth employee at Facebook, Twitter, Quora, Wealthfront exec, former VC)
--   **Chamath's description [^wip_metrics_foundation-1]**
+-   **Chamath's description** [^wip_metrics_foundation-1]
     -   acquisition: get people to the front door
     -   activation: get them to an "Aha" moment as quickly as possible
     -   engagement: deliver core value as often as possible
@@ -229,7 +234,7 @@
     -   don't overly rely on gut as most folks can't predict correctly
     -   growth equation specifics differ by company type (core elements persist: acquisition, activation, engagement)
 
-[^wip_metrics_foundation-1]: Virality wasn't a core focus initially (how existing users recruit other users); Chamath put the emphasis on acquisition, activation, and engagement vs K factor (virality)
+[^wip_metrics_foundation-1]: **Virality wasn't a core focus initially (how existing users recruit other users); Chamath put the emphasis on acquisition, activation, and engagement vs K factor (virality)**
 
 ------------------------------------------------------------------------
 
@@ -256,70 +261,62 @@
 
 # Investigating Metric Change
 
-1.  **Determine if the metric change is meaningful to the business**
-    - if the change is within the expected fluctuation range, it may not require further investigation
-    - however, if the change is small but unexpected, it might be worth investigating as a signal for a larger issue (business/product/data issue)
-
-2.  **Understand the metric definition, filters being used, and the time window**
-    - check if the metric logic, filters, date ranges, and time zone conversions are consistent
-
+1.  **Understand the metric definition, data source, filters being used, and the time window**
+    -   fact gathering step before jumping into problem solving mode
+2.  **Determine if the metric change is meaningful to the business**
+    -   if the change is within the expected fluctuation range, it may not require further investigation
+    -   however, if the change is small but unexpected, it might be worth investigating as a signal for a larger underlying issue (business/product/data issue)
 3.  **Consider any seasonal, business, or product changes that could influence the metric**
-    - metric changes during specific events may be expected (i.e. holiday shopping for an ecommerce product)
-
+    -   metric changes during specific events may be expected (i.e. holiday shopping surge for an ecommerce company)
 4.  **Check for any data pipeline or experience bugs that might be distorting the metric**
-    - recommended to start with the business context and then move to data/experience QA
-
+    -   recommended to start with the business context and then move to data/experience QA
 5.  **Conduct a drivers analysis to identify the root cause of the deviation**
-    - use segmentation analysis to understand if a specific segment is driving the change
-    - e.g. compare new users to existing ones, device types, geographic locations, power users versus non-power users, and paid versus free users
-    - i.e. new users during a particular period are taking certain actions at a lower rate than in previous periods
+    -   use segmentation analysis to understand if a specific segment is driving the change (i.e. due to large weight/influence on the metric or outlier type performance compared to other segments)
+    -   e.g. compare new users to existing ones, device types, geographic locations, power users versus non-power users, and paid versus free users
+    -   i.e. new users during a particular period are taking certain actions at a lower rate than in previous periods
 
 ------------------------------------------------------------------------
 
 NEXT STEP BOOKMARK
 
-# When Metrics Don't Tie Between Sources
--   IS THIS NEEDED?
--   is the difference large and material?
--   if so, investigate to understand why? there could be skeletons in the closest
--   for strategic high visibility work it's extra important that metrics being used to drive decisions/financials tie out as expected. From the start investigate and build high quality solution to minimize risk (\$ renewal forecast case study)
-
-------------------------------------------------------------------------
-
 # Defining Success Metrics for a New Product Experience
 
-1.  Context Collection
+1.  **Context Collection**
 
--   what problem/need/pain is the new product experience solving?
+-   what customer problem/need/pain is the new product experience solving?
 -   what would the high-level experience look like?
 
-2.  Connecting the New Product Experience to Company Objectives
+2.  **Connecting the New Product Experience to Company Objectives**
 
 -   is the new product experience expected to deliver on a key company objective (i.e. establish product market fit, increase acquisition, improve engagement depth or retention, drive average revenue per user or LTV higher, etc)?
 
-3.  Primary metric(s)
+3.  **Primary Success Metric**
 
 -   align primary metric(s) to the core value prop the new experience is delivering and to the company objective being targeted
+-   one key success metric helps drive focus
+-   example: Spotify releases a GenAI chat assistant to help increase paid member discovery (which aligns with company goals to increase engagement/product retention)
 
-4.  Guardrail/monitoring metrics
+4.  **Guardrail Metrics**
 
 -   make sure other parts of the experience isn't eroding unexpectedly so it's clear the overall business is benefiting vs a small surface area getting a win but hurting the system overall
 -   metrics that should be stable are stable
 -   key segments might also be part of the guardrail
 -   other upper and lower funnel pieces of the funnel that make sense and can be used for context/monitoring
 
-5.  Time frame and users filters
+5.  **Measurement Window and Filters**
 
 -   does the metric need a time filter?
 -   all users? or only paying users? or new vs existing users?
+-   
 
-6.  Using the primary and guardrail metrics
+**Example scenario: audio streaming company X**
 
--   ideally run an experiment
--   one or both primary metrics improve and guardrail metrics/segments stable then = likely good outcome
--   one or both primary metrics improve and guardrail metrics/segments negative = try to understand why/iterate further
--   one or both primary metrics negative and guardrail metrics/segments stable then = try to understand why/iterate further or move on
--   one or both primary metrics negative and guardrail metrics/segments negative = likely bad outcome; iterate or move on
+-   Customer pain
+    -   qual: subscribers continue to mention it is high friction to discover and consume newly released audio offerings (music, podcasts, audioboks, lectures, etc) on the platform
+    -   quant:
+-   High-level experience
+    -   content discovery genAI chat assistant
+    -   users select a mood, inputs a prompt, or shares inspiration and the AI returns new content recommendations
 
 ------------------------------------------------------------------------
 
