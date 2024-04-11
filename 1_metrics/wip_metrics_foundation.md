@@ -277,8 +277,6 @@
 
 ------------------------------------------------------------------------
 
-NEXT STEP BOOKMARK
-
 # Defining Success Metrics for a New Product Experience
 
 1.  **Context Collection**
@@ -292,28 +290,28 @@ NEXT STEP BOOKMARK
 
 3.  **Primary Success Metric**
 
--   align primary metric(s) to the core value prop the new experience is delivering and to the company objective being targeted
--   one key success metric helps drive focus
--   example: Spotify releases a GenAI chat assistant to help increase paid member discovery (which aligns with company goals to increase engagement/product retention)
+-   align the primary metric to the core value prop the new experience is delivering and to the company objective being targeted
+-   one key success metric is preferred as it helps drive focus
 
 4.  **Guardrail Metrics**
 
--   make sure other parts of the experience isn't eroding unexpectedly so it's clear the overall business is benefiting vs a small surface area getting a win but hurting the system overall
+-   make sure other parts of the experience are not eroding as the primary success metric improves
 -   metrics that should be stable are stable
--   key segments might also be part of the guardrail
--   other upper and lower funnel pieces of the funnel that make sense and can be used for context/monitoring
+-   key segments to watch might also be part of the guardrail metrics
 
 5.  **Measurement Window and Filters**
 
--   does the metric need a time filter?
--   all users? or only paying users? or new vs existing users?
--   
+-   do the metrics need a time filter?
+-   who should the metric target? (i.e. all users, only paying users, or new vs existing users, etc)
 
-**Example scenario: audio streaming company X**
+**Example scenario: audio streaming company ABC**
 
 -   Customer pain
     -   qual: subscribers continue to mention it is high friction to discover and consume newly released audio offerings (music, podcasts, audioboks, lectures, etc) on the platform
-    -   quant:
+    -   quant: onsumption rates are low on newly released audio offerings outside of the new user onboarding experience
+
+NEXT STEP BOOKMARK
+
 -   High-level experience
     -   content discovery genAI chat assistant
     -   users select a mood, inputs a prompt, or shares inspiration and the AI returns new content recommendations
