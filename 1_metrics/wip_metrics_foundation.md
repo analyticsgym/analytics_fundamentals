@@ -304,17 +304,24 @@
 -   do the metrics need a time filter?
 -   who should the metric target? (i.e. all users, only paying users, or new vs existing users, etc)
 
-**Example scenario: audio streaming company ABC**
+**Example Scenario: Audio Streaming Company ABC**
 
 -   Customer pain
-    -   qual: subscribers continue to mention it is high friction to discover and consume newly released audio offerings (music, podcasts, audioboks, lectures, etc) on the platform
-    -   quant: onsumption rates are low on newly released audio offerings outside of the new user onboarding experience
-
-NEXT STEP BOOKMARK
-
+    -   qual: when using ABC company's mobile app, subscribers continue to mention it is difficult to find and consume newly released audio offerings (music, podcasts, audioboks, lectures, etc) on the platform
+    -   quant: consumption rates are low on newly released audio offerings outside of the new user onboarding experience
 -   High-level experience
-    -   content discovery genAI chat assistant
-    -   users select a mood, inputs a prompt, or shares inspiration and the AI returns new content recommendations
+    -   content discovery AI chat assistant (within the mobile app experience)
+    -   users select a mood or input a prompt and the AI returns newly released content recommendations
+-   Connecting the New Product Experience to Company Objectives
+    -   ABC company is looking to increase engagement depth on it's mobile app
+    -   ABC has identified that new content discovery is predictive of higher engagment depth and retention
+    -   as a result, the new product experience is aiming to drive new content discovery and engagement depth in the near-term and retention in the long-term
+-   Primary Success Metric
+    -   OPEN
+-   Guardrail Metrics
+    -   OPEN
+-   Measurement Window and Filters
+    -   OPEN
 
 ------------------------------------------------------------------------
 
