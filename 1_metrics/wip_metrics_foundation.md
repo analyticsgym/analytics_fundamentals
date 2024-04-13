@@ -280,48 +280,55 @@
 # Defining Success Metrics for a New Product Experience
 
 1.  **Context Collection**
-
--   what customer problem/need/pain is the new product experience solving?
--   what would the high-level experience look like?
-
+    -   what customer problem/need/pain is the new product experience solving?
+    -   what would the high-level experience look like?
 2.  **Connecting the New Product Experience to Company Objectives**
-
--   is the new product experience expected to deliver on a key company objective (i.e. establish product market fit, increase acquisition, improve engagement depth or retention, drive average revenue per user or LTV higher, etc)?
-
+    -   is the new product experience expected to deliver on a key company objective (i.e. establish product market fit, increase acquisition, improve engagement depth or retention, drive average revenue per user or LTV higher, etc)?
 3.  **Primary Success Metric**
-
--   align the primary metric to the core value prop the new experience is delivering and to the company objective being targeted
--   one key success metric is preferred as it helps drive focus
-
+    -   align the primary metric to the core value prop the new experience is delivering and to the company objective being targeted
+    -   one key success metric is preferred as it helps drive focus
 4.  **Guardrail Metrics**
+    -   make sure other parts of the experience are not eroding as the primary success metric improves
+    -   metrics that should be stable are stable
+    -   key segments to watch might also be part of the guardrail metrics
+5.  **Measurement Window and Segments**
+    -   do the metrics need a time filter?
+    -   who should the metric target? (i.e. all users, only paying users, or new vs existing users, etc)
 
--   make sure other parts of the experience are not eroding as the primary success metric improves
--   metrics that should be stable are stable
--   key segments to watch might also be part of the guardrail metrics
+#### Example Scenario: Audio Streaming Company ABC
 
-5.  **Measurement Window and Filters**
+##### Customer Pain
+-   qual: when using ABC company's mobile app, subscribers mention it is difficult to find and consume newly released audio offerings (music, podcasts, audioboks, lectures, etc) on the platform
+-   quant: consumption rates are low on newly released audio offerings outside of the new user onboarding experience (suggesting discovery might be a challenge)
 
--   do the metrics need a time filter?
--   who should the metric target? (i.e. all users, only paying users, or new vs existing users, etc)
+##### High-level experience
+-   content discovery AI chat assistant (within the mobile app experience)
+-   users select a mood or input a prompt and the AI returns newly released content recommendations
 
-**Example Scenario: Audio Streaming Company ABC**
+##### Connecting the New Product Experience to Company Objectives
+-   ABC company is looking to increase engagement depth on it's mobile app
+-   ABC has identified that new content discovery is predictive of higher engagement depth and retention
+-   as a result, the new product experience is aiming to drive new content discovery and engagement depth in the near-term and retention in the long-term
 
--   Customer pain
-    -   qual: when using ABC company's mobile app, subscribers continue to mention it is difficult to find and consume newly released audio offerings (music, podcasts, audioboks, lectures, etc) on the platform
-    -   quant: consumption rates are low on newly released audio offerings outside of the new user onboarding experience
--   High-level experience
-    -   content discovery AI chat assistant (within the mobile app experience)
-    -   users select a mood or input a prompt and the AI returns newly released content recommendations
--   Connecting the New Product Experience to Company Objectives
-    -   ABC company is looking to increase engagement depth on it's mobile app
-    -   ABC has identified that new content discovery is predictive of higher engagment depth and retention
-    -   as a result, the new product experience is aiming to drive new content discovery and engagement depth in the near-term and retention in the long-term
--   Primary Success Metric
-    -   OPEN
--   Guardrail Metrics
-    -   OPEN
--   Measurement Window and Filters
-    -   OPEN
+##### Primary Success Metric
+-   new content discovery rate
+-   defined as the % of users who open the app and consume a newly released audio offering
+-   the metric is generic enough to work in an AB test (e.g. applicable to the control group / status quo experience)
+
+##### Guardrail Metrics
+-   listening time per user: check is listening time per user is stable or increasing
+-   session length: could potentially decrease if users are finding content faster
+-   CSAT: qual signal asking users if they are finding the new content discovery experience helpful
+
+##### Measurement Window and Segments
+-   measurement window: of all the users who open the app on X day, what percent consume new content within 24 hours of their last app open
+-   segments: all users
+-   additional segments to explore for deeper dive analysis
+    -   new users vs existing users
+    -   different user types: paid tier 1, paid tier 2, etc
+    -   content types driving the new content discovery rate
+    -   geos and device types
+    -   power users (engaged with the app weekly for past 4 weeks), causal users (engaged with the app 1 to 3 weeks in the past 4 weeks), (not active in the past 4 weeks) recently dormant users
 
 ------------------------------------------------------------------------
 
