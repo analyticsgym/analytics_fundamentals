@@ -191,7 +191,7 @@
     -   active: defined based on core value prop of product
     -   volume of active cohort users in period N+1 / Volume of active cohort users in period N
 -   **Sustainable growth**
-    -   Meta often waits to ramp up upper funnel acquisition till after products can sustainability add and retain folks
+    -   Meta often waits to ramp up upper funnel acquisition till after products can sustainability add and retain folks (e.g. product growth is likely not sustainable long-term if customer acquisition costs greatly exceed value extracted from the customer)
     -   growth accounting states model used to dissect active user growth ([Duolingo example](https://blog.duolingo.com/growth-model-duolingo/))
     -   i.e. is active user growth being fueled by new users or existing user frequency?
 -   **Deep engagement**
@@ -341,89 +341,23 @@
 
 #### Potential signs of healthy growth
 
--   product market fit has been established
+-   true test of sustainability is time (e.g. does the progress/momentum persist)
+-   growth is being driven after product market fit has been established
 -   organic word of mouth has started to drive new user growth
 -   LTV to CAC make ratios make economical sense across channels
 -   engagement depth and retention are solid/improving
 
 #### Potential signs of unhealthy growth
 
--   NEXT STEP BOOKMARK
-
-#### Misc/Old Notes
-
-1.  how is active defined and how is healthy growth being determined
-
--   is active a generic action or specific action
-
-2.  segments driving the metric
-
--   are new users driving the metric? i.e. acquisition
--   or are existing users returning and why? i.e. incentive, seasonality, new experience release, etc
-
-3.  acquisition quality assessment
-
--   \% of channels attribution (paid vs free)
--   LTV to CAC to assess sustainability
--   If paid then LTV to CAC needs to be considered to determine if the growth is healthy or not
--   If acquisition is primary organic then less emphasis on LTV to CAC
-
-4.  engagement
-
--   if active is a generic catchall
--   dig deeper to understand if folks are having engagement tied to the core value prop of the service
-
-5.  retention
-
--   if the active folks are having quality engagement depth then confirm if the engagement sustains overtime using retention signals
-
-6.  qual feedback
-
--   NPS
--   surveys
--   interviews
-
-# Assessing the quality of organic traffic/active user growth
-
-1.  analyze traffic source
-
--   which organic channels are driving the increase
--   determine if increase is due to viral event, mention by popular source, other short term
-
-2.  retention metrics
-
--   are folks joining and then sticking around to glean value from the product
--   DAU, WAU, MAU
--   and ratio between them
-
-3.  engagement depth
-
--   active users are good but highly engaged active users are even better
--   session duration, pages per sessions, actions taken per session
-
-4.  cohort analysis
-
--   are new cohorts behaving different than past cohorts
-
-5.  organic search
-
--   if organic is driving volume look for critical keyword vis to be stable or improving
--   make sure attributed search volume is not due to seasonal spike
-
-6.  content longevity
-
--   if organic content marketing (SEO, social) is driving growth
--   look into how evergreen the content and cost to produce
--   does content require high turnover
-
-7.  word of mouth and brand advocacy
-
--   are a passionate set of folks telling others and driving growth
--   investigate forums, social mentions, etc
-
-Misc considerations - channel diversification is key to reduce risk - true test of sustainability is time
+-   active user growth is being propped up by aggressive paid marketing efforts and word of mouth/referrals is minimal
+-   existing users are not engaging deeply and coming back to the product
+-   new user growth is hiding existing user churn
+-   satisfaction decays quickly as users use the product
+-   growth is highly dependent on one channel (resulting in channel risk)
 
 # Explain usefulness of trended ratios between DAU, WAU, MAU, QAU
+
+NEXT STEP BOOKMARK
 
 -   help explain the type of usage patterns folks have and gauge stickiness
 -   when the ratios are close to 1 it suggests high stickiness during the metric frame
