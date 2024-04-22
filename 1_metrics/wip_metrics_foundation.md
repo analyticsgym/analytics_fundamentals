@@ -338,26 +338,32 @@
 ------------------------------------------------------------------------
 
 # Active User Ratios: DAU, WAU, MAU, QAU
+
 -   help explain the type of usage patterns folks have and gauge stickiness
 -   when the ratios are close to 1 it suggests high stickiness during the metric frame
 -   when the ratios are low it suggests less frequent usage during the metric frame
 
 ### DAU / WAU
+
 -   helps to shed light on if WAU is driven by folks coming back each day of week (ratio close to 1) or many users coming back once per week
 
 ### DAU / MAU
+
 -   higher ratio means folks are coming back frequently and there's more of a daily value prop
 -   lower ratio suggests folks are coming less frequency during a month
 
 ### WAU / MAU
+
 -   if metric is close to 1 it suggest folks are coming back each week
 -   if metric is low suggests that folks are not coming back multiple weeks in a month
 
 ### MAU / QAU
+
 -   helpful if a product is used on less frequent basis
 -   scenarios where MAU could decline but QAU increases
 
 ### Why look at active user ratios vs absolute counts
+
 -   both are helpful to give a read on the engagement health of the business
 -   various counts can indicate if the active user base is growing or not
 -   active user ratios help assess the stickiness of the user base even if overall counts are declining (i.e. small active user base but those that are active are highly active)
@@ -368,7 +374,7 @@
 
 # Is Active User Growth Healthy/Sustainable?
 
-#### Potential signs of healthy growth
+### Potential signs of healthy growth
 
 -   true test of sustainability is time (e.g. does the progress/momentum persist)
 -   growth is being driven after product market fit has been established
@@ -378,7 +384,7 @@
 -   acquiring new user cohorts leads to more new users
 -   natural pattern of engagement followed by more engagement
 
-#### Potential signs of unhealthy growth
+### Potential signs of unhealthy growth
 
 -   active user growth is being propped up by spikey aggressive paid marketing efforts and word of mouth/referrals is minimal
 -   existing users are not engaging deeply and coming back to the product
@@ -391,27 +397,38 @@
 ------------------------------------------------------------------------
 
 # Case Studies
-- NEXT STEP BOOKMARK
 
-### Product X has 100% user turnover week to week but 7 day actives is still growing? How might this be?
-- 
+### Product X has 100% user turnover week to week but the count of 7 day actives is still growing? How might this be?
+
+-   100% user turnover week to week implies users are active for a given week and don't return the next week
+-   as a result, new user acquisition must be fueling the 7 day active count
+-   volume of new user acquisition is over 1x the number of existing users who stop being active
+-   extreme case (likely not realistic in practice for most products)
+-   UPDATE
+    -   **\<\<\<\<\< could be both new users acquisition and reactivated users \>\>\>\>\>**
+    -   NEXT STEP BOOKMARK
+
+| Week Number | Active Users | User Active Current and Previous Week | Active New Users |
+|---------------|---------------|-----------------------------|---------------|
+| 1           | 500          | 0                                     | 500              |
+| 2           | 600          | 0                                     | 600              |
+| 3           | 700          | 0                                     | 700              |
+| 4           | 800          | 0                                     | 800              |
 
 ### What metrics would you look at to understand if a product is sticky?
-- 
 
 ### What metrics would you look to understand activation?
-- 
 
 ### How to handle macro trend inflating primary metric?
--  
 
 ### Why type of metrics are most resistant to outliers?
-- 
 
 ### Why are vantiy metrics context dependent?
-- upper funnel metric like app installs can be a vanity metric for a mature business but a critical metric for a new business
-- social media likes might be an OKR vanity metric; however, if likes correlate with downstream core actions then it could be a useful metric
+
+-   upper funnel metric like app installs can be a vanity metric for a mature business but a critical metric for a new business
+-   social media likes might be an OKR vanity metric; however, if likes correlate with downstream core actions then it could be a useful metric
 
 ### Unintentioal consequences of goal metrics?
-- look out for path of least resistance to hit metric goals if career incentives are tied to metric goals?
-- could lead to short-term optimization vs long-term health of the business
+
+-   look out for path of least resistance to hit metric goals if career incentives are tied to metric goals?
+-   could lead to short-term optimization vs long-term health of the business
