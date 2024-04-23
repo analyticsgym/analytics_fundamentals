@@ -398,22 +398,22 @@
 
 # Case Studies
 
-### Product X has 100% user turnover week to week but the count of 7 day actives is still growing? How might this be?
+### Product X has 100% user turnover week to week but the count of 7 day actives is still growing. How might this be?
 
--   100% user turnover week to week implies users are active for a given week and don't return the next week
--   as a result, new user acquisition must be fueling the 7 day active count
--   volume of new user acquisition is over 1x the number of existing users who stop being active
--   extreme case (likely not realistic in practice for most products)
--   UPDATE
-    -   **\<\<\<\<\< could be both new users acquisition and reactivated users \>\>\>\>\>**
-    -   NEXT STEP BOOKMARK
+-   100% user turnover week to week implies users who are active for a given week and don't return the next week
+-   as a result, new user acquisition and reactivated users must be fueling the 7 day active count
+-   in other words, count of new users who become active + count of dormant users in the previous week who become active \> previous week active users
+-   note this is an extreme case (likely not realistic in practice for most products)
+-   however, useful thought exercise to conceptualize active user growth accounting basics
+-   total active users = active new user + returning active users + reactivated active users
+-   
 
-| Week Number | Active Users | User Active Current and Previous Week | Active New Users |
-|---------------|---------------|-----------------------------|---------------|
-| 1           | 500          | 0                                     | 500              |
-| 2           | 600          | 0                                     | 600              |
-| 3           | 700          | 0                                     | 700              |
-| 4           | 800          | 0                                     | 800              |
+| Week Number | Total Active Users | Active New Users | Returning Active Users | Reactivated Active Users |
+|--------------|--------------|----------------|------------------|--------------------|
+| 1           | 500                | 250              | 0                      | 250                      |
+| 2           | 600                | 300              | 0                      | 300                      |
+| 3           | 700                | 350              | 0                      | 350                      |
+| 4           | 800                | 400              | 0                      | 400                      |
 
 ### What metrics would you look at to understand if a product is sticky?
 
