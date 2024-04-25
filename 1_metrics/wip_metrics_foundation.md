@@ -405,17 +405,38 @@
 -   in other words, count of new users who become active + count of dormant users in the previous week who become active \> previous week active users
 -   note this is an extreme case (likely not realistic in practice for most products)
 -   however, useful thought exercise to conceptualize active user growth accounting basics
--   total active users = active new user + returning active users + reactivated active users
--   
+-   total active users = active new user + returning active existing users + reactivated active users
 
-| Week Number | Total Active Users | Active New Users | Returning Active Users | Reactivated Active Users |
-|--------------|--------------|----------------|------------------|--------------------|
-| 1           | 500                | 250              | 0                      | 250                      |
-| 2           | 600                | 300              | 0                      | 300                      |
-| 3           | 700                | 350              | 0                      | 350                      |
-| 4           | 800                | 400              | 0                      | 400                      |
++----------+----------+----------+-----------+-------------+
+| Week     | Total    | Active   | Returning | Reactivated |
+|          |          |          |           |             |
+| Number   | Active   | New      | Active    | Active      |
+|          |          |          |           |             |
+|          | Users    | Users    | Existing  | Existing    |
+|          |          |          |           |             |
+|          |          |          | Users     | Users       |
++:========:+:========:+:========:+:=========:+:===========:+
+| 1        | 500      | 250      | 0         | 250         |
++----------+----------+----------+-----------+-------------+
+| 2        | 600      | 300      | 0         | 300         |
++----------+----------+----------+-----------+-------------+
+| 3        | 700      | 350      | 0         | 350         |
++----------+----------+----------+-----------+-------------+
+| 4        | 800      | 400      | 0         | 400         |
++----------+----------+----------+-----------+-------------+
 
 ### What metrics would you look at to understand if a product is sticky?
+
+-   product stickiness tends to be defined based on core action usage and frequency
+-   the frequency interval depends on the product domain
+    -   consumer social media products tend to focus on frequency at day intervals
+    -   US tax preparation software would likely be on an annual usage internal
+-   core action usage should align to the main value prop of the product
+-   Spotify example
+    -   core action: session with 5 mins or more of media consumption
+    -   frequency: week over week retention
+    -   metric: percent of qualified users who return in week N and week N-1 with 5 mins or more media consumption in 1 or more sessions
+-   NEXT STEP BOOKMARK
 
 ### What metrics would you look to understand activation?
 
