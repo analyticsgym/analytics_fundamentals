@@ -428,17 +428,18 @@
 ### What metrics would you look at to understand if a product is sticky?
 
 -   product stickiness tends to be defined based on core action usage and frequency
--   the frequency interval depends on the product domain
-    -   consumer social media products tend to focus on frequency at day intervals
-    -   US tax preparation software would likely be on an annual usage internal
 -   core action usage should align to the main value prop of the product
--   Spotify example
+-   frequency interval depends on the product domain
+    -   consumer social media product might focus on daily usage intervals
+    -   US tax preparation software might focus on annual usage intervals
+-   what's an example of a product stickiness metric for Spotify?
     -   core action: session with 5 mins or more of media consumption
     -   frequency: week over week retention
     -   metric: percent of qualified users who return in week N and week N-1 with 5 mins or more media consumption in 1 or more sessions
--   NEXT STEP BOOKMARK
-
+    -   could also use WAU / MAU ratio to understand if folks are coming back each week
+    
 ### What metrics would you look to understand activation?
+- NEXT STEP BOOKMARK
 
 ### How to handle macro trend inflating primary metric?
 
