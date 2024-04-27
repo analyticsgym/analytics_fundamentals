@@ -1,9 +1,3 @@
-## ------------------------------------------------------------------------
-
-# WORK IN-PROGRESS
-
-## ------------------------------------------------------------------------
-
 # Metrics Overview
 
 ### Why use quantifiable metrics?
@@ -379,7 +373,8 @@
 -   true test of sustainability is time (e.g. does the progress/momentum persist)
 -   growth is being driven after product market fit has been established
 -   organic word of mouth has started to drive new user growth
--   LTV to CAC make ratios make economical sense across channels
+-   LTV to CAC ratios make economical sense across channels
+-   some growth acquisition channel diversification
 -   engagement depth and retention are solid/improving
 -   acquiring new user cohorts leads to more new users
 -   natural pattern of engagement followed by more engagement
@@ -407,23 +402,23 @@
 -   however, useful thought exercise to conceptualize active user growth accounting basics
 -   total active users = active new user + returning active existing users + reactivated active users
 
-+----------+----------+----------+-----------+-------------+
-| Week     | Total    | Active   | Returning | Reactivated |
-|          |          |          |           |             |
-| Number   | Active   | New      | Active    | Active      |
-|          |          |          |           |             |
-|          | Users    | Users    | Existing  | Existing    |
-|          |          |          |           |             |
-|          |          |          | Users     | Users       |
-+:========:+:========:+:========:+:=========:+:===========:+
-| 1        | 500      | 250      | 0         | 250         |
-+----------+----------+----------+-----------+-------------+
-| 2        | 600      | 300      | 0         | 300         |
-+----------+----------+----------+-----------+-------------+
-| 3        | 700      | 350      | 0         | 350         |
-+----------+----------+----------+-----------+-------------+
-| 4        | 800      | 400      | 0         | 400         |
-+----------+----------+----------+-----------+-------------+
++--------+--------+--------+-----------+-------------+
+| Week   | Total  | Active | Returning | Reactivated |
+|        |        |        |           |             |
+| Number | Active | New    | Active    | Active      |
+|        |        |        |           |             |
+|        | Users  | Users  | Existing  | Existing    |
+|        |        |        |           |             |
+|        |        |        | Users     | Users       |
++:======:+:======:+:======:+:=========:+:===========:+
+| 1      | 500    | 250    | 0         | 250         |
++--------+--------+--------+-----------+-------------+
+| 2      | 600    | 300    | 0         | 300         |
++--------+--------+--------+-----------+-------------+
+| 3      | 700    | 350    | 0         | 350         |
++--------+--------+--------+-----------+-------------+
+| 4      | 800    | 400    | 0         | 400         |
++--------+--------+--------+-----------+-------------+
 
 ### What metrics would you look at to understand if a product is sticky?
 
@@ -433,24 +428,34 @@
     -   consumer social media product might focus on daily usage intervals
     -   US tax preparation software might focus on annual usage intervals
 -   what's an example of a product stickiness metric for Spotify?
-    -   core action: session with 5 mins or more of media consumption
-    -   frequency: week over week retention
+    -   core action framing: session with 5 mins or more media consumption
+    -   frequency goal: users return week over week to do the core action
     -   metric: percent of qualified users who return in week N and week N-1 with 5 mins or more media consumption in 1 or more sessions
-    -   could also use WAU / MAU ratio to understand if folks are coming back each week
-    
-### What metrics would you look to understand activation?
-- NEXT STEP BOOKMARK
 
-### How to handle macro trend inflating primary metric?
+### What metrics would you look at to understand activation?
 
-### Why type of metrics are most resistant to outliers?
+-   activation metrics tend to align to the "ah ha" moment of the product
+-   for Facebook in the early days it was 7 friends in 10 days
+-   metric would vary by product
+-   base metric elements: user actions/behaviors that positively correlation with future usage/value extraction + time window for when the action(s) should occur
 
-### Why are vantiy metrics context dependent?
+### How to handle a macro trend inflating primary metric?
 
--   upper funnel metric like app installs can be a vanity metric for a mature business but a critical metric for a new business
+-   attempt to gauge if the macro trend is temporary or likely to persist
+-   i.e. COVID stay at home orders (temporary) vs shift to smartphones (likely to persist)
+-   if the macro trend is likely to persist, the product might be experiencing a cultural or technological wave in which case the primary metric could benefit or be dragged down (depending on the business case, teams might leave the primary metric as is)
+-   if the macro trend is temporary/seasonal, techniques could be explored to measure the primary metric impact or control for the temporary/seasonal trend
+    -   simple pre vs post is the most rudimentary approach
+    -   more advanced techniques to isolate the primary metric impact could involve time series decomposition, regression analysis, causal impact analysis, etc
+
+### Why are vanity metrics context dependent?
+
+-   NEXT STEP BOOKMARK
+-   vanity metrics = X
+-   upper funnel metric like app installs can be a vanity metric for a mature business but a critical metric for a new business trying to grow discovery
 -   social media likes might be an OKR vanity metric; however, if likes correlate with downstream core actions then it could be a useful metric
 
-### Unintentioal consequences of goal metrics?
+### Unintentional consequences of goal metrics?
 
 -   look out for path of least resistance to hit metric goals if career incentives are tied to metric goals?
 -   could lead to short-term optimization vs long-term health of the business
