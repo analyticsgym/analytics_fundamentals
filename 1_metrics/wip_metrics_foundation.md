@@ -13,7 +13,7 @@
 -   Used for comparison across time periods and/or segments
 -   Input to data-informed decision making process
 -   Standardize way to track performance
--   Online metric improvement hypotheses typically can be tested via AB testing
+-   Online metric improvement hypotheses can often be tested via AB testing
 
 ##### Pitfalls -
 
@@ -22,11 +22,10 @@
 -   Reliant on vanity metrics (e.g. always increasing metrics) that look good on paper but not tied to core business action
 -   Easy to game goal metrics
 -   Missing big picture and obsessing over small metric movements
--   Cherry picking metrics/time windows/segments as a way to prove a previously held opinion
+-   Cherry picking metrics, time windows, and/or segments to prove a previously held opinion (confirmation bias)
 -   Abandoning qual signals and over indexing on quant metrics due to ease of measurement
 -   Overly sensitive or overly stable metrics that limit actionability
 -   Not monitoring metric input data quality resulting in metric quality erosion over time
--   Trying to precisely measure hard to quantify experiences (i.e. love, happiness, delight, etc)
 
 ------------------------------------------------------------------------
 
@@ -77,7 +76,7 @@
 -   **Overview**
     -   [popularized by Dave McClure (2007)](https://www.slideshare.net/dmc500hats/startup-metrics-for-pirates-long-version)
     -   a systematic way to optimize the customer funnel
-    -   Dave suggested startups foucs on 5 to 10 conversion steps to measure and iterate on via AB tests (based on cost, conversion, and business revenue model)
+    -   Dave suggests startups foucs on 5 to 10 conversion steps to measure and iterate on via AB tests (based on cost, conversion, and business revenue model)
     -   Dave recommends 80% effort deployed on existing feature optimization and 20% on new feature dev
     -   funnel metrics segmented by audience, channel, campaign theme, landing page & CTA, copy & graphics
 
@@ -87,7 +86,7 @@
         -   site visits
         -   engaged prospect rate (pages viewed \>= x, time spent \>= y, clicks \>= z)
 2.  **Activation:** first happy experience and account creation
-    -   getting folks to key feature usage and actions that signal feature usage
+    -   getting folks to key feature usage and actions that signal future usage
     -   example funnel metrics
         -   account completion rate
         -   key feature usage rate
@@ -104,7 +103,7 @@
 5.  **Revenue:** users complete monetization actions
     -   aligns to how the business model captures value from customers
     -   example funnel metrics
-        -   percent users who to pay
+        -   percent users who pay
         -   percent users who break-even
 
 ### Google HEART
@@ -176,10 +175,10 @@
     -   [Meta Analytics PMF Playbook](https://medium.com/@AnalyticsAtMeta/analytics-and-product-market-fit-11efaea403cd)
     -   product market fit (PMF): the value a product delivers for a specific market segment
     -   in other words, are we building something people want? are folks using the product? do folks come back to use it?
-    -   valuable products with high product marketing fit: keep people coming back, sustainability acquire new users, and have long stretches of usage
+    -   valuable products with high product market fit: keep people coming back, sustainability acquire new users, and have long stretches of usage
 -   **PMF measurement criteria**
     -   stable retention: do folks keep coming back after using the product?
-    -   sustainable growth: is there a healthy approach to acquire, retain, and resurrect folks over time?
+    -   sustainable growth: is there a healthy (ROI efficient) approach to acquire, retain, and resurrect folks over time?
     -   deep engagement: do folks have long usage duration on core value prop actions?
 -   **Stable retention**
     -   active: defined based on core value prop of product
@@ -187,9 +186,9 @@
 -   **Sustainable growth**
     -   Meta often waits to ramp up upper funnel acquisition till after products can sustainability add and retain folks (e.g. product growth is likely not sustainable long-term if customer acquisition costs greatly exceed value extracted from the customer)
     -   growth accounting states model used to dissect active user growth ([Duolingo example](https://blog.duolingo.com/growth-model-duolingo/))
-    -   i.e. is active user growth being fueled by new users or existing user frequency?
+    -   i.e. is active user growth being fueled by new users, existing active users, and/or reactivated existing users?
 -   **Deep engagement**
-    -   time spent, days engaged out of the last 28 days, purchases/revenue per user
+    -   time spent, days engaged out of the last 28 days, purchases/revenue per user, etc
 
 ### Growth Equation
 
@@ -289,38 +288,40 @@
     -   do the metrics need a time filter?
     -   who should the metric target? (i.e. all users, only paying users, or new vs existing users, etc)
 
-### Example Scenario: Audio Streaming Company ABC
+NEXT STEP BOOKMARK (review notes/clean up typos/format below)
 
-#### Customer Pain
+#### Example Scenario: Audio Streaming Company ABC
+
+##### Customer Pain
 
 -   qual: when using ABC company's mobile app, subscribers mention it is difficult to find and consume newly released audio offerings (music, podcasts, audioboks, lectures, etc) on the platform
 -   quant: consumption rates are low on newly released audio offerings outside of the new user onboarding experience (suggesting discovery might be a challenge)
 
-#### High-level experience
+##### High-level experience
 
 -   content discovery AI chat assistant (within the mobile app experience)
 -   users select a mood or input a prompt and the AI returns newly released content recommendations
 
-#### Connecting the New Product Experience to Company Objectives
+##### Connecting the New Product Experience to Company Objectives
 
 -   ABC company is looking to increase engagement depth on it's mobile app
 -   ABC has identified that new content discovery is predictive of higher engagement depth and retention
 -   as a result, the new product experience is aiming to drive new content discovery and engagement depth in the near-term and retention in the long-term
 
-#### Primary Success Metric
+##### Primary Success Metric
 
 -   new content discovery rate
 -   defined as the % of users who open the app and consume a newly released audio offering
 -   the metric is generic enough to work in an AB test (e.g. applicable to the control group / status quo experience)
 -   newly released defined as content released within the last 30 days
 
-#### Guardrail Metrics
+##### Guardrail Metrics
 
 -   listening time per user: check if listening time per user is stable or increasing
 -   session length: could potentially decrease if users are finding content faster
 -   CSAT: qual survey asking users if they are finding the new AI content discovery experience helpful
 
-#### Measurement Window and Segments
+##### Measurement Window and Segments
 
 -   measurement window: of all the users who open the app on X day, what percent consume new content within 24 hours of their last app open
 -   segments: all users
@@ -402,23 +403,23 @@
 -   however, useful thought exercise to conceptualize active user growth accounting basics
 -   total active users = active new user + returning active existing users + reactivated active users
 
-+--------+--------+--------+-----------+-------------+
-| Week   | Total  | Active | Returning | Reactivated |
-|        |        |        |           |             |
-| Number | Active | New    | Active    | Active      |
-|        |        |        |           |             |
-|        | Users  | Users  | Existing  | Existing    |
-|        |        |        |           |             |
-|        |        |        | Users     | Users       |
-+:======:+:======:+:======:+:=========:+:===========:+
-| 1      | 500    | 250    | 0         | 250         |
-+--------+--------+--------+-----------+-------------+
-| 2      | 600    | 300    | 0         | 300         |
-+--------+--------+--------+-----------+-------------+
-| 3      | 700    | 350    | 0         | 350         |
-+--------+--------+--------+-----------+-------------+
-| 4      | 800    | 400    | 0         | 400         |
-+--------+--------+--------+-----------+-------------+
++----------+----------+----------+-----------+-------------+
+| Week     | Total    | Active   | Returning | Reactivated |
+|          |          |          |           |             |
+| Number   | Active   | New      | Active    | Active      |
+|          |          |          |           |             |
+|          | Users    | Users    | Existing  | Existing    |
+|          |          |          |           |             |
+|          |          |          | Users     | Users       |
++:========:+:========:+:========:+:=========:+:===========:+
+| 1        | 500      | 250      | 0         | 250         |
++----------+----------+----------+-----------+-------------+
+| 2        | 600      | 300      | 0         | 300         |
++----------+----------+----------+-----------+-------------+
+| 3        | 700      | 350      | 0         | 350         |
++----------+----------+----------+-----------+-------------+
+| 4        | 800      | 400      | 0         | 400         |
++----------+----------+----------+-----------+-------------+
 
 ### What metrics would you look at to understand if a product is sticky?
 
@@ -450,12 +451,16 @@
 
 ### Why are vanity metrics context dependent?
 
--   NEXT STEP BOOKMARK
--   vanity metrics = X
+-   vanity metrics tend to be metrics that look good on the surface but don't tie with business objectives and/or lack actionability
 -   upper funnel metric like app installs can be a vanity metric for a mature business but a critical metric for a new business trying to grow discovery
 -   social media likes might be an OKR vanity metric; however, if likes correlate with downstream core actions then it could be a useful metric
+-   vanity metric pressure testing
+    -   does the metric align to business objectives/goals?
+    -   is the metric actionable given business maturity and product type?
 
 ### Unintentional consequences of goal metrics?
 
--   look out for path of least resistance to hit metric goals if career incentives are tied to metric goals?
--   could lead to short-term optimization vs long-term health of the business
+-   look out for path of least resistance to hit metric goals
+-   could lead to short-term optimization vs long-term thinking
+-   if career incentives are tied to metric goals, are there "unhealthy" ways to move the metric?
+-   are some actions to move the metric better than others? is the goal metric robust enough to account for this?
