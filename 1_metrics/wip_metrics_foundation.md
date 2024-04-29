@@ -288,47 +288,35 @@
     -   do the metrics need a time filter?
     -   who should the metric target? (i.e. all users, only paying users, or new vs existing users, etc)
 
-NEXT STEP BOOKMARK (review notes/clean up typos/format below)
+### Example Scenario: Audio Streaming Company ABC
 
-#### Example Scenario: Audio Streaming Company ABC
-
-##### Customer Pain
-
--   qual: when using ABC company's mobile app, subscribers mention it is difficult to find and consume newly released audio offerings (music, podcasts, audioboks, lectures, etc) on the platform
--   quant: consumption rates are low on newly released audio offerings outside of the new user onboarding experience (suggesting discovery might be a challenge)
-
-##### High-level experience
-
--   content discovery AI chat assistant (within the mobile app experience)
--   users select a mood or input a prompt and the AI returns newly released content recommendations
-
-##### Connecting the New Product Experience to Company Objectives
-
--   ABC company is looking to increase engagement depth on it's mobile app
--   ABC has identified that new content discovery is predictive of higher engagement depth and retention
--   as a result, the new product experience is aiming to drive new content discovery and engagement depth in the near-term and retention in the long-term
-
-##### Primary Success Metric
-
--   new content discovery rate
--   defined as the % of users who open the app and consume a newly released audio offering
--   the metric is generic enough to work in an AB test (e.g. applicable to the control group / status quo experience)
--   newly released defined as content released within the last 30 days
-
-##### Guardrail Metrics
-
--   listening time per user: check if listening time per user is stable or increasing
--   session length: could potentially decrease if users are finding content faster
--   CSAT: qual survey asking users if they are finding the new AI content discovery experience helpful
-
-##### Measurement Window and Segments
-
--   measurement window: of all the users who open the app on X day, what percent consume new content within 24 hours of their last app open
--   segments: all users
--   additional segments to explore for deeper dive analysis:
-    -   different user types: free, paid tier 1, paid tier 2, etc
-    -   content types driving the new content discovery rate (i.e. music, podcasts, audiobooks, lectures, etc)
-    -   new users (signed up in the past 4 weeks), power users (engaged with the app weekly for past 4 weeks), causal users (engaged with the app 1 to 3 weeks in the past 4 weeks), reactivated (not active in the past 4 weeks)
+1.  **Context Collection**
+    -   customer pain
+        -   qual: when using ABC company's mobile app, subscribers mention it is difficult to find and consume newly released audio offerings (music, podcasts, audioboks, lectures, etc)
+        -   quant: consumption rates are low on newly released audio offerings outside of the new user onboarding experience (suggesting discovery might be a challenge)
+    -   high-level experience improvement solution
+        -   content discovery AI chat assistant (within the mobile app experience)
+        -   users select a mood or input a prompt and the AI returns newly released content recommendations
+2.  **Connecting the New Product Experience to Company Objectives**
+    -   ABC company is looking to increase engagement depth on it's mobile app
+    -   ABC has identified that new content discovery is predictive of higher future engagement depth and retention
+    -   as a result, the new product experience is aiming to drive new content discovery and engagement depth in the near-term and retention in the long-term
+3.  **Primary Success Metric**
+    -   new content discovery rate
+    -   defined as the % of users who open the app and consume a newly released audio offering
+    -   the metric is generic enough to work in an AB test (e.g. applicable to the control group / status quo experience)
+    -   newly released defined as content released within the last 30 days
+4.  **Guardrail Metrics**
+    -   listening time per user: check if listening time per user is stable or increasing
+    -   session length: could potentially decrease if users are finding content faster
+    -   CSAT: qual survey asking users if they are finding the new AI content discovery experience helpful
+5.  **Measurement Window and Segments**
+    -   measurement window: of all the users who open the app on X day, what percent consume new content within 24 hours of their last app open
+    -   segments: all users
+    -   additional segments to explore for deeper dive analysis:
+        -   different user types: free, paid tier 1, paid tier 2, etc
+        -   content types driving the new content discovery rate (i.e. music, podcasts, audiobooks, lectures, etc)
+        -   new users (signed up in the past 4 weeks), power users (engaged with the app weekly for past 4 weeks), causal users (engaged with the app 1 to 3 weeks in the past 4 weeks), reactivated (not active in the past 4 weeks)
 
 ------------------------------------------------------------------------
 
@@ -340,7 +328,7 @@ NEXT STEP BOOKMARK (review notes/clean up typos/format below)
 
 ### DAU / WAU
 
--   helps to shed light on if WAU is driven by folks coming back each day of week (ratio close to 1) or many users coming back once per week
+-   helps identify if WAU is driven by folks coming back each day of week (ratio close to 1) or many users coming back once per week
 
 ### DAU / MAU
 
@@ -356,6 +344,7 @@ NEXT STEP BOOKMARK (review notes/clean up typos/format below)
 
 -   helpful if a product is used on less frequent basis
 -   scenarios where MAU could decline but QAU increases
+-   NEXT STEP BOOKMARK (list 2 examples of the above bullet)
 
 ### Why look at active user ratios vs absolute counts
 
