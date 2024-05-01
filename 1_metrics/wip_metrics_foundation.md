@@ -343,16 +343,15 @@
 ### MAU / QAU
 
 -   helpful if a product is used on less frequent basis
--   scenarios where MAU could decline but QAU increases
--   NEXT STEP BOOKMARK (list 2 examples of the above bullet)
+-   is the QAU driven by folks coming back each month or folks coming back once per quarter
 
 ### Why look at active user ratios vs absolute counts
 
 -   both are helpful to give a read on the engagement health of the business
--   various counts can indicate if the active user base is growing or not
+-   counts can indicate if the active user base is growing or not
 -   active user ratios help assess the stickiness of the user base even if overall counts are declining (i.e. small active user base but those that are active are highly active)
--   helpful to look at ratio of active to inactivates as well (absolute counts could be increasing but share of active population could be declining)
--   counts could be driven up by large sign up volume and ratios can spotlight if folks are sticking around
+-   i.e. an active count increase could be driven up by large sign up volume and ratios can spotlight if folks are sticking around
+-   additionally, product teams look at proportion of actives of vs all qualified users(absolute counts could be increasing but share of active population could be declining)
 
 ------------------------------------------------------------------------
 
@@ -375,8 +374,8 @@
 -   existing users are not engaging deeply and coming back to the product
 -   new user growth is hiding existing user churn
 -   satisfaction decays quickly as users use the product
--   growth is highly dependent on one channel (resulting in channel risk)
--   deep discounting or free trials not optimized for LTV to CAC
+-   growth is highly dependent on one channel (resulting in single channel risk)
+-   deep discounting or free trials not optimized for LTV to CAC and boosting active user growth
 -   easily copied marketing tactics on primary channel(s)
 
 ------------------------------------------------------------------------
@@ -385,21 +384,21 @@
 
 ### Product X has 100% user turnover week to week but the count of 7 day actives is still growing. How might this be?
 
--   100% user turnover week to week implies users who are active for a given week and don't return the next week
--   as a result, new user acquisition and reactivated users must be fueling the 7 day active count
+-   100% user turnover week to week implies users who are active for a given week don't return the next week
+-   as a result, new user acquisition and/or reactivated users must be fueling the 7 day active count
 -   in other words, count of new users who become active + count of dormant users in the previous week who become active \> previous week active users
 -   note this is an extreme case (likely not realistic in practice for most products)
 -   however, useful thought exercise to conceptualize active user growth accounting basics
--   total active users = active new user + returning active existing users + reactivated active users
+-   total active users = active new users + returning active existing users + reactivated existing users
 
 +----------+----------+----------+-----------+-------------+
 | Week     | Total    | Active   | Returning | Reactivated |
 |          |          |          |           |             |
-| Number   | Active   | New      | Active    | Active      |
+| Number   | Active   | New      | Active    | Existing    |
 |          |          |          |           |             |
-|          | Users    | Users    | Existing  | Existing    |
+|          | Users    | Users    | Existing  | Users       |
 |          |          |          |           |             |
-|          |          |          | Users     | Users       |
+|          |          |          | Users     |             |
 +:========:+:========:+:========:+:=========:+:===========:+
 | 1        | 500      | 250      | 0         | 250         |
 +----------+----------+----------+-----------+-------------+
@@ -420,7 +419,7 @@
 -   what's an example of a product stickiness metric for Spotify?
     -   core action framing: session with 5 mins or more media consumption
     -   frequency goal: users return week over week to do the core action
-    -   metric: percent of qualified users who return in week N and week N-1 with 5 mins or more media consumption in 1 or more sessions
+    -   metric: percent of qualified users who return in week N and week N-1 with 5 mins or more media consumption in 1 or more sessions (future todo: how might one simplify this metric)
 
 ### What metrics would you look at to understand activation?
 
@@ -435,21 +434,22 @@
 -   i.e. COVID stay at home orders (temporary) vs shift to smartphones (likely to persist)
 -   if the macro trend is likely to persist, the product might be experiencing a cultural or technological wave in which case the primary metric could benefit or be dragged down (depending on the business case, teams might leave the primary metric as is)
 -   if the macro trend is temporary/seasonal, techniques could be explored to measure the primary metric impact or control for the temporary/seasonal trend
-    -   simple pre vs post is the most rudimentary approach
+    -   simple pre vs post is the most basic starting point
     -   more advanced techniques to isolate the primary metric impact could involve time series decomposition, regression analysis, causal impact analysis, etc
 
 ### Why are vanity metrics context dependent?
 
 -   vanity metrics tend to be metrics that look good on the surface but don't tie with business objectives and/or lack actionability
--   upper funnel metric like app installs can be a vanity metric for a mature business but a critical metric for a new business trying to grow discovery
--   social media likes might be an OKR vanity metric; however, if likes correlate with downstream core actions then it could be a useful metric
+-   upper funnel metrics like app installs can be a vanity metric for a mature business but a critical metric for a new business trying to grow discovery
+-   social media likes might be an OKR vanity metric; however, if likes correlate with downstream business objectives/goals then it could be a useful metric
 -   vanity metric pressure testing
     -   does the metric align to business objectives/goals?
     -   is the metric actionable given business maturity and product type?
 
 ### Unintentional consequences of goal metrics?
 
--   look out for path of least resistance to hit metric goals
 -   could lead to short-term optimization vs long-term thinking
--   if career incentives are tied to metric goals, are there "unhealthy" ways to move the metric?
+-   look out for path of least resistance to hit goal metrics which could lead to negative knock-on effects
+-   many corporate world examples of this (individuals/teams pressured to hit a goal metric and damage the business/customer experience in the process)
+-   if career incentives are tied to goal metrics, are there "unhealthy" ways to move the metric?
 -   are some actions to move the metric better than others? is the goal metric robust enough to account for this?
