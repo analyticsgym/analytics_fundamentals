@@ -1,0 +1,1386 @@
+---
+title: "AB Testing Foundation"
+output: rmarkdown::github_document
+always_allow_html: yes
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+options(scipen=999)
+
+required_packages <- c('tidyverse', 'pwr')
+
+for(p in required_packages) {
+  if(!require(p,character.only = TRUE)) 
+        install.packages(p, repos = "http://cran.us.r-project.org")
+  library(p,character.only = TRUE)
+}
+```
+
+------------------------------------------------------------
+
+WORK IN-PROGRESS
+
+------------------------------------------------------------
+
+# AB Testing Foundation
+
+*notes inspired by ChatGPT and [Trustworthy Online Controlled
+Experiments](https://www.amazon.com/Trustworthy-Online-Controlled-Experiments-Practical/dp/1108724264)**(highly
+recommended book)*
+
+### Why run AB tests
+
+-   test if intervention has an effect on target overall eval criteria
+    (i.e. does changing the onboarding flow improve early product
+    engagement)
+-   risk management: run test to infer what the impact would be on
+    broader population of users during the experiment and in the future
+-   without an AB test, it's often not feasible establish causality.
+    Launch of new feature could be harmful to success metrics
+-   randomized control experiments (which AB tests are often designed
+    as) tend to be the gold standard for establishing causality
+-   it is difficult to know in advance what will work
+
+### AB test learning objective
+
+-   we use a representative sample from the test to infer how the
+    results generalize to a larger population and/or future population
+
+### Key considerations when designing an AB test
+
+-   **randomization mechanism** works as expected (if an experiment is
+    designed to be 50/50 splits then the resulting experiment buckets
+    are not statistically different from 50/50; sample ratio mismatch
+    check)
+-   establish the **experiment unit of analysis** (i.e. user, visit
+    session, etc)
+    -   If experiment unit of analysis is users, are there enough users
+        in a given time frame to get signal in a meaningful timeline
+-   get buy-in from stakeholders on the **experiment success evaluation
+    criteria** (most important for strategic non-standard experiments vs
+    business as usual experiments with consistent primary
+    metric/guardrails)
+-   assess **experimentation cultural readiness** (need to be able to
+    endure lots of failed experiments, exp velocity to counter all the
+    failed tests, HIPPO decision model is not cemented into the culture)
+-   build **infrastructure** for experimentation
+
+### What to AB test vs not test
+
+-   what to test and not test depends on maturity of product and
+    experimentation stage
+-   **test**: MVP ideas to help with broad search of idea space to find
+    heat for further investment
+-   **hold off on testing**: evil and unethical ideas, ideas that would
+    not get launched if they won, tiny incremental ideas for start-ups
+    (context dependent)
+-   **challenging to test**: major brand redesign, large strategic bets,
+    significant infrastructure changes, etc
+
+### Why is randomization so important in AB tests
+
+-   NEXT STEP BOOKMARK
+-   Randomly assigning experiment units to experiment buckets help
+    ensure that factors outside the experiment intervention are evenly
+    spread across the groups which helps with the following:
+    -   reduces selection bias
+
+    -   reduces bias from known and known confounding variables (e.g.
+        making it less likely that factors outside the intervention
+        unevenly influence one of the groups)
+
+    -   reduces uneven time related bias as groups are exposed to same
+        time period
+
+    -   randomization used as foundation for statistical inference
+        methods where we infer about population using sample
+
+    -   randomization allows us to frame a null hypothesis of no
+        difference between groups because the randomization attempts to
+        control for factors outside of the experiment intervention
+
+### How to pick **experiment success evaluation criteria**
+
+-   Measurable in the short term (ideally 1 to 2 weeks) and believed to
+    causally drive long term strategic metric
+-   When north star metric is lagging (y1 renewal) surrogate metrics
+    used for experimentation (time to action, capped revenue per user,
+    etc)
+-   OEC includes success metric and counter metrics (revenue per user
+    and user engagement metric)
+-   Are the key success metrics sensitive enough to experiment
+    on/movable (i.e. month 1 engagement rate at MC is near a ceiling so
+    it's not)
+-   Measurable in the short-term, sensitive, and predictive of long term
+    objectives, and not easily gameable
+
+### Calling experiments using **success evaluation criteria**
+
+-   SHIP: 1 positive, others flat
+-   DON'T SHIP: 1 negative, others flat
+-   FAIL FAST or PIVOT: all flat, check power
+-   DISCUSS TRADEOFFS: some positive and some negative
+
+### Guardrail metric
+
+-   Example: app crash rate
+-   MC launches iOS app feature to reduce friction to continue consuming
+    previously consumed content
+-   However, app crash rate spiked after release of the feature
+-   Experiment ended early to resolve issue and relaunch
+-   Foundation user experience always has to come first
+
+### Iterative experiments vs full site redesign
+
+-   **Full site redesign experiments**: useful if site is in bad shape
+    and not meeting user needs, draw back is users learn to use legacy
+    experience and might take time to learn new experience, can be
+    costly on time to execute and dev resources for large overhaul, due
+    to a set of changes bundled together it will be difficult to
+    untangle which of the changes are driving metrics or not, high risk
+    due to assumption that new redesign will be better but it is unknown
+    in advance
+-   **Iterative experiments**: lower risk and faster to execute, test
+    one feature/theme at a time to attribute effect to intervention,
+    users have less UX shock as the entire product UX is not changing
+    drastically, iterative experiments can result in always learning
+    feedback loops
+
+### Hypothesis testing as part of AB testing
+
+-   Objective
+
+    -   test if the difference between control and treatment is unlikely
+        given null hypothesis assumption that differences are zero
+
+-   Test setup
+
+    -   frame null and alt hypothesis
+
+    -   predefined alpha (significance level) level threshold: if pvalue
+        below alpha we conclude stat sig difference between groups
+
+    -   practical significance level: for lift to be meaningful for the
+        business it should be greater than or equal to X
+
+    -   power analysis (power 0.8) to derive predetermine sample size:
+        significance 0.95 and MDE needed as inputs
+
+-   Run test
+
+    -   collect data / run test till predetermine sample size is reached
+
+    -   recommended to run test for at least 1 week to capture day of
+        week and weekend users/patterns
+
+-   Analyze
+
+    -   generate test stat: group difference / std error
+
+    -   generate pvalue using test stat
+
+    -   if pvalue is below alpha level then we have evidence to reject
+        null in favor of the alternative
+
+    -   check for practical significance
+
+### Minimum detectable effect practically meaningful for the business
+
+-   Used as input to derive predetermined sample size
+-   Set as the smallest effect size that is practically meaningful for
+    the business based on the metric of interest
+-   Will vary by company and metric
+
+### Determining how long to run an experiment
+
+-   Run power analysis for deriving sample size target based on exp
+    inputs
+-   Yypically recommended to run exp for at least one business
+    cycle/week (to include weekdays and weekend trends)
+
+### Power analysis and how long to run a test
+
+-   Power = probability of detecting an effect (rejecting the null) when
+    there is one the alt is true
+-   Power = 1 - T2 error
+-   Said differently, probability of correcting detecting an effect when
+    one exists.
+-   Power analysis for sample size on difference in means
+    -   inputs: effect size (cohens d: difference in means / pooled sd),
+        power (80%), sig threshold level (5%)
+
+```{r}
+### TODOS V2
+# power analysis using Cohen's d and not using cohen's D
+# show approximate sample size formula
+
+d <- 1   # Hypothetical difference in means
+sd <- 120 # Hypothetical standard deviation
+power <- 0.8 # Desired power
+sig.level <- 0.05 # Significance level
+
+# Calculate the effect size
+effect.size <- d / sd
+
+# Cohen himself suggested the following interpretations for different values
+# .2	Small
+# 0.5	Medium
+# 0.8	Large
+effect_size_2 <- c(.005, .01, .2, 0.5, 0.8)
+
+# Calculate the sample size
+map_dbl(effect_size_2, ~pwr.t.test(d = ., 
+                     power = power, 
+                     sig.level = sig.level, 
+                     type = "two.sample", 
+                     alternative = "two.sided")$n)
+
+# Plot results
+# Can plot pwr.t.test object to see sample size curve
+# plot(result)
+```
+
+Power analysis for sample size on difference in proportions
+
+```{r}
+mde_lift_vs_baseline <- 0.05
+
+# Desired power level
+power <- 0.8
+
+# Significance level
+sig.level <- 0.05
+
+# Assumed baseline conversion rate
+p1 <- 0.019
+
+# Derive based on mde lift that is meaningful for the business
+p2 <- p1 * (1 + mde_lift_vs_baseline)
+
+# Use power.prop.test to calculate sample size
+result <- power.prop.test(p1 = p1, p2 = p2, power = power, sig.level = sig.level, alternative = "two.sided")
+
+# Print the result
+print(result)
+```
+
+### Statistically Significance result vs Practically Significant Result
+
+-   Result can be stat sig but not practically significant
+-   A very small lift on say minute watched is not material for the
+    business and other ideas could be explored for a given surface
+-   Practical sig level should be set in a advance
+-   Over powered experiments could detect lifts below the practically
+    sig level
+
+### Pvalues
+
+-   Probability of observing result as extreme or more extreme assuming
+    null hypothesis is true
+-   Metric for assessing how unlikely a result is given hull hypothesis
+-   A small pvalue makes the null hypothesis start to seem ridiculous
+
+### Confidence Intervals
+
+-   At X confidence level, range that covers the true pop param X% of
+    the time over the long run (many trials/samples)
+-   Used to given context on exp result uncertainty and noise
+-   CIs tend to center around observed delta
+-   Exp group mean CIs that don't overlap are considered stat sig.
+    However, exp group CIs can overalp as much as 29% and deltas till be
+    stat sig.
+
+### Sidebar: mean CIs vs mean difference CIs
+
+-   Note that individual mean CIs can overlap some and the difference in
+    means can still be stat sig. This is because the formulas for each
+    CI are different
+-   See below simulation and visualization example
+
+```{r}
+# Set seed for reproducibility
+set.seed(42)
+
+# Set the number of simulations
+num_simulations <- 1000
+
+# Define a function to perform each simulation
+perform_simulation <- function(i) {
+  
+  # Generate two sets of random data with a slight difference in means
+  group1 <- rnorm(n=100, mean=0, sd=1)
+  group2 <- rnorm(n=100, mean=0.2, sd=1)
+
+  # Perform a t-test
+  t_test <- t.test(group1, group2, var.equal = F)
+
+  # Compute the confidence intervals for each group
+  ci_group1 <- mean(group1) + c(-1, 1) * qt(0.975, df=length(group1)-1) * sd(group1) / sqrt(length(group1))
+  ci_group2 <- mean(group2) + c(-1, 1) * qt(0.975, df=length(group2)-1) * sd(group2) / sqrt(length(group2))
+
+  # Check if the result is statistically significant
+  sig <- t_test$p.value < 0.05
+
+  # Check if the confidence intervals overlap
+  overlap <- ci_group1[2] > ci_group2[1] && ci_group1[1] < ci_group2[2]
+  
+  # Return a tibble with the results
+  tibble(
+    is_sig = sig,
+    is_overlap = overlap
+  )
+}
+
+# Perform the simulations and bind the results into one tibble
+results <- map_dfr(1:num_simulations, perform_simulation)
+
+# Calculate the percentage of significant results
+percent_sig <- mean(results$is_sig) * 100
+
+# Calculate the percentage of confidence intervals that overlap
+percent_overlap <- mean(results$is_overlap) * 100
+
+# Print the results
+cat("Percentage of significant results:", percent_sig, "\n")
+cat("Percentage of confidence intervals that overlap:", percent_overlap, "\n")
+```
+
+```{r}
+# Set seed for reproducibility
+set.seed(42)
+
+# Generate two sets of random data with a slight difference in means
+group1 <- rnorm(n=100, mean=0, sd=1)
+group2 <- rnorm(n=100, mean=0.5, sd=1)
+
+# Perform a t-test
+t_test <- t.test(group1, group2, var.equal = TRUE)
+
+# Compute the confidence intervals for each group
+ci_group1 <- mean(group1) + c(-1, 1) * qt(0.975, df=length(group1)-1) * sd(group1) / sqrt(length(group1))
+ci_group2 <- mean(group2) + c(-1, 1) * qt(0.975, df=length(group2)-1) * sd(group2) / sqrt(length(group2))
+
+# Create a dataframe for plotting
+df <- data.frame(
+  Group = c("Group 1", "Group 2", "Difference"),
+  Mean = c(mean(group1), mean(group2), (t_test$conf.int[1] + t_test$conf.int[2]) / 2),
+  Lower = c(ci_group1[1], ci_group2[1], t_test$conf.int[1]),
+  Upper = c(ci_group1[2], ci_group2[2], t_test$conf.int[2])
+)
+
+# Plot
+ggplot(df, aes(x = Group, y = Mean, ymin = Lower, ymax = Upper)) +
+  geom_pointrange() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(y = "Value", title = "Confidence Intervals for Two Groups and their Difference") +
+  theme_minimal()
+```
+
+### Explain relationship between alpha, type 1 error, and type 2 error
+
+-   Alpha (aka significance threshold level)
+-   Type 1 error (incorrectly rejecting the null when null is true; aka
+    false positive)
+-   Type 2 error (failing to reject null when alt is true; false
+    negative)
+-   As alpha increases (i.e. from 0.05 to 0.1) type 1 error increases
+    (less stringent on what a stat sig pvalue is) and type 2 error
+    decreases (more generous in rejecting null so decrease t2 error)
+-   As alpha decreases (i.e. from 0.05 to 0.01) type 1 error decreases
+    (only reject null when there's strong evidence) and type 2 error
+    increases (harder to get small pvalue to reject null)
+
+### Best practices for early stopping an experiment if negative results are observed
+
+-   There isn't a simple answer here
+-   Often drastic negative or positive results could be due to bugs in
+    feature or tracking (which might require fixes then relaunching the
+    experiment)
+-   Check if other metrics/funnel steps are showing negative decline (is
+    there consistency across metrics pointing to negative experience)
+-   Check segments to see if new vs existing visitor issue, device,
+    browser, etc
+-   If no bugs and results are still drastically negative OUTSIDE normal
+    fluctuations it could still make sense to end exp due to opportunity
+    cost if it is a high traffic exp
+-   If negative fluctuations are WITHIN typical bounds, often best to
+    run the experiment for one business cycle (week) at least to try to
+    hit target sample size and reassess as experiment stabilizes
+-   Often experiment results can be bouncy/saw tooth shaped when total
+    sample size is small early and experiment is ramping
+
+```{r}
+# TODO simulate/visualize how experiment results can be spikey early on as experiment sample size is small and ramping up
+```
+
+### Areas that can throw off AB test results
+
+-   Feature bug distorts metrics (i.e. scrolling causes video to start
+    playing)
+-   If bug or poor experience in experiment, re-bucketing should occur
+    to reduce bias from residual negative effect or only include units
+    in analysis who joined after exp bug fixed
+-   Bucketing is not allocated correctly or not random and causes bias
+    (SRM issue)
+-   Primacy effects: existing users are primed on old UX; new experience
+    takes time to bake/learn (plot existing user exp cohort by day
+    trends we might see a ramping trend)
+-   Novelty effects: newness is driving effect and dies out as
+    experiment ages (shiny button, Sessions launch, new show but doesn't
+    hold attention)
+-   Stable Unit Treatment Value Assumption is broken
+-   Data pipeline issue
+
+### Explain Stable Unit Treatment Value Assumption
+
+-   Fundamental assumption in A/B testing that allows us to make causal
+    inferences claims
+-   Consists of no interference and consistency
+-   **No interference**: treatment applied to one test unit doesn't
+    affect the outcomes of another
+-   **Consistency**: treatment is delivered the same each time a test
+    unit experiences the treatment
+-   Assumptions enable: isolation of treatment effects, simplicity and
+    feasibility (without this we could have a complex web of
+    interactions), validity of results
+-   Potential issues inference and consistency needed to be consider in
+    the design and analysis of the experiment
+
+### Direct interference
+
+-   Treatment effect of one test unit can directly affect the outcome of
+    another unit
+-   Examples: treatment users share positive experience with control and
+    that changes control behavior or actions, treatment users increase
+    messaging to control users
+
+### Indirect interference
+
+-   Treatment of one unit changes the system/environment in such a way
+    that impacts other units
+-   Treatment group starts booking more stays on Airbnb which reduces
+    supply in control for same geo
+-   Campaign AB test: campaign A spends budget faster with more
+    impressions vs campaign B control resulting in landscape environment
+    changes
+
+### Ways to avoid interference/contamination
+
+-   Proper randomization helps to limit bias
+-   If geo or network interference expected, consider geo or cluster
+    based randomization
+-   Attempt to measure inference and explore ways to adjust for it
+
+### Test generalizability (external validity)
+
+-   Deals with assessing if the test results generalizeable to different
+    settings, contexts, groups, periods
+-   Generalizeable results apply to different population users, time
+    periods, slightly different contexts
+
+### Factors that can hurt AB test generalizability (external validity)
+
+-   Early adopters (sample of users in the experiment not representative
+    of future population)
+-   Holiday/promo/peak season (dynamics of the business different than
+    business as usual state so result generalizability breaks)
+-   Test sample is different from broader population of interest
+-   Business dynamics (macro environment drastically changes or business
+    matures)
+-   Often recommended to replicate experiment if generalizability is
+    being questioned to validate generalizability to another user set,
+    context, time period
+
+### Process for determining if an experiment is trustworthy before results share out
+
+-   When possible, use the experience as control and treatment user to
+    verify experience is working as intended (latency is not an issue,
+    content loading in working, response to user actions don't have
+    bugs, etc)
+-   Sanity checks for sample ratio mismatch, outliers that could corrupt
+    test results, metrics we'd expect to be stable are stable (invariant
+    metrics) and guardrail metrics did not go off the rails
+-   Check experiment key success metrics
+-   Check key experiment segments for unexpected degradation or
+    unexpected improvement
+
+### Process for analyzing experiment segments
+
+-   Strategy for segmentation analysis should be described in advance of
+    the experiment. Which parts are exploratory vs confirmatory. If
+    confirmatory, pvalue correction needed or additional test design.
+-   Exploratory/directional analysis of exp segments can inspire future
+    ideas and/or spot issues. i.e. there could be a key segment that is
+    trending negative which could suggest further feature iteration
+    needed and another test before pushing to 100% launch.
+-   Note: Simpson's paradox can appear when drilling into segments.
+
+### Describe how false positive rate increases due to multiple comparison
+
+-   Multiple comparison or multiple testing impacts the interpretation
+    of pvalues.
+-   Multiple comparison occurs when multiple significance tests are made
+    without pvalue correction which inflates false positive rate.
+-   Assuming the null hypothesis of no difference, the null hypothesis
+    pvalue distribution is uniform. If we were to randomly sample the
+    distribution and draw one value there's a \~5% probability we draw a
+    pvalue of 0.05 or less. Now instead of one draw we were to draw many
+    pvalues from the null hypothesis pvalue distribution we increase the
+    chance of observing one or more pvalues being 0.05 or less due to
+    chance. Assuming independent tests, the inflated false positive rate
+    for multiple comparison can be assessed with the following formula:
+    1 - (probability of not observing false positive)\^number of
+    comparisons.
+-   Techniques for multiple comparison that correct pvalues can be used:
+    Bonferroni correction, Holm-Bonferroni method, or Benjamini-Hochberg
+    procedure. Additionally, in Online Trustworthy experiments authors
+    suggest a crude practical approach of lowering sig level to 0.01 to
+    account for multiple comparison of different metrics.
+-   Additionally, more advanced statistical approaches can be used (such
+    as mixed-effects models or multivariate regression models) that can
+    account for multiple comparisons within the model structure itself.
+    Depends on domain context if these are useful.
+-   Online Trustworthy experiments recommends different alpha levels for
+    metric tiers (which accounts for our prior knowledge). Multiple
+    testing as we check more metrics.
+    -   First order \| 0.05
+
+    -   Second order \| 0.01
+
+    -   Third order \| 0.001
+
+```{r}
+########################################
+# visualize the pvalue distribution we'd expected under the null hypothesis
+########################################
+
+# Number of tests
+num_tests <- 10000
+
+# Generate p-values under the null hypothesis
+p_values <- data.frame(p_value = runif(num_tests))
+
+# ~5% 
+mean(p_values<=0.05)
+
+# Create a histogram of the p-values
+ggplot(p_values, aes(x = p_value)) +
+  geom_histogram(binwidth = 0.01, color = "black", fill = "skyblue") +
+  theme_minimal() +
+  labs(title = "Distribution of p-values under the null hypothesis",
+       x = "p-value",
+       y = "Frequency")
+```
+
+```{r}
+########################################
+# simulate multiple comparison on the null hypothesis pvalue distribution
+########################################
+
+library(tidyverse)
+
+set.seed(123)
+
+# Define the parameters for the simulation
+num_simulations <- 1000
+num_comparisons <- c(1, 5, 10, 20, 50)
+alpha <- 0.05
+
+# Define a function to perform one simulation
+simulate <- function(n_comparisons) {
+  # Generate p-values under the null hypothesis
+  p_values <- runif(n_comparisons)
+
+  # Return TRUE if any p-values are less than alpha, FALSE otherwise
+  any(p_values < alpha)
+}
+
+# Run the simulation for each number of comparisons
+results <- map_dfr(num_comparisons, ~{
+  # Run the simulation many times
+  simulations <- replicate(num_simulations, simulate(.x))
+
+  # Calculate the proportion of simulations with at least one false positive
+  false_positive_rate <- mean(simulations)
+
+  # Return a data frame with the results
+  tibble(num_comparisons = .x, false_positive_rate = false_positive_rate)
+})
+
+# Print the results
+print(results)
+```
+
+```{r}
+########################################
+# formula assuming each test is independent
+# 1 - (prob of no false positive)^raised to number of tests
+# probability that 1 or more tests result in false positive
+# formulas tie with simulation above
+########################################
+tibble(num_of_comparison_tests = c(1, 5, 10, 20, 50)) %>%
+  mutate(false_positive_rate = (1 - (0.95)^num_of_comparison_tests))
+```
+
+### Describe false positive and false negative meaning in AB hypothesis test
+
+-   Assumption: null is no difference; alt there is a difference
+-   False positive (type 1 error): incorrectly rejecting the null in
+    favor of alternative
+-   True positive: correctly rejecting the null in favor of alternative
+-   True negative: failing to reject null when null is true
+-   False negative (type 2 error): failing to reject the null when alt
+    is true
+
+### Ideas backlog and stack ranking
+
+Approach
+
+-   useful to always have a backlog of ideas both lower lift iteration
+    type plays and radical leaps
+-   radical leaps often fail but the ones that work can offset failures
+-   can score ideas to attempt to prioritize for resourcing discussions:
+    impact, confidence, effort
+-   Kevin Systrom: pain x frequency x scale
+-   Other frameworks for prio can work as well
+-   Ideas that are lowest resource lift with highest upside value tend
+    to get prioritized first in practice
+
+RICE framework
+
+-   Reach: users it will touch
+-   Impact: impact on users
+-   Confidence: confidence related to impact and effort (as at times
+    reach)
+-   Effort: dev work needed for the feature
+-   RICE Score: (Reach \* Impact \* Confidence)/Effort
+
+### Running AB tests in parallel and interaction effects
+
+-   At mature companies, AB tests tend to run in parallel vs
+    sequential/staggered one after another. Often parallel AB tests, are
+    done on different surface areas of the product to avoid negative
+    interactions.
+-   Negative interactions can occur when bucketing combination with a
+    variant of two or more experiments can result in poor user
+    experience. i.e. exp 1 testing lighter background and exp 2 testing
+    lighter button color. Resulting in difficulty to see button and for
+    user to take action.
+
+### Ways to handle interaction effects
+
+-   Multivariate test design (i.e. 2x2 factorial design) + control
+    group. Useful if there's high confidence that interactions exist and
+    there's a desire to measure the interaction effect directly. Con is
+    that overall experiment sample is larger than traditional 2 cell
+    test.
+-   Test ideas sequentially/staggered to get results of first idea then
+    test next idea.
+-   If the interaction effect is based on a user attribute, we could
+    stratify results by the user attribute but would need to account for
+    multiple testing.
+-   Advanced techniques V2 study areas
+    -   multivariate analysis of variance / multivariant regression for
+        multivariant testing
+
+    -   hierarchical model building
+
+    -   Regularization models with interactions included
+
+### Model showing how sample size requirements change for binary vs skewed continuous variable
+
+```{r}
+# Set the seed for reproducibility
+set.seed(123)
+
+# Generate data for control group
+minutes_watched_control <- rlnorm(1000, meanlog = 2.3, sdlog = 1.2)
+
+# Generate data for variant group
+minutes_watched_variant <- rlnorm(1000, meanlog = 2.5, sdlog = 1.2)
+
+# Create a data frame
+df <- data.frame(
+  group = c(rep("Control", 1000), rep("Variant", 1000)),
+  minutes_watched = c(minutes_watched_control, minutes_watched_variant)
+)
+
+# Calculate the means for the two groups
+mean_control <- mean(df$minutes_watched[df$group == "Control"])
+mean_variant <- mean(df$minutes_watched[df$group == "Variant"])
+
+# Create the plot
+ggplot(df, aes(x = minutes_watched, fill = group)) +
+  geom_histogram(bins = 30, alpha = 0.7, position = "identity") +
+  geom_vline(aes(xintercept = mean_control), color = "dodgerblue3", linetype = "dashed", size = 1) +
+  geom_vline(aes(xintercept = mean_variant), color = "firebrick3", linetype = "dashed", size = 1) +
+  theme_minimal() +
+  labs(x = "Minutes Watched", y = "Frequency", fill = "Group",
+       title = "Histogram of Minutes Watched for Control and Variant Groups") +
+  scale_fill_manual(values = c("Control" = "dodgerblue3", "Variant" = "firebrick3")) +
+  scale_x_log10()
+```
+
+Three different stats tests on minutes watched data.
+
+-   Raw uncapped
+-   Capped
+-   Binary
+
+```{r}
+# Test 1: Compare mean of control and variant
+# test1_result <- t.test(minutes_watched ~ group, data = df)
+# 
+# # Calculate the 99th percentile for each group
+# cap_values <- df %>% 
+#   group_by(group) %>% 
+#   summarise(cap = quantile(minutes_watched, 0.99), .groups = "drop")
+# 
+# # Cap 'minutes watched' at the 99th percentile for each group
+# df_capped <- df %>%
+#   left_join(cap_values, by = "group") %>%
+#   mutate(minutes_watched = if_else(minutes_watched > cap, cap, minutes_watched))
+# 
+# # Test 2: Compare mean of control and variant for capped data
+# test2_result <- t.test(minutes_watched ~ group, data = df_capped)
+# 
+# # Create a new binary variable indicating whether 'minutes watched' is 60 or more
+# df <- df %>% 
+#   mutate(watched_60_or_more = if_else(minutes_watched >= 60, 1, 0))
+# 
+# # Test 3: Compare proportion of control and variant that has 'minutes watched' 60 or more
+# table_var <- table(df$group, df$watched_60_or_more)
+# prop.table(table_var)
+# 
+# test3_result <- chisq.test(table_var)
+# 
+# # To tidy up the test results, use broom package's tidy() function:
+# test1_result <- broom::tidy(test1_result)
+# test2_result <- broom::tidy(test2_result)
+# test3_result <- broom::tidy(test3_result)
+# 
+# # Combine all test results
+# all_results <- list(Test1 = test1_result, Test2 = test2_result, Test3 = test3_result) %>%
+#   bind_rows(.id = "Test")
+# 
+# all_results
+```
+
+```{r}
+# # Load necessary libraries
+# library(pwr)
+# library(purrr)
+# library(dplyr)
+# 
+# # Define a function for power analysis
+# power_analysis <- function(data, test_type = "t") {
+#   data_summary <- data %>%
+#     group_by(group) %>%
+#     summarise(
+#       n = n(),
+#       mean = mean(minutes_watched),
+#       sd = sd(minutes_watched),
+#       p = mean(watched_60_or_more),
+#       .groups = "drop"
+#     )
+#   
+#   if (test_type == "t") {
+#     # Calculate the weighted pooled standard deviation
+#     n1 <- data_summary$n[data_summary$group == "Control"]
+#     n2 <- data_summary$n[data_summary$group == "Variant"]
+#     sd1 <- data_summary$sd[data_summary$group == "Control"]
+#     sd2 <- data_summary$sd[data_summary$group == "Variant"]
+#     pooled_sd <- sqrt(((n1 - 1) * sd1^2 + (n2 - 1) * sd2^2) / (n1 + n2 - 2))
+#     
+#     effect_size <- (data_summary$mean[data_summary$group == "Control"] * 0.05) / pooled_sd
+#     
+#     return(pwr.t.test(d = effect_size, 
+#                       sig.level = 0.05, 
+#                       power = 0.8, 
+#                       alternative = "two.sided")
+#            )
+#   } else if (test_type == "p") {
+#     p1 <- data_summary$p[data_summary$group == "Control"]
+#     p2 <- p1 * 1.05
+#     
+#     return(power.prop.test(p1=p1, p2=p2, sig.level = 0.05, power = 0.8, alternative = "two.sided"))
+#   }
+# }
+# 
+# # Perform power analysis for each test
+# test1 <- power_analysis(df)
+# test2 <- power_analysis(df_capped)
+# test3 <- power_analysis(df, test_type = "p")
+# 
+# # Print results
+# print(test1)
+# print(test2)
+# print(test3)
+# 
+# 
+
+```
+
+```{r}
+mean_control = mean(df$minutes_watched[df$group == "Control"])
+sd_control = sd(df$minutes_watched[df$group == "Control"])
+    mean_variant = mean(df$minutes_watched[df$group == "Variant"])
+    sd_variant = sd(df$minutes_watched[df$group == "Variant"])
+    effect_size = (mean_control * 0.05) / sqrt((sd_control^2 + sd_variant^2) / 2)
+    
+n1 <- sum(df$group == "Control")
+n2 <- sum(df_summary$group == "Variant")
+sd1 <- df_summary$sd[df_summary$group == "Control"]
+sd2 <- df_summary$sd[df_summary$group == "Variant"]
+pooled_sd <- sqrt(((n1 - 1) * sd1^2 + (n2 - 1) * sd2^2) / (n1 + n2 - 2))
+    
+effect_size
+
+
+```
+
+### Pros and cons to running AB tests on continuous vs binary metrics
+
+-   Continuous metrics
+    -   Pros
+
+        -   sensitive to small changes
+        -   more information and granular metric
+
+    -   Cons
+
+        -   outliers can distort stats tests
+
+        -   sample size requirements can be higher due to higher
+            variance
+-   Binary metrics
+    -   Pros
+
+        -   simplicity
+        -   sample size efficiency
+
+    -   Cons
+
+        -   loss of information and granularity
+
+        -   less sensitive to small changes that might move continuous
+            metric
+
+        -   there isn't a simple 1:1 relationship between how the binary
+            metric could move and the change to the continuous metric
+
+### Explain the value of A:A tests
+
+-   AA tests used to validate experiment infrastructure is working as
+    expected
+-   Checking for potential bias, bucketing misalignment, metric
+    stability, bucketing volume aligns with say visitor volume to page
+    where AA test triggers
+-   Approach
+    -   Run series of AA tests on key metric
+
+    -   Assess distribution of pvalues
+
+    -   We'd expect close uniform distribution when conducting t tests
+
+    -   We'd expect 5% of pvalues stat sig by chance
+-   Online trustworthy experiments book
+    -   Recommends simulating 1k AA tests on past week data then running
+        goodness of fit test such as Anderson-Darling or
+        Kolmogorov-Smirnoff to assess if distribution is uniform
+
+    -   Also plotting the distribution will signal any red flags
+
+### How to do statistical test on SRM data
+
+-   Use chi sq test to test if observed counts are statistically
+    different than expected proportions
+
+```{r}
+control_observed <- 34005
+variant_observed <- 29000
+ 
+# Perform Chi-Square Test of Goodness-of-Fit
+observed <- c(control_observed, variant_observed)
+chisq.test(observed, p = c(0.5, 0.5))
+```
+
+### Explain the relationship between significance level, type 1 error rate, and false positive rate
+
+-   Significance level is the threshold value used to determine if a
+    test statistic pvalue is statistically significance. Represents a
+    measure of risk we're taking in falsely rejecting the null.
+-   Type 1 error and false positive rate are interchangeable. False
+    positive and T1 error represent incorrectly rejecting the null
+    hypothesis when the null is true. Said differently, saying there is
+    an effect when there isn't.
+-   One way we control our tolerance for type 1 error (false positives)
+    is by setting the significance level ahead of the test. Often 0.05
+    as the industry default in online experimentation.
+
+### Describe statistically significant in the context of an AB test
+
+-   Statistically significant means that the observed test statistic is
+    unlikely (pvalue below 0.05) given the null hypothesis distribution.
+    As result, we conclude that the treatment performed different than
+    the control and there is likely a real effect vs random fluctuations
+    in the data.
+
+### Explain the relationship between variance and sample size
+
+-   Holding other factors constant, larger variance metrics tends to
+    require larger sample size to detect MDE or larger due to more
+    noise/spread in the data.
+
+```{r}
+# Define parameters for the simulation
+effect_size <- 5  # Difference between group means
+pooled_sds <- c(5, 10, 20, 40, 80, 160, 320)  # Different pooled standard deviations
+power <- 0.8  # Probability of rejecting null hypothesis when it is false
+
+# Create a data frame with pooled standard deviations and corresponding effect sizes
+data.frame(sd = pooled_sds, d = effect_size / pooled_sds) %>%
+  rowwise() %>%
+  mutate(sample_size_per_group = ceiling(pwr.t.test(d=d, power=0.8, sig.level=0.05)$n))
+```
+
+### Methods to reduce variance
+
+-   Capping outliers
+-   Binary metrics
+-   Log transforming (however, not something I've commonly seen). Would
+    need careful analysis before going this route
+-   Make sure experiment is triggering on users who had a chance to
+    experience the feature
+-   CUPED and stratification
+
+```{r}
+# TODO how can CUPED and stratification be used to reduce variance and sample size requirements
+```
+
+### Why is replication important?
+
+-   When results are surprising or experiment needs further testing for
+    additional external validity support
+-   Also acts as a validation that the original test was not a false
+    positive
+-   Acts as stamp of reliability and trustworthiness for the experiment
+
+### Use two tail or one tail test for ab test and why?
+
+-   One tailed test
+    -   Interested in detecting a difference in one direction only
+        (better or worse than control). Assumes the opposite direction
+        result is irrelevant.
+-   Two tailed test
+    -   Interested in detecting a difference better or worse. More
+        conservative.
+-   Two tailed tests tend to be more appropriate as we're open to
+    learning and often interested if treatment performs much worse. By
+    testing both tails, we reduce risk of false positives.
+
+### Running tests with multiple interventions vs single intervention
+
+-   Single intervention
+    -   Pros
+        -   simple interpretation
+        -   helps determine if specific element in the test is working
+            or not
+    -   Cons
+        -   slower learning as multiple single intervention tests needed
+
+        -   could be missing interactions
+
+        -   impact could be small and exp needs larger sample size to
+            detect
+-   Multiple intervention
+    -   Pros
+
+        -   useful when overhaul type of design change made and less
+            emphasis on single intervention measurement
+        -   prioritize speed
+
+    -   Cons
+
+        -   individual intervention measurement hard to untangle
+
+        -   might need to go back an rerun single intervention
+            experiment to unpack what might be driving measured effect
+
+        -   interventions could negatively interaction and wash each
+            other out which will be hard to detect
+
+### Handling high risk experiments
+
+-   Validate first in qual setting
+-   Consider slow ramp up of traffic
+-   Dev work to easily turn feature on and off via feature flag
+-   Rollback plan
+-   Monitoring and altering set up
+
+### Explain differences between Welch T Test and Student T Test?
+
+-   Student T test has an equal variance assumption that is often
+    violated in practice. Pooled variance is used as part of the t stat
+    calc.
+
+    -   t = (M1 - M2) / sqrt[(s_p\^2/n1) + (s_p\^2/n2)]
+
+    -   M1 and M2 are the sample means
+
+    -   s_p\^2 is the pooled variance
+
+        -   s_p\^2 = [(n1 - 1)s1\^2 + (n2 - 1)s2\^2] / (n1 + n2 - 2)
+
+    -   n1 and n2 are the sample sizes
+
+-   Welch T test does not have equal variance assumption making it a
+    safer bet. A treatment effect could lead to more variance in the
+    treatment group by more users consuming way more and more users
+    consuming zero. Note how variance is not pooled below.
+
+    -   t = (M1 - M2) / sqrt[(s1\^2/n1) + (s2\^2/n2)]
+
+    -   M1 and M2 are the sample means
+
+    -   s1\^2 and s2\^2 are the sample variances
+
+    -   n1 and n2 are the sample sizes
+
+    -   degrees of freedom is also calculated differently for Welch's
+        t-test to be more robust for variance and sample size
+        differences.
+
+### How to handle outliers in AB tests?
+
+-   Capping
+-   Trimming X% in tails
+-   In rare cases we even might remove them if the data is due to error
+-   Run statistical test on metric less sensitive to outliers (binary
+    metric, median, etc)
+
+### Overall treatment effect on broader population
+
+-   When computing treatment effect on overall pop some dilution might
+    be needed
+-   If 3% improvement on 10% of users site wide impact could be
+    different
+-   Depends what 10% represents
+
+### Experiment Results Tree
+
+-   Not stat sig and not a type 2 error
+    -   Could be underpower if wide CI
+-   Not stat sig and a type 2 error (failed to reject null when alt is
+    true
+-   Stat sig and not practical sig
+    -   Could need further iteration or move on to bigger bets/needle
+        movers
+-   Stat sig and practical sig
+    -   Win
+-   Stat sig and boarderline practical sig
+    -   Consider rerunning and/or further iteration
+
+### Simulate an AB test and highlight why early results can be misleading
+
+-   TODO: add stats checks for each day???
+
+```{r}
+mde_lift_vs_baseline <- 0.05
+# Desired power level
+power <- 0.8
+# Significance level
+sig.level <- 0.05
+# Assumed baseline conversion rate
+p1 <- 0.10
+
+# Derive based on mde lift that is meaningful for the business
+p2 <- p1 * (1 + mde_lift_vs_baseline)
+
+# Use power.prop.test to calculate sample size
+sample_size <- power.prop.test(p1 = p1, p2 = p2, 
+                power = power, 
+                sig.level = sig.level, 
+                alternative = "two.sided")$n
+
+exp_sample_size <- round(sample_size * 2,-3)
+# Set parameters
+n_days <- 14
+
+# Assume avg daily visitors is hit to achieve desired MDE power above
+avg_daily_visitors <- ceiling(exp_sample_size/n_days)
+control_conversion_rate <- p1
+treatment_conversion_rate <- p2
+
+# Create a tibble (a type of data frame) for the days of the experiment
+days <- tibble(Day = 1:n_days) %>%
+  expand_grid(sim_id = 1:1000)
+
+# Use the same code you've provided to simulate the data
+results <- days %>%
+  mutate(n_visitors_per_variant = ceiling(avg_daily_visitors * Day/2)) %>%
+  group_by(sim_id) %>%
+  rowwise() %>%
+  mutate(
+    Control_Conversions = map_int(n_visitors_per_variant, 
+                                  ~rbinom(1, .x, control_conversion_rate)),
+    Treatment_Conversions = map_int(n_visitors_per_variant, 
+                                    ~rbinom(1, .x, treatment_conversion_rate)),
+    Control_Conversion_Rate = Control_Conversions / n_visitors_per_variant,
+    Treatment_Conversion_Rate = Treatment_Conversions / n_visitors_per_variant
+  ) %>%
+  arrange(sim_id, Day) %>%
+  mutate(cumulative_control_cvr = cumsum(Control_Conversions) / n_visitors_per_variant,
+         cumulative_treatment_cvr = cumsum(Treatment_Conversions) / n_visitors_per_variant)
+
+results %>%
+  group_by(Day, n_visitors_per_variant) %>%
+  summarise(pct_of_trials_control_better_than_treatment = 
+              mean(cumulative_control_cvr>cumulative_treatment_cvr)) %>%
+  ggplot(aes(x=Day, 
+             y=pct_of_trials_control_better_than_treatment)) +
+  geom_line() +
+  geom_text(aes(label=n_visitors_per_variant*2)) +
+  scale_x_continuous(breaks=1:14)
+  
+# Plot the cumulative conversion rates for a random subset of the simulations
+# results %>%
+#   ggplot(aes(x=Day)) +
+#   geom_line(aes(y=cumulative_control_cvr, color="control"), alpha = 0.3) +
+#     geom_line(aes(y=cumulative_treatment_cvr, color="treatment"), alpha = 0.3) +
+#   facet_wrap(~ sim_id) +
+#   labs(x = "Day of Experiment", y = "Cumulative Conversion Rate", 
+#        title = "A/B Test Simulation Results") +
+#   scale_color_manual(values = c("control" = "blue", "treatment" = "red"))
+
+
+```
+
+# V2
+
+### Future reading
+
+-   <https://www.microsoft.com/en-us/research/group/experimentation-platform-exp/>
+-   <https://docs.google.com/document/d/1yLbhC1cEbOzkY4yHsBveirBZFv598E1s/edit>
+-   <https://exp-platform.com/Documents/2017-05%20ICSE2017_EvolutionOfExP.pdf>
+-   <https://exp-platform.com/Documents/2023-03-11EncyclopeiaMLDSABTestingFinal.pdf>
+-   <https://exp-platform.com/Documents/2014%20experimentersRulesOfThumb.pdf>
+-   <https://exp-platform.com/Documents/2014-08-27ExperimentersRulesOfthumbKDD.pdf>
+-   <https://www.lukasvermeer.nl/publications/>
+
+### V2 Misc
+
+-   Bayesian stats for AB testing
+-   How to handle experiment analysis on \# of treatments \>= 2
+-   Explain the rubin causal model?
+-   Why do we get max power at 50/50?
+-   Read linked resources on trustworthy experiments site
+-   explain this: understand whether the treatment effect differs among
+    different segments, it might be more appropriate to use an
+    interaction term in a regression model, or to use a stratified
+    analysis or subgroup analysis, rather than treating each segment as
+    a separate AB test.
+-   inspiration here from Optimizely:
+    <https://support.optimizely.com/hc/en-us/articles/4410283328013>
+-   why are triggered experiments more sensitive? pros and cons to
+    running triggered experiments?
+-   study: <https://goodui.org/>
+-   flaws with pre vs post analysis
+-   what analyses techniques to use when experiments aren't possible
+-   show how outliers in the tail can flip a test from positive to
+    negative
+-   Reread trustworthy online experiments book this year
+
+### MC misc ideas
+
+-   Read in trusty online exp book about Bing example aggregating exp
+    results to count toward OKR
+-   Assume experiments are additive for OKR goal
+-   Need to report on number experiments/treatments launched from Growth
+    and Consumer Product?
+
+### Advanced topics
+
+-   multiarm bandit experiments (adjust allocation to winning variant as
+    experiment continues and data is collected)
+-   sequential testing (Optimizely uses sequential testing to check
+    pvalues during experiment run time)
+-   what is the AGILE statistical method, which allow you to stop tests
+    early without inflating Type I errors?
+-   Fisher meta analysis and combining results across experiments
+
+### Experiment Stats
+
+1.  Binary metric
+2.  Continuous metric
+
+# Typical Metric Themes
+
+-   Acquisition
+-   Activation (aha moment)
+-   Engagement (active users within time window, active defined as
+    taking XYZ actions in the product)
+-   Retention
+-   Referral
+
+# Feature launch
+
+-   exposure
+-   adoption
+-   depth
+-   frequency
+-   value
+
+# AB test stats for conversion rate
+
+<Answer from chatGPT below> The most commonly used statistical tests in
+A/B testing to compare the conversion rates of two different groups (A
+and B) are the Chi-squared test (for larger sample sizes) or the
+Fisher's exact test (for smaller sample sizes).
+
+The assumption behind these tests is that the samples are independent
+and randomly sampled from the population, and they follow a binomial
+distribution. The null hypothesis is that the conversion rates for the
+two groups are the same, while the alternative hypothesis is that they
+are different.
+
+Here's a general step-by-step guide for carrying out a Chi-squared test:
+
+Prepare the data: In an A/B test, you typically have two groups: a
+control group (A) and a test group (B). Each group has visitors and
+conversions. Prepare a 2x2 contingency table with these values.
+Conversions Non-Conversions A a b B c d Calculate the Chi-squared
+statistic: The formula for the Chi-squared statistic is:
+
+χ² = Σ [ (O-E)²/E ]
+
+where:
+
+O is the observed frequency (from your table) E is the expected
+frequency if the null hypothesis is true The expected frequencies are
+calculated as follows:
+
+E(a) = (a + c) \* (a + b) / (a + b + c + d) E(b) = (b + d) \* (a + b) /
+(a + b + c + d) E(c) = (a + c) \* (c + d) / (a + b + c + d) E(d) = (b +
+d) \* (c + d) / (a + b + c + d)
+
+Find the p-value: The p-value associated with a particular Chi-squared
+statistic is found by referring to a Chi-squared distribution with
+(r-1)\*(c-1) degrees of freedom, where r is the number of rows in your
+contingency table and c is the number of columns. Most statistical
+software and programming languages with statistical functions can do
+this for you.
+
+Interpret the results: If the p-value is less than your pre-specified
+significance level (commonly chosen as 0.05), you reject the null
+hypothesis and conclude that there is a statistically significant
+difference between the conversion rates of group A and group B. If the
+p-value is greater than your significance level, you fail to reject the
+null hypothesis, meaning that you do not have sufficient evidence to say
+that there is a difference in conversion rates.
+
+Remember, failing to reject the null hypothesis doesn't mean that the
+null hypothesis is true, just that we don't have strong enough evidence
+to say it's false. Likewise, rejecting the null hypothesis doesn't prove
+the alternative hypothesis, it just suggests it's more likely given the
+data.
+
+Also, statistical significance doesn't necessarily imply practical
+significance. Even if the difference in conversion rates is
+statistically significant, it may not be large enough to matter in
+practice. That's why it's also important to consider the effect size and
+the cost-benefit analysis of implementing the changes.
+
+# AB test stats for revenue per visitor
+
+The Welch's t-test is a variation of the independent samples t-test that
+is more reliable when the two samples have unequal variances and/or
+unequal sample sizes. This test is often used in A/B testing when these
+conditions are met.
+
+Here is an outline of how to use the Welch's t-test in this context:
+
+Prepare the data: In an A/B test, you have two groups: a control group
+(A) and a variant group (B). Each user in each group will have an
+associated revenue figure.
+
+Check for assumptions: The Welch's t-test, like the regular t-test,
+assumes that the data are independently and identically distributed and
+follow a normal distribution. If these assumptions are not met, you
+might need to use a non-parametric test, such as the Mann-Whitney U
+test.
+
+Formulate the hypotheses: The null hypothesis (H0) is that there is no
+difference in the mean revenue per user between group A and group B. The
+alternative hypothesis (H1) is that there is a difference.
+
+Calculate the t-statistic and p-value: This calculation is slightly
+different from the standard t-test. The Welch's t-test adjusts the
+degrees of freedom when the variances are unequal, which makes it more
+robust. The formula for the t statistic in the Welch's test is:
+
+t = (mean(X1) - mean(X2)) / sqrt((sd(X1)²/n1) + (sd(X2)²/n2))
+
+Here, mean(X1) and mean(X2) are the sample means, sd(X1) and sd(X2) are
+the sample standard deviations, and n1 and n2 are the sizes of the two
+samples. The associated degrees of freedom and the p-value can be
+calculated using this t statistic.
+
+Interpret the results: If the p-value is less than your pre-specified
+significance level (commonly chosen as 0.05), you reject the null
+hypothesis and conclude that there is a statistically significant
+difference in the mean revenue per user between the control group and
+the variant group. If the p-value is greater than your significance
+level, you fail to reject the null hypothesis, meaning that you do not
+have enough evidence to say that there is a difference in mean revenue
+per user.
+
+As with any statistical test, remember that failing to reject the null
+hypothesis doesn't mean the null hypothesis is true. Likewise, rejecting
+the null hypothesis doesn't prove the alternative hypothesis. Also,
+statistical significance doesn't always imply practical significance.
+Even if the difference in mean revenue per user is statistically
+significant, it may not be large enough to matter in practice. It's also
+important to consider the effect size and the cost-benefit analysis of
+implementing the changes.
+
+### Should consistently negative variants be turned off mid experiment?
+
+-   <https://chat.openai.com/share/ea39b126-a37f-43af-b147-656213e4466c>
+
+```{r}
+### TODO: simulate the effects of phacking
+library(tidyverse)
+
+set.seed(123)  # for reproducibility
+
+simulate_experiment <- function(n) {
+  tibble(
+    control = rnorm(n),
+    variant = rnorm(n)
+  ) %>%
+  mutate(
+    row = row_number(),
+    p_value = map_dbl(row, ~ t.test(control[1:.], variant[1:.])$p.value)
+  )
+}
+
+n <- 100  # total sample size
+num_simulations <- 1000  # number of simulations to run
+
+results <- tibble(
+  simulation = 1:num_simulations,
+  p_values = map(simulation, ~ simulate_experiment(n)),
+  false_positive = map_lgl(p_values, ~ any(.x$p_value < 0.05))
+)
+
+false_positive_rate <- mean(results$false_positive)
+print(paste("False Positive Rate: ", false_positive_rate))
+```
