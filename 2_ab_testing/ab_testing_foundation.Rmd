@@ -35,11 +35,16 @@ WORK IN-PROGRESS
 Experiments](https://www.amazon.com/Trustworthy-Online-Controlled-Experiments-Practical/dp/1108724264)**(highly
 recommended book)*
 
+### AB test learning objective
+
+-   we use a representative sample from the test to infer how the
+    results generalize to a larger population and/or future population
+
 ### Why run AB tests
 
--   test if intervention has an effect on target overall eval criteria
-    (i.e. does changing the onboarding flow improve early product
-    engagement)
+-   test if an intervention has an effect on target overall eval
+    criteria (i.e. does changing the onboarding flow improve early
+    product engagement)
 -   risk management: run test to infer what the impact would be on
     broader population of users during the experiment and in the future
 -   without an AB test, it's often not feasible establish causality.
@@ -48,17 +53,22 @@ recommended book)*
     as) tend to be the gold standard for establishing causality
 -   it is difficult to know in advance what will work
 
-### AB test learning objective
+### What to test vs not test depends on maturity of product and experimentation stage
 
--   we use a representative sample from the test to infer how the
-    results generalize to a larger population and/or future population
+-   **test**: MVP ideas to help with broad search of idea space to find
+    heat for further investment
+-   **hold off on testing**: evil and unethical ideas, ideas that would
+    not get launched if they won, tiny incremental ideas for start-ups
+    (context dependent)
+-   **challenging to test**: major brand redesign, large strategic bets,
+    significant infrastructure changes, etc
 
 ### Key considerations when designing an AB test
 
 -   **randomization mechanism** works as expected (if an experiment is
     designed to be 50/50 splits then the resulting experiment buckets
-    are not statistically different from 50/50; sample ratio mismatch
-    check)
+    are not statistically different from 50/50; aka sample ratio
+    mismatch check)
 -   establish the **experiment unit of analysis** (i.e. user, visit
     session, etc)
     -   If experiment unit of analysis is users, are there enough users
@@ -72,54 +82,29 @@ recommended book)*
     failed tests, HIPPO decision model is not cemented into the culture)
 -   build **infrastructure** for experimentation
 
-### What to AB test vs not test
+### AB test randomization ensures results are valid and reliable
 
--   what to test and not test depends on maturity of product and
-    experimentation stage
--   **test**: MVP ideas to help with broad search of idea space to find
-    heat for further investment
--   **hold off on testing**: evil and unethical ideas, ideas that would
-    not get launched if they won, tiny incremental ideas for start-ups
-    (context dependent)
--   **challenging to test**: major brand redesign, large strategic bets,
-    significant infrastructure changes, etc
-
-### Why is randomization so important in AB tests
-
--   NEXT STEP BOOKMARK
--   Randomly assigning experiment units to experiment buckets help
-    ensure that factors outside the experiment intervention are evenly
-    spread across the groups which helps with the following:
-    -   reduces selection bias
-
-    -   reduces bias from known and known confounding variables (e.g.
-        making it less likely that factors outside the intervention
-        unevenly influence one of the groups)
-
-    -   reduces uneven time related bias as groups are exposed to same
-        time period
-
-    -   randomization used as foundation for statistical inference
-        methods where we infer about population using sample
-
-    -   randomization allows us to frame a null hypothesis of no
-        difference between groups because the randomization attempts to
-        control for factors outside of the experiment intervention
+-   **control for external influences**: randomization minimizes the
+    impact of external factors by evenly distributing them across both
+    groups
+-   **ensure group comparability**: randomization counters potential
+    biases in group sample selection and intervention delivery
+-   **supports valid statistical inferences**: enables statistical
+    inference where we infer about a population using sample data
+    (crucial for independence assumption behind many statistical tests)
 
 ### How to pick **experiment success evaluation criteria**
 
--   Measurable in the short term (ideally 1 to 2 weeks) and believed to
-    causally drive long term strategic metric
--   When north star metric is lagging (y1 renewal) surrogate metrics
-    used for experimentation (time to action, capped revenue per user,
-    etc)
--   OEC includes success metric and counter metrics (revenue per user
-    and user engagement metric)
--   Are the key success metrics sensitive enough to experiment
-    on/movable (i.e. month 1 engagement rate at MC is near a ceiling so
-    it's not)
--   Measurable in the short-term, sensitive, and predictive of long term
-    objectives, and not easily gameable
+-   NEXT STEP BOOKMARK
+-   success evaluation criteria tends to include a set of primary
+    metric(s) + counter metrics (primary metric: revenue per user;
+    counter metrics: user engagement metric)
+-   measurable in the short term (ideally 1 to 2 weeks), believed to
+    causally drive long term strategic metric, sensitive but not
+    volatile, moveable but not easily gameable
+-   when north star metric is lagging (annual subscription renewal)
+    proxy metrics often used for experimentation (time to action, capped
+    revenue per user, etc)
 
 ### Calling experiments using **success evaluation criteria**
 
