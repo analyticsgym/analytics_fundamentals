@@ -95,32 +95,32 @@ recommended book)*
 
 ### How to pick **experiment success evaluation criteria**
 
--   NEXT STEP BOOKMARK
 -   success evaluation criteria tends to include a set of primary
-    metric(s) + counter metrics (primary metric: revenue per user;
+    metric(s) + counter metrics (i.e. primary metric: revenue per user;
     counter metrics: user engagement metric)
 -   measurable in the short term (ideally 1 to 2 weeks), believed to
-    causally drive long term strategic metric, sensitive but not
-    volatile, moveable but not easily gameable
--   when north star metric is lagging (annual subscription renewal)
-    proxy metrics often used for experimentation (time to action, capped
-    revenue per user, etc)
+    causally drive long term strategic metric (might be a proxy metric
+    if ideal primary metric is lagging), sensitive but not volatile,
+    moveable but not easily gameable
 
 ### Calling experiments using **success evaluation criteria**
 
--   SHIP: 1 positive, others flat
--   DON'T SHIP: 1 negative, others flat
--   FAIL FAST or PIVOT: all flat, check power
--   DISCUSS TRADEOFFS: some positive and some negative
+-   simplified scenario: 1 primary metric, 3 counter metrics
+    -   SHIP: primary metric positive, all counter metrics flat
+    -   DON'T SHIP: primary metric negative, all counter metrics flat
+    -   FAIL FAST or PIVOT: all metrics flat, check power
+    -   DISCUSS TRADEOFFS: primary metric positive, counter metrics
+        trend negative
 
-### Guardrail metric
+### Counter metrics (aka guardrail metrics)
 
+-   NEXT STEP BOOKMARK
+-   foundational user experience always has to come first
 -   Example: app crash rate
--   MC launches iOS app feature to reduce friction to continue consuming
+-   Launches iOS app feature to reduce friction to continue consuming
     previously consumed content
 -   However, app crash rate spiked after release of the feature
 -   Experiment ended early to resolve issue and relaunch
--   Foundation user experience always has to come first
 
 ### Iterative experiments vs full site redesign
 
