@@ -114,36 +114,47 @@ recommended book)*
 
 ### Counter metrics (aka guardrail metrics)
 
--   NEXT STEP BOOKMARK
--   foundational user experience always has to come first
--   Example: app crash rate
--   Launches iOS app feature to reduce friction to continue consuming
-    previously consumed content
--   However, app crash rate spiked after release of the feature
--   Experiment ended early to resolve issue and relaunch
+-   counter metrics tend to represent user experience health (i.e. time
+    to value, session time, etc) and product technology health (i.e. app
+    crash rate, buffering, load time, etc)
+-   if an experiment spikes time to value or causes the app to crash it
+    could warrant ending the experiment early or holding off on feature
+    rollout even when primary metric(s) are positive
 
 ### Iterative experiments vs full site redesign
 
--   **Full site redesign experiments**: useful if site is in bad shape
-    and not meeting user needs, draw back is users learn to use legacy
-    experience and might take time to learn new experience, can be
-    costly on time to execute and dev resources for large overhaul, due
-    to a set of changes bundled together it will be difficult to
-    untangle which of the changes are driving metrics or not, high risk
-    due to assumption that new redesign will be better but it is unknown
-    in advance
--   **Iterative experiments**: lower risk and faster to execute, test
-    one feature/theme at a time to attribute effect to intervention,
-    users have less UX shock as the entire product UX is not changing
-    drastically, iterative experiments can result in always learning
-    feedback loops
+-   **Full site/app redesign experiments**
+    -   useful if site is in bad shape and not meeting user needs
+    -   draw back is users learn to use legacy experience and might take
+        time to learn new experience
+    -   can be costly on time to execute and dev resources for large
+        overhaul
+    -   due to a set of changes bundled together it will be difficult to
+        untangle which of the changes are driving metrics or not
+    -   high risk due to assumption that new redesign will be better but
+        it is unknown in advance
+-   **Iterative experiments**
+    -   lower risk and faster to execute
+    -   test one feature/theme at a time to attribute effect to
+        intervention
+    -   users have less UX shock as the entire product UX is not
+        changing drastically
+    -   iterative experiments can result in always learning feedback
+        loops
 
-### Hypothesis testing as part of AB testing
+### Hypothesis testing as part of AB testing (**frequentist** approach)
 
+-   NEXT STEP BOOKMARK (improvement collaboration with GPT:
+    <https://chatgpt.com/c/86c48943-23d0-4f17-982f-9a50380afcfd>)
+
+```{=html}
+<!-- -->
+```
 -   Objective
 
-    -   test if the difference between control and treatment is unlikely
-        given null hypothesis assumption that differences are zero
+    -   we typically test if the difference between control and
+        treatment is unlikely given null hypothesis assumption that
+        differences are zero
 
 -   Test setup
 
@@ -167,7 +178,8 @@ recommended book)*
 
 -   Analyze
 
-    -   generate test stat: group difference / std error
+    -   generate test statistic from experiment sample data: group
+        difference / std error
 
     -   generate pvalue using test stat
 
@@ -187,7 +199,7 @@ recommended book)*
 
 -   Run power analysis for deriving sample size target based on exp
     inputs
--   Yypically recommended to run exp for at least one business
+-   Typically recommended to run exp for at least one business
     cycle/week (to include weekdays and weekend trends)
 
 ### Power analysis and how long to run a test
