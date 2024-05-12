@@ -23,17 +23,17 @@ for(p in required_packages) {
 }
 ```
 
-------------------------------------------------------------
+------------------------------------------------------------------------
 
 WORK IN-PROGRESS
 
-------------------------------------------------------------
+------------------------------------------------------------------------
 
 # AB Testing Foundation
 
-*notes inspired by ChatGPT and [Trustworthy Online Controlled
-Experiments](https://www.amazon.com/Trustworthy-Online-Controlled-Experiments-Practical/dp/1108724264)**(highly
-recommended book)*
+\*notes inspired by ChatGPT and [Trustworthy Online Controlled
+Experiments](https://www.amazon.com/Trustworthy-Online-Controlled-Experiments-Practical/dp/1108724264)\*\*(highly
+recommended book)\*
 
 ### AB test learning objective
 
@@ -119,7 +119,7 @@ recommended book)*
     crash rate, buffering, load time, etc)
 -   if an experiment spikes time to value or causes the app to crash it
     could warrant ending the experiment early or holding off on feature
-    rollout even when primary metric(s) are positive
+    roll out even when primary metric(s) are positive
 
 ### Iterative experiments vs full site redesign
 
@@ -129,10 +129,13 @@ recommended book)*
         time to learn new experience
     -   can be costly on time to execute and dev resources for large
         overhaul
-    -   due to a set of changes bundled together it will be difficult to
-        untangle which of the changes are driving metrics or not
+    -   due to a large set of changes bundled together it will be
+        difficult to untangle which of the changes are driving metrics
+        or not
     -   high risk due to assumption that new redesign will be better but
         it is unknown in advance
+    -   measurement works more like a program evaluation with multiple
+        program interventions
 -   **Iterative experiments**
     -   lower risk and faster to execute
     -   test one feature/theme at a time to attribute effect to
@@ -141,52 +144,55 @@ recommended book)*
         changing drastically
     -   iterative experiments can result in always learning feedback
         loops
+    -   at times, might encourage the team to think of incremental ideas
+        vs step change ideas
 
 ### Hypothesis testing as part of AB testing (**frequentist** approach)
 
--   NEXT STEP BOOKMARK (improvement collaboration with GPT:
-    <https://chatgpt.com/c/86c48943-23d0-4f17-982f-9a50380afcfd>)
+NEXT STEP BOOKMARK
 
-```{=html}
-<!-- -->
-```
--   Objective
+-   **Objective**
 
-    -   we typically test if the difference between control and
-        treatment is unlikely given null hypothesis assumption that
-        differences are zero
+    -   test if the difference between control and treatment is unlikely
+        under the null hypothesis (typically assuming no difference)
 
--   Test setup
+    **Test Setup**
 
-    -   frame null and alt hypothesis
+    -   frame the null and alternative hypotheses
 
-    -   predefined alpha (significance level) level threshold: if pvalue
-        below alpha we conclude stat sig difference between groups
+    -   set a predefined significance level (alpha threshold)
 
-    -   practical significance level: for lift to be meaningful for the
-        business it should be greater than or equal to X
+    -   if the p-value is below the alpha level, conclude a
+        statistically significant difference
 
-    -   power analysis (power 0.8) to derive predetermine sample size:
-        significance 0.95 and MDE needed as inputs
+    -   set a practical significance threshold for meaningful lift to
+        the business
 
--   Run test
+    -   conduct a power analysis to determine the required sample size
+        based on relevant factors for the statistical test/primary
+        metric of interest
 
-    -   collect data / run test till predetermine sample size is reached
+    **Run Test**
 
-    -   recommended to run test for at least 1 week to capture day of
-        week and weekend users/patterns
+    -   collect data and continue until reaching the predetermined
+        sample size
 
--   Analyze
+    -   monitor the experiment for extreme negative outcomes or data
+        corruption
 
-    -   generate test statistic from experiment sample data: group
-        difference / std error
+    **Analyze**
 
-    -   generate pvalue using test stat
+    -   ensure statistical test assumptions are met
 
-    -   if pvalue is below alpha level then we have evidence to reject
-        null in favor of the alternative
+    -   calculate the test statistic based on sample data
 
-    -   check for practical significance
+    -   generate the p-value and confidence intervals
+
+    -   if the p-value is below the alpha level, reject the null
+        hypothesis
+
+    -   assess whether the result meets the practical significance
+        criteria
 
 ### Minimum detectable effect practically meaningful for the business
 
@@ -483,6 +489,15 @@ ggplot(df, aes(x = Group, y = Mean, ymin = Lower, ymax = Upper)) +
     periods, slightly different contexts
 
 ### Factors that can hurt AB test generalizability (external validity)
+
+Miscs notes
+
+-   often recommended to run test for at least 1 week to capture day of
+    week and weekend users/patterns; test runs Mon to Thu but Fri to Sun
+    has a different weekly seasonal usage pattern
+-   selection bias, novelty bias, etc
+
+Draft 1
 
 -   Early adopters (sample of users in the experiment not representative
     of future population)
