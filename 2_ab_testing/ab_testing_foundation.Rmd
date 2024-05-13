@@ -147,9 +147,7 @@ recommended book)\*
     -   at times, might encourage the team to think of incremental ideas
         vs step change ideas
 
-### Hypothesis testing as part of AB testing (**frequentist** approach)
-
-NEXT STEP BOOKMARK
+### Overview: hypothesis testing as part of AB testing (**frequentist** approach)
 
 -   **Objective**
 
@@ -160,13 +158,13 @@ NEXT STEP BOOKMARK
 
     -   frame the null and alternative hypotheses
 
-    -   set a predefined significance level (alpha threshold)
+    -   set a predefined significance level (alpha threshold; often
+        0.05)
 
     -   if the p-value is below the alpha level, conclude a
         statistically significant difference
 
-    -   set a practical significance threshold for meaningful lift to
-        the business
+    -   set a practical significance threshold for business impact
 
     -   conduct a power analysis to determine the required sample size
         based on relevant factors for the statistical test/primary
@@ -191,15 +189,30 @@ NEXT STEP BOOKMARK
     -   if the p-value is below the alpha level, reject the null
         hypothesis
 
-    -   assess whether the result meets the practical significance
-        criteria
+    -   assess whether the result pass the practical significance
+        threshold
 
-### Minimum detectable effect practically meaningful for the business
+NEXT STEP BOOKMARK
 
--   Used as input to derive predetermined sample size
--   Set as the smallest effect size that is practically meaningful for
-    the business based on the metric of interest
--   Will vary by company and metric
+### Null vs Alternative Hypothesis
+
+### Significance Level (alpha)
+
+### Practical Significance Threshold
+
+### Power Analysis
+
+### Experiment Monitoring and Early Stopping
+
+### Statistical Test
+- assumptions
+- test stat
+
+### Pvalue and Confidence Intervals
+
+### Conclusion Phrasing
+- 
+
 
 ### Determining how long to run an experiment
 
@@ -207,6 +220,13 @@ NEXT STEP BOOKMARK
     inputs
 -   Typically recommended to run exp for at least one business
     cycle/week (to include weekdays and weekend trends)
+
+### Minimum detectable effect practically meaningful for the business
+
+-   Used as key input to power analysis
+-   Set as the smallest effect size that is practically meaningful for
+    the business based on the metric of interest
+-   Will vary by company and metric
 
 ### Power analysis and how long to run a test
 
